@@ -17,4 +17,9 @@ class VehicleBorrowing extends Model
         'destination',
         'status',
     ];
+
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at'   => 'datetime',
+    ];
 }
