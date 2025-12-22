@@ -39,6 +39,8 @@ class DepartmentsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Departemen')
+            ->emptyStateDescription('Klik tombol "Tambah Departemen" untuk menambahkan data baru.');
     }
 }
