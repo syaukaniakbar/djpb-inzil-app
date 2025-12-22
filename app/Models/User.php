@@ -32,8 +32,8 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'role',
-        'position',
-        'department',
+        'position_id',
+        'department_id',
     ];
 
     /**
@@ -60,5 +60,10 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function vehicleBorrowings()
+    {
+        return $this->hasMany(VehicleBorrowing::class);
     }
 }

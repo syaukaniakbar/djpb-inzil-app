@@ -13,8 +13,8 @@ class BookingRoom extends Model
         'room_id',
         'start_at',
         'end_at',
-        'konsep_acara',
-        'kegiatan',
+        'event_mode',
+        'event_name',
         'status',
     ];
 
