@@ -20,11 +20,13 @@ class RoomResource extends Resource
 {
     protected static ?string $model = Room::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedViewColumns;
 
-    protected static ?string $navigationLabel = 'Ruangan';
+    protected static ?string $navigationLabel = 'Data Ruangan';
 
     protected static ?string $recordTitleAttribute = 'Room';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

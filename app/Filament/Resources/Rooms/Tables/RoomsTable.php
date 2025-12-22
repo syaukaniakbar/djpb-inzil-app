@@ -39,6 +39,8 @@ class RoomsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Ruangan')
+            ->emptyStateDescription('Klik tombol "Tambah Ruangan" untuk menambahkan data baru.');
     }
 }
