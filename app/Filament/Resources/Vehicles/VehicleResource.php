@@ -20,11 +20,13 @@ class VehicleResource extends Resource
 {
     protected static ?string $model = Vehicle::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     protected static ?string $recordTitleAttribute = 'Vehicle';
 
-    protected static ?string $navigationLabel = 'Kendaraan';
+    protected static ?string $navigationLabel = 'Data Kendaraan';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {
