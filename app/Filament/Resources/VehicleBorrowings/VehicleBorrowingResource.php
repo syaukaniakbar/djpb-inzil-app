@@ -20,11 +20,15 @@ class VehicleBorrowingResource extends Resource
 {
     protected static ?string $model = VehicleBorrowing::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
     protected static ?string $recordTitleAttribute = 'VehicleBorrowing';
 
     protected static ?string $navigationLabel = 'Peminjaman Kendaraan';
+    protected static ?string $pluralLabel = 'Riwayat Peminjaman Kendaraan';
+    protected static ?string $modelLabel = 'Peminjaman Kendaraan';
+
+    protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
     {

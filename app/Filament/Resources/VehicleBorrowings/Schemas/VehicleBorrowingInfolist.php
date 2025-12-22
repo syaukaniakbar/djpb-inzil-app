@@ -19,7 +19,8 @@ class VehicleBorrowingInfolist
                     ->dateTime(),
                 TextEntry::make('end_at')
                     ->dateTime(),
-                TextEntry::make('purpose'),
+                TextEntry::make('purpose')
+                    ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota'),
                 TextEntry::make('destination'),
                 TextEntry::make('status')
                     ->badge(),

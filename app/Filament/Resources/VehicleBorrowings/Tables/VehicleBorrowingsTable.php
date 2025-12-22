@@ -28,6 +28,7 @@ class VehicleBorrowingsTable
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('purpose')
+                    ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
                     ->searchable(),
                 TextColumn::make('destination')
                     ->searchable(),
@@ -53,6 +54,8 @@ class VehicleBorrowingsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Peminjaman Kendaraan')
+            ->emptyStateDescription('Klik tombol "Ajukan Peminjaman Kendaraan" untuk membuat data baru.');
     }
 }

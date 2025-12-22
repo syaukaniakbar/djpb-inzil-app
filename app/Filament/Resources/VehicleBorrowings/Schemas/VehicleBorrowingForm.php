@@ -6,6 +6,8 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
+use App\Models\User;
 
 class VehicleBorrowingForm
 {
@@ -13,29 +15,31 @@ class VehicleBorrowingForm
     {
         return $schema
             ->components([
-                TextInput::make('user_id')
+                Select::make('user_id')
+                    ->label('User')
                     ->required()
-                    ->numeric(),
-                TextInput::make('vehicle_id')
+                    ->options(
+                        User::where('role', 'user')->pluck('name', 'id')->toArray()
+                    ),
+                Select::make('vehicle_id')
+                    ->label('Vehicle')
                     ->required()
-                    ->numeric(),
+                    ->options(
+                        \App\Models\Vehicle::all()->pluck('name', 'id')->toArray()
+                    ),
                 DateTimePicker::make('start_at')
                     ->required(),
                 DateTimePicker::make('end_at')
                     ->required(),
-                TextInput::make('purpose')
+                Select::make('purpose')
+                    ->options([
+                        'dalam_kota' => 'Dalam Kota',
+                        'luar_kota' => 'Luar Kota',
+                    ])
                     ->required(),
                 TextInput::make('destination')
                     ->required(),
-                Select::make('status')
-                    ->options([
-            'pending' => 'Pending',
-            'approved' => 'Approved',
-            'used' => 'Used',
-            'finished' => 'Finished',
-            'canceled' => 'Canceled',
-        ])
-                    ->required(),
+                Hidden::make('status')->default('pending'),
             ]);
     }
 }
