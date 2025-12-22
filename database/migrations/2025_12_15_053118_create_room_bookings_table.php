@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->dateTime('start_at');
             $table->dateTime('end_at');
-            $table->string('konsep_acara');
-            $table->string('kegiatan');
-            $table->enum('status', ['pending', 'approved', 'used', 'finished', 'canceled']);
+            $table->string('event_mode');
+            $table->string('event_name');
+            $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'canceled']);
             $table->timestamps();
         });
     }

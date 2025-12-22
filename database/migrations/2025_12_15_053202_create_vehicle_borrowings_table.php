@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('end_at');
             $table->string('purpose');
             $table->string('destination');
-            $table->enum('status', ['pending', 'approved', 'used', 'finished', 'canceled']);            
+            $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'canceled']);            
             $table->timestamps();
         });
     }
