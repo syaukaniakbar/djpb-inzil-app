@@ -52,6 +52,8 @@ class UsersTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Pengguna')
+            ->emptyStateDescription('Klik tombol "Tambah Pengguna" untuk menambahkan data baru.');
     }
 }
