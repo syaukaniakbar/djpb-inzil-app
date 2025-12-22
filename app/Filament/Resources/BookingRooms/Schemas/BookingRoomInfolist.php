@@ -19,8 +19,8 @@ class BookingRoomInfolist
                     ->dateTime(),
                 TextEntry::make('end_at')
                     ->dateTime(),
-                TextEntry::make('konsep_acara'),
-                TextEntry::make('kegiatan'),
+                TextEntry::make('event_mode'),
+                TextEntry::make('event_name'),
                 TextEntry::make('status')
                     ->badge(),
                 TextEntry::make('created_at')

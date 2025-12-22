@@ -22,11 +22,13 @@ class BookingRoomResource extends Resource
 
     protected static ?string $model = BookingRoom::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     protected static ?string $recordTitleAttribute = 'BookingRoom';
 
     protected static ?string $navigationLabel = 'Peminjaman Ruangan';
+
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

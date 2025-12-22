@@ -23,9 +23,9 @@ class BookingRoomForm
                     ->required(),
                 DateTimePicker::make('end_at')
                     ->required(),
-                TextInput::make('konsep_acara')
+                TextInput::make('event_mode')
                     ->required(),
-                TextInput::make('kegiatan')
+                TextInput::make('event_name')
                     ->required(),
                 Select::make('status')
                     ->options([
@@ -34,7 +34,7 @@ class BookingRoomForm
             'used' => 'Used',
             'finished' => 'Finished',
             'canceled' => 'Canceled',
-        ])
+                ])
                     ->required(),
             ]);
     }

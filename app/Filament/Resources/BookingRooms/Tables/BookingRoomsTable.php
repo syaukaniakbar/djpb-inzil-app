@@ -27,9 +27,9 @@ class BookingRoomsTable
                 TextColumn::make('end_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('konsep_acara')
+                TextColumn::make('event_mode')
                     ->searchable(),
-                TextColumn::make('kegiatan')
+                TextColumn::make('event_name')
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge(),
@@ -53,6 +53,8 @@ class BookingRoomsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Peminjaman Ruangan')
+            ->emptyStateDescription('Klik tombol "Ajukan Peminjaman Ruangan" untuk membuat data baru.');
     }
 }
