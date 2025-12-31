@@ -15,12 +15,49 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         DB::table('departments')->insert([
-            ['name' => 'BAGIAN UMUM', 'code' => 'BAGUM ', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
-            ['name' => 'PEMBINAAN PELAKSANAAN ANGGARAN I', 'code' => 'PPA I', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
-            ['name' => 'PEMBINAAN PELAKSANAAN ANGGARAN II', 'code' => 'PPA II', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
-            ['name' => 'PEMBINAAN AKUNTASI DAN PELAPORAN KEUANGAN', 'code' => 'PSAPP', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
-            ['name' => 'SUPERVISI KPPN DAN KEPATUHAN INTERNAL', 'code' => 'SKKI', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
-            ['name' => 'ANALISIS PERBENDAHARAAN NEGARA AHLI PERTAMA', 'code' => 'APBN', 'created_at' => Carbon::now(),  'updated_at' => Carbon::now()],
+            [
+                'id' => 1,
+                'name' => 'Bagian Umum',
+                'code' => 'BAGUM',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 2,
+                'name' => 'Pembinaan Pelaksanaan Anggaran I',
+                'code' => 'PPA I',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 3,
+                'name' => 'Pembinaan Pelaksanaan Anggaran II',
+                'code' => 'PPA II',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                
+                'id' => 4,
+                'name' => 'Pembinaan Akuntansi dan Pelaporan Keuangan',
+                'code' => 'PSAPP',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 5,
+                'name' => 'Supervisi KPPN dan Kepatuhan Internal',
+                'code' => 'SKKI',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'id' => 6,
+                'name' => 'Analisis Perbendaharaan Negara Ahli Pertama',
+                'code' => 'APBN',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]
         ]);
     }
 }
