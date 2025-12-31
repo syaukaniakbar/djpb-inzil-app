@@ -51,6 +51,8 @@ class VehiclesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+
+            
             ])
             ->emptyStateHeading('Tidak Ada Data Kendaraan')
             ->emptyStateDescription('Klik tombol "Tambah Kendaraan" untuk menambahkan data baru.');
