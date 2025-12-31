@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Providers\Filament;
+use App\Filament\Pages\Settings;
 
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -12,12 +13,15 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use Filament\Actions\Action;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Support\Enums\Width;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,12 +32,19 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->maxContentWidth(Width::Full)
+            ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->colors([
                 'primary' => Color::Blue,
             ])
-            ->brandName('Admin')
-            ->brandLogo(asset('images/kemenkeu-logo.png'))
+            ->userMenuItems([
+                Action::make('settings')
+                    ->url(fn (): string => Settings::getUrl())
+                    ->icon('heroicon-o-cog-6-tooth'),
+            ])  
+            ->brandName('Inzil DJPb')
+            ->brandLogo(asset('images/kemenkeu-logo-dashboard.png'))
             ->brandLogoHeight('3rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
