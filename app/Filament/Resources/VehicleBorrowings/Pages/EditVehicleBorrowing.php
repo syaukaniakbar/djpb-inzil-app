@@ -6,6 +6,9 @@ use App\Filament\Resources\VehicleBorrowings\VehicleBorrowingResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\RejectAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction;
 
 class EditVehicleBorrowing extends EditRecord
 {
@@ -15,6 +18,9 @@ class EditVehicleBorrowing extends EditRecord
     {
         return [
             ViewAction::make(),
+            ApproveAction::make(),
+            RejectAction::make(),
+            MarkAsReturnedAction::make(),
             DeleteAction::make(),
         ];
     }

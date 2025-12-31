@@ -8,6 +8,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Hidden;
 use App\Models\User;
+use App\Models\Vehicle;
+use Filament\Forms\Components\Section;
 
 class VehicleBorrowingForm
 {
@@ -16,30 +18,43 @@ class VehicleBorrowingForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('User')
+                    ->label('Pengguna')
                     ->required()
                     ->options(
                         User::where('role', 'user')->pluck('name', 'id')->toArray()
-                    ),
+                    )
+                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change user
+
                 Select::make('vehicle_id')
-                    ->label('Vehicle')
+                    ->label('Pilih Kendaraan')
                     ->required()
                     ->options(
-                        \App\Models\Vehicle::all()->pluck('name', 'id')->toArray()
-                    ),
+                        Vehicle::all()->pluck('name', 'id')->toArray()
+                    )
+                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change vehicle
+
                 DateTimePicker::make('start_at')
-                    ->required(),
-                DateTimePicker::make('end_at')
-                    ->required(),
+                    ->label('Tanggal Peminjaman')
+                    ->required()
+                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change dates
+
                 Select::make('purpose')
+                    ->label('Jenis Perjalanan')
                     ->options([
                         'dalam_kota' => 'Dalam Kota',
                         'luar_kota' => 'Luar Kota',
                     ])
                     ->required(),
+
                 TextInput::make('destination')
+                    ->label('Tujuan Perjalanan')
                     ->required(),
-                Hidden::make('status')->default('pending'),
+
+                // Admin-specific fields
+                Hidden::make('status')
+                    ->default('pending'),
+
+                
             ]);
     }
 }
