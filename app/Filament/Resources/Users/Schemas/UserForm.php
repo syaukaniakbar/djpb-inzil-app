@@ -22,7 +22,6 @@ class UserForm
                     ->label('Email address')
                     ->email()
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
                     ->password()
                     ->revealable()
@@ -33,8 +32,12 @@ class UserForm
                         'user' => 'User',
                         'admin' => 'Admin',
                     ]),
-                TextInput::make('position_id')
-                    ->label('Position'),
+                Select::make('position_id')
+                    ->label('Position')
+                    ->required()
+                    ->options(
+                        Position::pluck('name', 'id')->toArray()
+                    ),
                 Select::make('department_id') // atau 'bidang' sesuai kolom di database
                     ->label('Department')
                     ->required()

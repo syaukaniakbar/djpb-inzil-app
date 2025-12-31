@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\SelectFilter;
 
 class UsersTable
 {
@@ -16,21 +17,27 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('email_verified_at')
+                    ->label('Email Verified At')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('two_factor_confirmed_at')
+                    ->label('Two Factor Confirmed At')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('role')
+                    ->label('Role')
                     ->searchable(),
-                TextColumn::make('jabatan')
+                TextColumn::make('position.name')
+                    ->label('Position')
                     ->searchable(),
-                TextColumn::make('bidang')
+                TextColumn::make('department.name')
+                    ->label('Department')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -42,7 +49,11 @@ class UsersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('role')
+                    ->options([
+                        'admin' => 'Admin',
+                        'user' => 'User',
+                    ]),
             ])
             ->recordActions([
                 ViewAction::make(),
