@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use App\Models\Department;
+use App\Models\Position;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -35,6 +37,16 @@ class User extends Authenticatable implements FilamentUser
         'position_id',
         'department_id',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
