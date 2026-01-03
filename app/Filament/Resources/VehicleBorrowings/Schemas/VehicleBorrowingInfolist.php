@@ -30,11 +30,6 @@ class VehicleBorrowingInfolist
                     ->dateTime()
                     ->label('End Date'),
 
-                TextEntry::make('returned_at')
-                    ->dateTime()
-                    ->label('Returned At')
-                    ->placeholder('Not yet returned'),
-
                 TextEntry::make('purpose')
                     ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
                     ->badge(),

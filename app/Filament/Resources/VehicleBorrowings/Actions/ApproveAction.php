@@ -8,25 +8,26 @@ use Filament\Notifications\Notification;
 class ApproveAction
 {
     public static function make(): Action
-    {
-        return Action::make('approve')
-            ->label('Approve')
-            ->color('success')
-            ->requiresConfirmation()
-            ->modalHeading('Approve Vehicle Request')
-            ->modalDescription('Are you sure you want to approve this vehicle request?')
-            ->modalSubmitActionLabel('Yes, approve')
-            ->action(function ($record) {
-                // Update the record to mark as approved (ongoing)
-                $record->update([
-                    'status' => 'ongoing',
-                ]);
+{
+    return Action::make('approve')
+        ->label('Setujui')
+        ->color('success')
+        ->requiresConfirmation()
+        ->modalHeading('Setujui Permintaan Kendaraan')
+        ->modalDescription('Apakah Anda yakin ingin menyetujui permintaan kendaraan ini?')
+        ->modalSubmitActionLabel('Ya, setujui')
+        ->action(function ($record) {
+            // Perbarui data untuk menandai sebagai disetujui (berlangsung)
+            $record->update([
+                'status' => 'ongoing',
+            ]);
 
-                Notification::make()
-                    ->title('Vehicle request approved')
-                    ->success()
-                    ->send();
-            })
-            ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
-    }
+            Notification::make()
+                ->title('Permintaan kendaraan berhasil disetujui')
+                ->success()
+                ->send();
+        })
+        ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
+}
+
 }

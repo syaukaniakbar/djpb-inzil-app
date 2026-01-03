@@ -10,24 +10,25 @@ class MarkAsReturnedAction
     public static function make(): Action
     {
         return Action::make('mark_as_returned')
-            ->label('Mark as Returned')
+            ->label('Tandai Sebagai Dikembalikan')
             ->color('success')
             ->requiresConfirmation()
-            ->modalHeading('Mark Vehicle as Returned')
-            ->modalDescription('Are you sure you want to mark this vehicle as returned?')
-            ->modalSubmitActionLabel('Yes, mark as returned')
+            ->modalHeading('Tandai Kendaraan Telah Dikembalikan')
+            ->modalDescription('Apakah Anda yakin ingin menandai kendaraan ini sebagai telah dikembalikan?')
+            ->modalSubmitActionLabel('Ya, tandai sebagai dikembalikan')
             ->action(function ($record) {
-                // Update the record to mark as returned
+                // Update data untuk menandai sebagai dikembalikan
                 $record->update([
                     'end_at' => now(),
                     'status' => 'finished',
                 ]);
 
                 Notification::make()
-                    ->title('Vehicle marked as returned')
+                    ->title('Kendaraan berhasil ditandai sebagai dikembalikan')
                     ->success()
                     ->send();
             })
-            ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'ongoing' && is_null($record->end_at));
+            ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'ongoing');
+
     }
 }

@@ -13,6 +13,7 @@ use App\Models\VehicleBorrowing;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use UnitEnum;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -27,6 +28,8 @@ class VehicleBorrowingResource extends Resource
     protected static ?string $navigationLabel = 'Peminjaman Kendaraan';
     protected static ?string $pluralLabel = 'Riwayat Peminjaman Kendaraan';
     protected static ?string $modelLabel = 'Peminjaman Kendaraan';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Peminjaman';
 
     protected static ?int $navigationSort = 7;
 
