@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class RoomResource extends Resource
 {
@@ -22,7 +23,11 @@ class RoomResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedViewColumns;
 
-    protected static ?string $navigationLabel = 'Data Ruangan';
+    protected static ?string $navigationLabel = 'Inventaris Ruang';
+    protected static ?string $pluralLabel = 'Inventaris Ruang';
+    protected static ?string $modelLabel = 'Ruang';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Kelola Aset';
 
     protected static ?string $recordTitleAttribute = 'Room';
 
