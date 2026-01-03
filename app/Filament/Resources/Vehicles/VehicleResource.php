@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class VehicleResource extends Resource
 {
@@ -24,8 +25,11 @@ class VehicleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Vehicle';
 
-    protected static ?string $navigationLabel = 'Data Kendaraan';
+    protected static ?string $navigationLabel = 'Inventaris Kendaraan';
+    protected static ?string $pluralLabel = 'Inventaris Kendaraan';
+    protected static ?string $modelLabel = 'Kendaraan';
 
+    protected static string | UnitEnum | null $navigationGroup = 'Kelola Aset';
     protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
