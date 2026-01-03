@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class DepartmentResource extends Resource
 {
@@ -25,6 +26,10 @@ class DepartmentResource extends Resource
     protected static ?string $recordTitleAttribute = 'Department';
 
     protected static ?string $navigationLabel = 'Data Departemen';
+    protected static ?string $pluralLabel = 'Data Departemen';
+    protected static ?string $modelLabel = 'Departemen';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Struktur Organisasi';
 
     protected static ?int $navigationSort = 2;
 
@@ -49,7 +54,6 @@ class DepartmentResource extends Resource
             //
         ];
     }
-
     public static function getPages(): array
     {
         return [
