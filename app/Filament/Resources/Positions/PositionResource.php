@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class PositionResource extends Resource
 {
@@ -24,7 +25,12 @@ class PositionResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Position';
 
-    protected static ?string $navigationLabel = 'Data Position';
+    protected static ?string $navigationLabel = 'Data Jabatan';
+    protected static ?string $pluralLabel = 'Data Jabatan';
+    protected static ?string $modelLabel = 'Jabatan';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Struktur Organisasi';
+
 
     protected static ?int $navigationSort = 3;
 
