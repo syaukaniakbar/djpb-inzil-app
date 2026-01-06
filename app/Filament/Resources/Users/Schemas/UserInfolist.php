@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Schemas\Schema;
 
 class UserInfolist
@@ -11,6 +12,11 @@ class UserInfolist
     {
         return $schema
             ->components([
+                ImageEntry::make('profile_photo')
+                    ->label('Foto Profil')
+                    ->circular()
+                    ->size(100)
+                    ->placeholder('Belum ada foto profil'),
                 TextEntry::make('name')
                     ->label('Nama'),
                 TextEntry::make('email')

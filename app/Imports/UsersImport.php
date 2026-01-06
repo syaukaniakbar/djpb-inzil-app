@@ -21,6 +21,7 @@ class UsersImport implements ToModel, WithHeadingRow
             'role'              => 'user',
             'position_id'       => $row['jabatan'],
             'department_id'     => $row['bagianbidang'],
+            'profile_photo'     => $row['photo_profile'],
             'created_at'        => now(),
             'updated_at'        => now(),
         ]);

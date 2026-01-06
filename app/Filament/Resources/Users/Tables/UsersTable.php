@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 
@@ -16,6 +17,12 @@ class UsersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('profile_photo')
+                    ->label('Foto Profil')
+                    ->circular()
+                    ->size(120)
+                    ->defaultImageUrl(url('/images/default-avatar.png'))
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),

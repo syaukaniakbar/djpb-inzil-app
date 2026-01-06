@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     {
         // Insert the main admin user
         DB::table('users')->insert([
-            'name' => 'Akhmad Syaukani Akbar',
+            'name' => 'Admin',
             'email' => 'admin01@gmail.com',
             'email_verified_at' => Carbon::now(),
             'nip' => null,
