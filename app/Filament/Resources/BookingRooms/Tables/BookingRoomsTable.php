@@ -59,15 +59,16 @@ class BookingRoomsTable
                     ->limit(30),
 
                 TextColumn::make('status')
-                    ->badge()
-                    ->colors([
-                        'warning' => 'pending',
-                        'info' => 'ongoing',
-                        'primary' => 'used',
-                        'success' => 'finished',
-                        'danger' => 'canceled',
-                    ])
-                    ->sortable(),
+                ->badge()
+                ->colors([
+                    'warning' => 'pending',
+                    'success' => 'approved',
+                    'info' => 'ongoing',
+                    'danger' => 'rejected',
+                    'success' => 'finished',
+                    'secondary' => 'canceled',
+                ])
+                ->sortable(),
 
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -104,7 +105,6 @@ class BookingRoomsTable
                 // Custom admin actions
                 \App\Filament\Resources\BookingRooms\Actions\ApproveAction::make(),
                 \App\Filament\Resources\BookingRooms\Actions\RejectAction::make(),
-                \App\Filament\Resources\BookingRooms\Actions\MarkAsReturnedAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

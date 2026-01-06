@@ -67,11 +67,10 @@ class VehicleBorrowingsTable
                     'success' => 'approved',
                     'info' => 'ongoing',
                     'danger' => 'rejected',
-                    'primary' => 'finished',
+                    'success' => 'finished',
                     'secondary' => 'canceled',
                 ])
                 ->sortable(),
-
             TextColumn::make('created_at')
                 ->dateTime()
                 ->sortable()
