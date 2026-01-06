@@ -33,12 +33,17 @@ class VehicleBorrowingsTable
                 ->sortable(),
 
             TextColumn::make('start_at')
-                ->label('Tanggal Peminjaman')
+                ->label('Jadwal Peminjaman')
                 ->dateTime()
                 ->sortable(),
 
             TextColumn::make('end_at')
-                ->label('Tanggal Pengembalian')
+                ->label('Jadwal Pengembalian')
+                ->dateTime()
+                ->sortable(),
+
+            TextColumn::make('returned_at')
+                ->label('Waktu Pengembalian Aktual')
                 ->dateTime()
                 ->sortable(),
 
@@ -59,9 +64,11 @@ class VehicleBorrowingsTable
                 ->badge()
                 ->colors([
                     'warning' => 'pending',
-                    'success' => 'finished',
-                    'danger' => 'canceled',
+                    'success' => 'approved',
                     'info' => 'ongoing',
+                    'danger' => 'rejected',
+                    'primary' => 'finished',
+                    'secondary' => 'canceled',
                 ])
                 ->sortable(),
 

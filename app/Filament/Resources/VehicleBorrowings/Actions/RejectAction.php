@@ -10,20 +10,20 @@ class RejectAction
     public static function make(): Action
     {
         return Action::make('reject')
-            ->label('Reject')
+            ->label('Tolak')
             ->color('danger')
             ->requiresConfirmation()
-            ->modalHeading('Reject Vehicle Request')
-            ->modalDescription('Are you sure you want to reject this vehicle request?')
-            ->modalSubmitActionLabel('Yes, reject')
+            ->modalHeading('Tolak Permintaan Kendaraan')
+            ->modalDescription('Apakah Anda yakin ingin menolak permintaan kendaraan ini?')
+            ->modalSubmitActionLabel('Ya, tolak')
             ->action(function ($record) {
-                // Update the record to mark as rejected (canceled)
+                // Perbarui status menjadi ditolak
                 $record->update([
-                    'status' => 'canceled',
+                    'status' => 'rejected',
                 ]);
 
                 Notification::make()
-                    ->title('Vehicle request rejected')
+                    ->title('Permintaan kendaraan berhasil ditolak')
                     ->danger()
                     ->send();
             })

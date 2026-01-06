@@ -24,7 +24,19 @@ class VehicleBorrowingForm
                     ->options(
                         User::where('role', 'user')->pluck('name', 'id')->toArray()
                     )
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change user
+                    ->disabled(fn () => auth()->user()->role !== 'admin'), 
+
+                DateTimePicker::make('start_at')
+                    ->label('Tanggal Peminjaman')
+                    ->required()
+                    ->live()
+                    ->disabled(fn () => auth()->user()->role !== 'admin'),
+
+                DateTimePicker::make('end_at')
+                    ->label('Tanggal Pengembalian')
+                    ->required()
+                    ->live()
+                    ->disabled(fn () => auth()->user()->role !== 'admin'), 
 
                 Select::make('vehicle_id')
                     ->label('Pilih Kendaraan')
@@ -63,18 +75,6 @@ class VehicleBorrowingForm
                         return 'Pilih kendaraan yang tersedia untuk periode yang dipilih';
                     })
                     ->live(), // Make it live to update when dates change
-
-                DateTimePicker::make('start_at')
-                    ->label('Tanggal Peminjaman')
-                    ->required()
-                    ->live() // Make it live to trigger vehicle availability check
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change dates
-
-                DateTimePicker::make('end_at')
-                    ->label('Tanggal Pengembalian')
-                    ->required()
-                    ->live() // Make it live to trigger vehicle availability check
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change dates
 
                 Select::make('purpose')
                     ->label('Jenis Perjalanan')

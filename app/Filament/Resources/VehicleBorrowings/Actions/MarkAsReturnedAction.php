@@ -19,7 +19,7 @@ class MarkAsReturnedAction
             ->action(function ($record) {
                 // Update data untuk menandai sebagai dikembalikan
                 $record->update([
-                    'end_at' => now(),
+                    'returned_at' => now(),
                     'status' => 'finished',
                 ]);
 
@@ -27,7 +27,7 @@ class MarkAsReturnedAction
                     ->title('Kendaraan berhasil ditandai sebagai dikembalikan')
                     ->success()
                     ->send();
-            })
+                })
             ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'ongoing');
 
     }

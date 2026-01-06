@@ -19,7 +19,7 @@ class ApproveAction
         ->action(function ($record) {
             // Perbarui data untuk menandai sebagai disetujui (berlangsung)
             $record->update([
-                'status' => 'ongoing',
+                'status' => 'approved',
             ]);
 
             Notification::make()

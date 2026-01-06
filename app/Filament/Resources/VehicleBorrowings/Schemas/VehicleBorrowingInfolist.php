@@ -29,6 +29,10 @@ class VehicleBorrowingInfolist
                 TextEntry::make('end_at')
                     ->dateTime()
                     ->label('End Date'),
+            
+                TextEntry::make('returned_at')
+                    ->dateTime()
+                    ->label('Returned Date'),
 
                 TextEntry::make('purpose')
                     ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
@@ -40,9 +44,11 @@ class VehicleBorrowingInfolist
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
-                        'success' => 'finished',
-                        'danger' => 'canceled',
+                        'success' => 'approved',
                         'info' => 'ongoing',
+                        'danger' => 'rejected',
+                        'primary' => 'finished',
+                        'secondary' => 'canceled',
                     ]),
 
                 TextEntry::make('created_at')
