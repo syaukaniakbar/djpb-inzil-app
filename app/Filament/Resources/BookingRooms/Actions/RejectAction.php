@@ -19,7 +19,7 @@ class RejectAction
             ->action(function ($record) {
                 // Update data untuk menandai sebagai ditolak (dibatalkan)
                 $record->update([
-                    'status' => 'canceled',
+                    'status' => 'rejected',
                 ]);
 
                 Notification::make()

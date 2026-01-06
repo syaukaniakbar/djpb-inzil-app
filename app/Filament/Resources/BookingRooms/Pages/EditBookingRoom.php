@@ -9,8 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\BookingRooms\Actions\ApproveAction;
 use App\Filament\Resources\BookingRooms\Actions\RejectAction;
-use App\Filament\Resources\BookingRooms\Actions\MarkAsUsedAction;
-use App\Filament\Resources\BookingRooms\Actions\MarkAsFinishedAction;
+use App\Filament\Resources\BookingRooms\Actions\MarkAsReturnedAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 
@@ -24,8 +23,7 @@ class EditBookingRoom extends EditRecord
             ViewAction::make(),
             ApproveAction::make(),
             RejectAction::make(),
-            MarkAsUsedAction::make(),
-            MarkAsFinishedAction::make(),
+            MarkAsReturnedAction::make(),
             DeleteAction::make(),
         ];
     }

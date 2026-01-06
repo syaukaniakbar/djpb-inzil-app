@@ -104,7 +104,7 @@ class BookingRoomsTable
                 // Custom admin actions
                 \App\Filament\Resources\BookingRooms\Actions\ApproveAction::make(),
                 \App\Filament\Resources\BookingRooms\Actions\RejectAction::make(),
-                \App\Filament\Resources\BookingRooms\Actions\MarkAsUsedAction::make(),
+                \App\Filament\Resources\BookingRooms\Actions\MarkAsReturnedAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

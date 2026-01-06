@@ -22,7 +22,14 @@ class BookingRoomInfolist
                 TextEntry::make('event_mode'),
                 TextEntry::make('event_name'),
                 TextEntry::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'info' => 'ongoing',
+                        'primary' => 'used',
+                        'success' => 'finished',
+                        'danger' => 'canceled',
+                    ]),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

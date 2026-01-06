@@ -5,17 +5,17 @@ namespace App\Filament\Resources\BookingRooms\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
-class MarkAsUsedAction
+class MarkAsReturnedAction
 {
     public static function make(): Action
     {
-        return Action::make('mark_as_used')
-            ->label('Mark as Used')
+        return Action::make('mark_as_returned')
+            ->label('Tandai Selesai Dikembalikan')
             ->color('success')
             ->requiresConfirmation()
-            ->modalHeading('Mark Room as Used')
-            ->modalDescription('Are you sure you want to mark this room as used?')
-            ->modalSubmitActionLabel('Yes, mark as used')
+            ->modalHeading('Tandai Ruangan Selesai Dikembalikan')
+            ->modalDescription('Apakah Anda yakin ingin menandai ruangan ini selesai dikembalikan?')
+            ->modalSubmitActionLabel('Ya, tandai selesai dikembalikan')
             ->action(function ($record) {
                 
                 // Update the record to mark as used
@@ -24,7 +24,7 @@ class MarkAsUsedAction
                 ]);
 
                 Notification::make()
-                    ->title('Room marked as used')
+                    ->title('Ruangan berhasil ditandai sebagai selesai digunakan')
                     ->success()
                     ->send();
             })

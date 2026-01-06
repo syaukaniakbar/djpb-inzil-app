@@ -7,8 +7,7 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\BookingRooms\Actions\ApproveAction;
 use App\Filament\Resources\BookingRooms\Actions\RejectAction;
-use App\Filament\Resources\BookingRooms\Actions\MarkAsUsedAction;
-use App\Filament\Resources\BookingRooms\Actions\MarkAsFinishedAction;
+use App\Filament\Resources\BookingRooms\Actions\MarkAsReturnedAction;
 
 class ViewBookingRoom extends ViewRecord
 {
@@ -20,8 +19,7 @@ class ViewBookingRoom extends ViewRecord
             EditAction::make(),
             ApproveAction::make(),
             RejectAction::make(),
-            MarkAsUsedAction::make(),
-            MarkAsFinishedAction::make(),
+            MarkAsReturnedAction::make(),
         ];
     }
 }
