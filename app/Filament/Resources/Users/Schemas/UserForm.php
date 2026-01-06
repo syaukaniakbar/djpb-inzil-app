@@ -17,29 +17,36 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nama')
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->email()
+                    ->required(),
+                TextInput::make('nip')
+                    ->label('NIP')
                     ->required(),
                 TextInput::make('password')
                     ->password()
-                    ->revealable()
-                    ->required(),
+                    ->revealable(),
                 Select::make('role')
+                    ->label('Role')
                     ->required()
                     ->options([
                         'user' => 'User',
                         'admin' => 'Admin',
                     ]),
+                DateTimePicker::make('birth_date')
+                    ->label('Tanggal Lahir')
+                    ->required(),
                 Select::make('position_id')
-                    ->label('Position')
+                    ->label('Jabatan')
                     ->required()
                     ->options(
                         Position::pluck('name', 'id')->toArray()
                     ),
-                Select::make('department_id') // atau 'bidang' sesuai kolom di database
-                    ->label('Department')
+                Select::make('department_id')
+                    ->label('Departemen')
                     ->required()
                     ->options(
                         Department::pluck('name', 'id')->toArray()

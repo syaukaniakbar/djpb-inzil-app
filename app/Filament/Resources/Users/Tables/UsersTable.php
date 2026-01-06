@@ -26,10 +26,6 @@ class UsersTable
                     ->label('Email Verified At')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('two_factor_confirmed_at')
-                    ->label('Two Factor Confirmed At')
-                    ->dateTime()
-                    ->sortable(),
                 TextColumn::make('role')
                     ->label('Role')
                     ->searchable(),
