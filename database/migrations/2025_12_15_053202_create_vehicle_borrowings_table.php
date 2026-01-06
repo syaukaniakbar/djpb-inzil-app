@@ -17,9 +17,10 @@ return new class extends Migration
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
             $table->dateTime('start_at');
             $table->dateTime('end_at');
+            $table->dateTime('returned_at')->nullable();
             $table->string('purpose');
             $table->string('destination');
-            $table->enum('status', ['pending', 'ongoing', 'finished', 'canceled']);
+            $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'rejected', 'canceled']);
             $table->timestamps();
         });
     }

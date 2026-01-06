@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('end_at');
             $table->string('event_mode');
             $table->string('event_name');
-            $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'canceled']);
+            $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'rejected', 'canceled']);
             $table->timestamps();
         });
     }
