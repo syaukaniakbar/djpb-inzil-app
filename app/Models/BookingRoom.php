@@ -21,6 +21,7 @@ class BookingRoom extends Model
     protected $casts = [
         'start_at' => 'datetime',
         'end_at'   => 'datetime',
+        'returned_at' => 'datetime',
     ];
 
     public function user()
@@ -33,27 +34,27 @@ class BookingRoom extends Model
         return $this->belongsTo(Room::class);
     }
 
-    // Scope to get active bookings (ongoing, used)
+    // Scope to get active bookings (not yet finished)
     public function scopeActive($query)
     {
-        return $query->whereIn('status', ['ongoing', 'used']);
+        return $query->whereNull('returned_at')->whereIn('status', ['ongoing', 'used']);
     }
 
     // Scope to get completed bookings
     public function scopeCompleted($query)
     {
-        return $query->where('status', 'finished');
+        return $query->whereNotNull('returned_at');
     }
 
     // Check if booking is currently active
     public function isActive(): bool
     {
-        return in_array($this->status, ['ongoing', 'used']);
+        return is_null($this->returned_at) && in_array($this->status, ['ongoing', 'used']);
     }
 
     // Check if booking is overdue
     public function isOverdue(): bool
     {
-        return !$this->isActive() && $this->end_at < now() && $this->status !== 'finished';
+        return !$this->isActive() && $this->end_at < now();
     }
 }
