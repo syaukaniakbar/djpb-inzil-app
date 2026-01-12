@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             VehicleSeeder::class,
             UserSeeder::class,
+            InventorySeeder::class,
+            BorrowingSeeder::class,
+            BorrowingDetailSeeder::class,
         ]);
     }
 }
