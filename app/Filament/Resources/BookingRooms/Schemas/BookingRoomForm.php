@@ -18,12 +18,12 @@ class BookingRoomForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('Pengguna')
-                    ->required()
-                    ->options(
-                        User::where('role', 'user')->pluck('name', 'id')->toArray()
-                    )
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change user
+                    ->label('User')
+                    ->relationship('user', 'name')
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->required(),
 
                 Select::make('room_id')
                     ->label('Pilih Ruangan')
