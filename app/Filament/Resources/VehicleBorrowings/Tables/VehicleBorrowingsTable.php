@@ -59,7 +59,6 @@ class VehicleBorrowingsTable
                 ->label('Tujuan Perjalanan')
                 ->searchable()
                 ->limit(30),
-
             TextColumn::make('status')
                 ->badge()
                 ->colors([

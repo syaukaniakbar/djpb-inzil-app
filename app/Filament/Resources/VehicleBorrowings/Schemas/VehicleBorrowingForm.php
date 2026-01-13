@@ -19,25 +19,22 @@ class VehicleBorrowingForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('Pengguna')
-                    ->required()
-                    ->options(
-                        User::where('role', 'user')->pluck('name', 'id')->toArray()
-                    )
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), 
-
+                    ->label('User')
+                    ->relationship('user', 'name')
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 DateTimePicker::make('start_at')
                     ->label('Tanggal Peminjaman')
                     ->required()
                     ->live()
                     ->disabled(fn () => auth()->user()->role !== 'admin'),
-
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian')
                     ->required()
                     ->live()
                     ->disabled(fn () => auth()->user()->role !== 'admin'), 
-
                 Select::make('vehicle_id')
                     ->label('Pilih Kendaraan')
                     ->required()
