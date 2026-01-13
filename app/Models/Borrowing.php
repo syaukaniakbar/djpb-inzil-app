@@ -14,6 +14,7 @@ class Borrowing extends Model
         'start_at',
         'end_at',
         'returned_at',
+        'status',
         'notes',
     ];
 
