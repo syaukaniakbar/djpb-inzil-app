@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\BookingRoom;
 use App\Models\VehicleBorrowing;
+use App\Models\Borrowing;
 
 class UpdateLoanStatuses extends Command
 {
@@ -15,6 +16,7 @@ class UpdateLoanStatuses extends Command
     {
         $this->updateVehicles();
         $this->updateRooms();
+        $this->updateBorrowings();
 
         $this->info('Loan & Booking statuses updated.');
     }
@@ -36,6 +38,19 @@ class UpdateLoanStatuses extends Command
 
         // ongoing → finished jika end_at lewat
         BookingRoom::where('status', 'ongoing')
+            ->where('end_at', '<', now())
+            ->update(['status' => 'finished']);
+    }
+    
+    private function updateBorrowings()
+    {
+        // approved → ongoing
+        Borrowing::where('status', 'approved')
+            ->where('start_at', '<=', now())
+            ->update(['status' => 'ongoing']);
+            
+        // ongoing → finished jika end_at lewat
+        Borrowing::where('status', 'ongoing')
             ->where('end_at', '<', now())
             ->update(['status' => 'finished']);
     }
