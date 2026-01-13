@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Borrowings\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -13,6 +14,7 @@ class BorrowingsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('user.name')
                     ->label('User')
@@ -34,6 +36,17 @@ class BorrowingsTable
                 TextColumn::make('notes')
                     ->limit(50)
                     ->searchable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'success' => 'approved',
+                        'info' => 'ongoing',
+                        'danger' => 'rejected',
+                        'success' => 'finished',
+                        'secondary' => 'canceled',
+                    ])
+                ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -48,6 +61,11 @@ class BorrowingsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                ViewAction::make(),
+                // Custom admin actions
+                \App\Filament\Resources\Borrowings\Actions\ApproveAction::make(),
+                \App\Filament\Resources\Borrowings\Actions\RejectAction::make(),
+                \App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
