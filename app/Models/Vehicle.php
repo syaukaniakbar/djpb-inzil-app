@@ -18,24 +18,11 @@ class Vehicle extends Model
         'year',
     ];
 
-    public function activeBorrowing()
-    {
-        return $this->hasOne(VehicleBorrowing::class)
-            ->whereNull('returned_at')
-            ->whereIn('status', ['ongoing', 'pending']);
-    }
-
     public function vehicleBorrowings()
     {
         return $this->hasMany(VehicleBorrowing::class);
     }
 
-    // Check if vehicle is currently available for borrowing
-    public function isAvailable(): bool
-    {
-        $activeBorrowing = $this->activeBorrowing()->first();
-        return !$activeBorrowing;
-    }
 
     // Check if vehicle is available for a specific time range
     public function isAvailableForRange($startAt, $endAt): bool

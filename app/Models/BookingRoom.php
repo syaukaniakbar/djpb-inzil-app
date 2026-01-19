@@ -21,7 +21,6 @@ class BookingRoom extends Model
     protected $casts = [
         'start_at' => 'datetime',
         'end_at'   => 'datetime',
-        'returned_at' => 'datetime',
     ];
 
     public function user()
