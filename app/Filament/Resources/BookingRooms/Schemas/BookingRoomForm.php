@@ -26,42 +26,22 @@ class BookingRoomForm
                     ->required(),
 
                 Select::make('room_id')
-                    ->label('Pilih Ruangan')
-                    ->required()
+                    ->label('Ruangan')
                     ->options(function (Get $get) {
                         $startAt = $get('start_at');
-                        $endAt = $get('end_at');
+                        $endAt   = $get('end_at');
 
-                        // Only filter if both dates are selected
-                        if ($startAt && $endAt) {
-                            // Filter rooms based on availability for the selected time range
-                            $availableRooms = Room::whereDoesntHave('bookingRooms', function ($query) use ($startAt, $endAt) {
-                                $query->where('start_at', '<', $endAt)  // The new booking starts before the existing one ends
-                                      ->where('end_at', '>', $startAt)  // The new booking ends after the existing one starts
-                                      ->whereIn('status', ['pending', 'ongoing']);
-                            })->get();
-                        } else {
-                            // If dates are not fully selected, show no rooms
-                            $availableRooms = collect(); // Empty collection
+                        if (! $startAt || ! $endAt) {
+                            return [];
                         }
 
-                        return $availableRooms->pluck('name', 'id')->toArray();
-                    })
-                    ->disabled(function (Get $get) {
-                        $startAt = $get('start_at');
-                        $endAt = $get('end_at');
-                        // Disable if dates are not fully selected or if not admin
-                        return !($startAt && $endAt) || auth()->user()->role !== 'admin';
-                    })
-                    ->helperText(function (Get $get) {
-                        $startAt = $get('start_at');
-                        $endAt = $get('end_at');
-                        if (!$startAt || !$endAt) {
-                            return 'Silakan pilih tanggal peminjaman dan tanggal pengembalian terlebih dahulu';
-                        }
-                        return 'Pilih ruangan yang tersedia untuk periode yang dipilih';
-                    })
-                    ->live(), // Make it live to update when dates change
+                        return Room::all()
+                            ->filter(fn ($room) =>
+                                $room->isAvailableForRange($startAt, $endAt)
+                            )
+                            ->pluck('name', 'id')
+                            ->toArray();
+                    }),
 
                 DateTimePicker::make('start_at')
                     ->label('Tanggal Peminjaman')

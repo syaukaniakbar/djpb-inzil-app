@@ -18,6 +18,11 @@ class BookingRoomsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                TextColumn::make('user.department.code')
+                    ->label('Departemen')
+                    ->sortable()
+                    ->searchable(),
+
                 TextColumn::make('user.name')
                     ->label('Pengguna')
                     ->sortable()
