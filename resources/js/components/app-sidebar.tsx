@@ -13,24 +13,36 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import {
+    BookOpen,
+    Building2,
+    Car,
+    Folder,
+    LayoutGrid,
+    Package,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Beranda',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Peminjaman Asset',
+        href: '/borrowings',
+        icon: Package,
     },
     {
         title: 'Peminjaman Ruangan',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: Building2,
     },
     {
         title: 'Peminjaman Kendaraan',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: Car,
     },
 ];
 
