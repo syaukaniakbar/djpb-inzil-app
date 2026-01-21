@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('purpose');
             $table->string('destination');
             $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'rejected', 'canceled']);
+            $table->text('admin_note')->nullable();
             $table->timestamps();
         });
     }

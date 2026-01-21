@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->unsignedBigInteger('position_id')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
+            $table->string('phone')->nullable();
             $table->string('profile_photo')->nullable();
             $table->rememberToken();
             $table->timestamps();

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('end_at')->nullable();
             $table->dateTime('returned_at')->nullable();
             $table->text('notes')->nullable();
+            $table->text('admin_note')->nullable();
             $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'rejected', 'canceled']);
             $table->timestamps();
         });

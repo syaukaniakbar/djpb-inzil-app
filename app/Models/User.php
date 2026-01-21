@@ -38,6 +38,7 @@ class User extends Authenticatable implements FilamentUser
         'position_id',
         'department_id',
         'profile_photo',
+        'phone'
     ];
 
     public function department()

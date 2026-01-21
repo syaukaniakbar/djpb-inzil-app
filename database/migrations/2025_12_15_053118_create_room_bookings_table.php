@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('event_mode');
             $table->string('event_name');
             $table->enum('status', ['pending', 'approved', 'ongoing', 'finished', 'rejected', 'canceled']);
+            $table->text('admin_note')->nullable();
             $table->timestamps();
         });
     }

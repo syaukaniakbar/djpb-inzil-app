@@ -16,6 +16,7 @@ class BookingRoom extends Model
         'event_mode',
         'event_name',
         'status',
+        'admin_note'
     ];
 
     protected $casts = [

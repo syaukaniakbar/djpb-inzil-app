@@ -16,6 +16,7 @@ class Borrowing extends Model
         'returned_at',
         'status',
         'notes',
+        'admin_note'
     ];
 
     protected $casts = [

@@ -18,6 +18,7 @@ class VehicleBorrowing extends Model
         'purpose',
         'destination',
         'status',
+        'admin_note'
     ];
 
     protected $casts = [
