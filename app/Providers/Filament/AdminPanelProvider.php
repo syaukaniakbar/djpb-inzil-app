@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth(Width::Full)
             ->unsavedChangesAlerts()
             ->globalSearch(false)
+            ->favicon(asset('/images/kemenkeu-logo.png'))
             ->colors([
                 'primary' => Color::Blue,
             ])
