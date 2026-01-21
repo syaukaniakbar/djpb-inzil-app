@@ -1,11 +1,23 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 /* =======================
- * Interfaces
+ * Interfaces (from index.tsx and create.tsx)
  * ======================= */
 
 interface Inventory {
+    id: number;
+    name: string;
+}
+
+interface BorrowingDetail {
+    id: number;
+    quantity: number;
+    notes: string | null;
+    inventory_id: number;
+}
+
+interface User {
     id: number;
     name: string;
 }
@@ -18,33 +30,59 @@ interface BorrowingItem {
 
 interface BorrowingFormData {
     start_at: string;
-    end_at: string;
+    end_at: string | null;
     notes: string;
     items: BorrowingItem[];
 }
 
 interface Props {
+    borrowing: {
+        id: number;
+        start_at: string;
+        end_at: string | null;
+        returned_at: string | null;
+        status: string;
+        notes: string;
+        user: User;
+        borrowing_details: BorrowingDetail[];
+    };
     inventories: Inventory[];
 }
+
+/* =======================
+ * Helper Functions
+ * ======================= */
+
+// Helper function to format datetime for datetime-local input
+const formatDateTimeLocal = (dateTimeString: string | null): string => {
+    if (!dateTimeString) return '';
+
+    const date = new Date(dateTimeString);
+    // Convert to local timezone and format as YYYY-MM-DDTHH:mm
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
 
 /* =======================
  * Component
  * ======================= */
 
-export default function BorrowingCreate({ inventories }: Props) {
-    const { data, setData, post, processing, errors } =
-        useForm<BorrowingFormData>({
-            start_at: '',
-            end_at: '',
-            notes: '',
-            items: [
-                {
-                    inventory_id: null,
-                    quantity: 1,
-                    notes: '',
-                },
-            ],
-        });
+export default function BorrowingEdit({ borrowing, inventories }: Props) {
+    const { data, setData, put, processing, errors } = useForm<BorrowingFormData>({
+        start_at: formatDateTimeLocal(borrowing.start_at),
+        end_at: formatDateTimeLocal(borrowing.end_at),
+        notes: borrowing.notes || '',
+        items: borrowing.borrowing_details.map(detail => ({
+            inventory_id: detail.inventory_id,
+            quantity: detail.quantity,
+            notes: detail.notes || ''
+        })),
+    });
 
     const addItem = () => {
         setData('items', [
@@ -74,22 +112,21 @@ export default function BorrowingCreate({ inventories }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/borrowings/store');
+        put(`/borrowings/${borrowing.id}`);
     };
 
     return (
         <AppLayout>
-            <Head title="Peminjaman Barang" />
+            <Head title="Edit Peminjaman Barang" />
 
             <div className="flex min-h-screen justify-center bg-gray-50 p-4">
                 <div className="w-full max-w-6xl px-4">
                     <div className="rounded-xl border bg-white p-6 shadow-lg">
                         <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">
-                            Form Peminjaman Barang
+                            Edit Form Peminjaman Barang
                         </h1>
                         <p className="mb-6 text-center text-gray-600">
-                            Silakan isi form berikut untuk meminjam barang.
-                            Pastikan data benar.
+                            Silakan edit form berikut untuk memperbarui peminjaman barang.
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-8">
@@ -299,15 +336,15 @@ export default function BorrowingCreate({ inventories }: Props) {
                                 >
                                     {processing
                                         ? 'Memproses...'
-                                        : 'Ajukan Peminjaman'}
+                                        : 'Perbarui Peminjaman'}
                                 </button>
 
-                                <a
+                                <Link
                                     href="/borrowings"
                                     className="w-full cursor-pointer rounded border px-5 py-3 text-center text-gray-700 transition hover:bg-gray-100 md:w-auto"
                                 >
                                     Batal
-                                </a>
+                                </Link>
                             </div>
                         </form>
                     </div>

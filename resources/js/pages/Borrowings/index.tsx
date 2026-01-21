@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 interface Inventory {
     id: number;
@@ -21,7 +21,7 @@ interface User {
 interface Borrowing {
     id: number;
     start_at: string;
-    end_at: string | null;
+    end_at: string;
     returned_at: string | null;
     status: string;
     user: User;
@@ -75,134 +75,164 @@ export default function Index({ borrowings }: Props) {
         <AppLayout>
             <Head title="Borrowing" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <Link
-                        href="/borrowings/create"
-                        className="mb-4 cursor-pointer rounded bg-blue-600 px-5 py-3 text-sm text-white transition hover:bg-blue-700"
-                    >
-                        Tambah Peminjaman
-                    </Link>
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <h3 className="mb-4 text-lg font-semibold">
+            <div className="py-10">
+                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                    {/* Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-2xl font-semibold text-gray-800">
                                 Riwayat Peminjaman Asset
-                            </h3>
+                            </h1>
+                            <p className="text-sm text-gray-500">
+                                Daftar peminjaman barang yang pernah dilakukan
+                            </p>
+                        </div>
 
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full border border-gray-200">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="border px-4 py-2">
-                                                ID
-                                            </th>
-                                            <th className="border px-4 py-2">
-                                                Tanggal Peminjaman
-                                            </th>
-                                            <th className="border px-4 py-2">
-                                                Tanggal Pengembalian
-                                            </th>
-                                            <th className="border px-4 py-2">
-                                                Barang
-                                            </th>
-                                            <th className="border px-4 py-2">
-                                                Status
-                                            </th>
-                                            <th className="border px-4 py-2 text-center">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
+                        <Link
+                            href="/borrowings/create"
+                            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        >
+                            + Tambah Peminjaman
+                        </Link>
+                    </div>
 
-                                    <tbody>
-                                        {data.length > 0 ? (
-                                            data.map((borrowing) => (
-                                                <tr key={borrowing.id}>
-                                                    <td className="border px-4 py-2">
-                                                        {borrowing.id}
-                                                    </td>
+                    {/* Table Card */}
+                    <div className="overflow-hidden rounded-xl bg-white shadow">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            ID
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            Tanggal Peminjaman
+                                        </th>
 
-                                                    <td className="border px-4 py-2">
-                                                        {new Date(
-                                                            borrowing.start_at,
-                                                        ).toLocaleDateString()}
-                                                    </td>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            Tanggal Pengembalian
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            Tanggal Pengembalian Aktual
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            Barang
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                            Status
+                                        </th>
+                                        <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
 
-                                                    <td className="border px-4 py-2">
-                                                        {borrowing.returned_at
-                                                            ? new Date(
-                                                                  borrowing.returned_at,
-                                                              ).toLocaleDateString()
-                                                            : '-'}
-                                                    </td>
+                                <tbody className="divide-y divide-gray-100 bg-white">
+                                    {data.length > 0 ? (
+                                        data.map((borrowing) => (
+                                            <tr
+                                                key={borrowing.id}
+                                                className="transition hover:bg-gray-50"
+                                            >
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    #{borrowing.id}
+                                                </td>
 
-                                                    <td className="border px-4 py-2">
-                                                        <ul className="list-disc pl-4">
-                                                            {borrowing.borrowing_details.map(
-                                                                (detail) => (
-                                                                    <li
-                                                                        key={
-                                                                            detail.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            detail
-                                                                                .inventory
-                                                                                .name
-                                                                        }{' '}
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    {new Date(
+                                                        borrowing.start_at,
+                                                    ).toLocaleDateString()}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    {new Date(
+                                                        borrowing.end_at,
+                                                    ).toLocaleDateString()}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    {borrowing.returned_at
+                                                        ? new Date(
+                                                              borrowing.returned_at,
+                                                          ).toLocaleDateString()
+                                                        : '-'}
+                                                </td>
+
+                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                    <ul className="list-disc space-y-1 pl-4">
+                                                        {borrowing.borrowing_details.map(
+                                                            (detail) => (
+                                                                <li
+                                                                    key={
+                                                                        detail.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        detail
+                                                                            .inventory
+                                                                            .name
+                                                                    }{' '}
+                                                                    <span className="text-gray-500">
                                                                         (
                                                                         {
                                                                             detail.quantity
                                                                         }
                                                                         )
-                                                                    </li>
-                                                                ),
-                                                            )}
-                                                        </ul>
-                                                    </td>
+                                                                    </span>
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                </td>
 
-                                                    <td className="border px-4 py-2">
-                                                        <span
-                                                            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status].className}`}
+                                                <td className="px-4 py-3">
+                                                    <span
+                                                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status].className}`}
+                                                    >
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                                                        {
+                                                            statusBadge[
+                                                                borrowing.status
+                                                            ].label
+                                                        }
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-4 py-3 text-center">
+                                                    <div className="flex justify-center gap-2">
+                                                        <Link
+                                                            href={`/borrowings/${borrowing.id}/edit`}
+                                                            className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
                                                         >
-                                                            <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                            {
-                                                                statusBadge[
-                                                                    borrowing
-                                                                        .status
-                                                                ].label
-                                                            }
-                                                        </span>
-                                                    </td>
-
-                                                    <td className="border px-4 py-2 text-center">
-                                                        <div className="flex justify-center gap-2">
-                                                            {/* Edit Button */}
-                                                            <button className="cursor-pointer rounded bg-blue-700 px-3 py-1 text-sm text-white transition hover:bg-blue-800">
-                                                                Edit
-                                                            </button>
-
-                                                            {/* Delete Button */}
-                                                            <button className="cursor-pointer rounded bg-red-600 px-3 py-1 text-sm text-white transition hover:bg-red-700">
-                                                                Delete
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td
-                                                    colSpan={6}
-                                                    className="border px-4 py-2 text-center text-gray-500"
-                                                >
-                                                    Tidak ada data peminjaman
+                                                            Edit
+                                                        </Link>
+                                                        <button
+                                                            className="rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-red-700"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                if (confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')) {
+                                                                    router.delete(`/borrowings/${borrowing.id}`);
+                                                                }
+                                                            }}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan={6}
+                                                className="px-4 py-10 text-center text-sm text-gray-500"
+                                            >
+                                                Tidak ada data peminjaman
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
