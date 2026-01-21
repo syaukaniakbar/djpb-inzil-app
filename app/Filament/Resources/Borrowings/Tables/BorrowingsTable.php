@@ -36,6 +36,10 @@ class BorrowingsTable
                 TextColumn::make('notes')
                     ->limit(50)
                     ->searchable(),
+                TextColumn::make('admin_note')
+                    ->label('Admin Note')
+                    ->limit(50)
+                    ->searchable(),
                 TextColumn::make('status')
                     ->badge()
                     ->colors([

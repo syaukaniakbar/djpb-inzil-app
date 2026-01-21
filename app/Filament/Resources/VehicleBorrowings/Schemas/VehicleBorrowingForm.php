@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Filament\Forms\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\Textarea;
 
 class VehicleBorrowingForm
 {
@@ -19,7 +20,7 @@ class VehicleBorrowingForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('User')
+                    ->label('Pengguna')
                     ->relationship('user', 'name')
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable()
@@ -65,6 +66,10 @@ class VehicleBorrowingForm
                 TextInput::make('destination')
                     ->label('Tujuan Perjalanan')
                     ->required(),
+                
+                Textarea::make('admin_note')
+                    ->label('Admin Note')
+                    ->columnSpanFull(),
 
                 // Admin-specific fields
                 Hidden::make('status')

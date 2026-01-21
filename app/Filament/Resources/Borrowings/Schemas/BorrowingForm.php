@@ -29,6 +29,10 @@ class BorrowingForm
                 DateTimePicker::make('returned_at')
                     ->label('Returned Date & Time'),
                 Textarea::make('notes')
+                    ->label('Notes')
+                    ->columnSpanFull(),
+                Textarea::make('admin_note')
+                    ->label('Admin Note')
                     ->columnSpanFull(),
             ]);
     }

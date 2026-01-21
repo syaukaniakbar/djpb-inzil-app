@@ -11,17 +11,26 @@ class BookingRoomInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('user_id')
+                TextEntry::make('user.name')
+                ->label('Pengguna')
                     ->numeric(),
-                TextEntry::make('room_id')
+                    
+                TextEntry::make('room.name')
+                ->label('Ruangan')
                     ->numeric(),
                 TextEntry::make('start_at')
+                ->label('Tanggal Peminjaman')
                     ->dateTime(),
                 TextEntry::make('end_at')
+                ->label('Tanggal Pengembalian')
                     ->dateTime(),
-                TextEntry::make('event_mode'),
-                TextEntry::make('event_name'),
+                TextEntry::make('event_mode')
+                ->badge()
+                ->label('Jenis Acara'),
+                TextEntry::make('event_name')
+                ->label('Nama Acara'),
                 TextEntry::make('status')
+                ->label('Status')
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
@@ -30,6 +39,8 @@ class BookingRoomInfolist
                         'success' => 'finished',
                         'danger' => 'canceled',
                     ]),
+                TextEntry::make('admin_note')
+                    ->label('Admin Note'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

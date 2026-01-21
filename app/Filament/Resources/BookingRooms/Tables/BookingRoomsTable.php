@@ -57,12 +57,14 @@ class BookingRoomsTable
                     )
                     ->badge()
                     ->sortable(),
-
                 TextColumn::make('event_name')
                     ->label('Nama Acara')
                     ->searchable()
                     ->limit(30),
-
+                TextColumn::make('admin_note')
+                    ->label('Admin Note')
+                    ->limit(50)
+                    ->searchable(),
                 TextColumn::make('status')
                 ->badge()
                 ->colors([

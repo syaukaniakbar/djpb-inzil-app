@@ -12,33 +12,38 @@ class VehicleBorrowingInfolist
         return $schema
             ->components([
                 TextEntry::make('user.name')
-                    ->label('User')
+                    ->label('Pengguna')
                     ->url(fn ($record) => route('filament.admin.resources.users.edit', ['record' => $record->user->id]))
                     ->openUrlInNewTab(),
 
                 TextEntry::make('vehicle.name')
-                    ->label('Vehicle'),
+                    ->label('Kendaraan'),
 
                 TextEntry::make('vehicle.license_plate')
-                    ->label('License Plate'),
+                    ->label('Plat Kendaraan'),
 
                 TextEntry::make('start_at')
                     ->dateTime()
-                    ->label('Start Date'),
+                    ->label('Tanggal Peminjaman'),
 
                 TextEntry::make('end_at')
                     ->dateTime()
-                    ->label('End Date'),
+                    ->label('Tanggal Pengembalian'),
             
                 TextEntry::make('returned_at')
                     ->dateTime()
-                    ->label('Returned Date'),
+                    ->label('Tanggal Pengembalian Aktual'),
 
                 TextEntry::make('purpose')
+                    ->label('Jenis Perjalanan')
                     ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
                     ->badge(),
 
-                TextEntry::make('destination'),
+                TextEntry::make('destination')
+                    ->label('Tujuan Perjalanan'),
+
+                TextEntry::make('admin_note')
+                    ->label('Catatan Admin'),
 
                 TextEntry::make('status')
                     ->badge()
@@ -53,10 +58,12 @@ class VehicleBorrowingInfolist
 
                 TextEntry::make('created_at')
                     ->dateTime()
+                    ->label('Dibuat Pada')
                     ->placeholder('-'),
 
                 TextEntry::make('updated_at')
                     ->dateTime()
+                    ->label('Diperbarui Pada')
                     ->placeholder('-'),
             ]);
     }

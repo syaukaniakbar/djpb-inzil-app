@@ -38,17 +38,17 @@ class VehicleBorrowingsTable
                 ->sortable(),
 
             TextColumn::make('start_at')
-                ->label('Jadwal Peminjaman')
+                ->label('Tanggal Peminjaman')
                 ->dateTime()
                 ->sortable(),
 
             TextColumn::make('end_at')
-                ->label('Jadwal Pengembalian')
+                ->label('Tanggal Pengembalian')
                 ->dateTime()
                 ->sortable(),
 
             TextColumn::make('returned_at')
-                ->label('Waktu Pengembalian Aktual')
+                ->label('Tanggal Pengembalian Aktual')
                 ->dateTime()
                 ->sortable(),
 
@@ -64,6 +64,10 @@ class VehicleBorrowingsTable
                 ->label('Tujuan Perjalanan')
                 ->searchable()
                 ->limit(30),
+            TextColumn::make('admin_note')
+                    ->label('Catatan Admin')
+                    ->limit(50)
+                    ->searchable(),
             TextColumn::make('status')
                 ->badge()
                 ->colors([
