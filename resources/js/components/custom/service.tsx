@@ -1,108 +1,99 @@
+import { ArrowRight, FileText, PieChart, ShieldCheck } from 'lucide-react';
+
 export default function Service() {
     return (
         <section
-            className="flex min-h-screen items-center bg-white px-6 py-24"
+            className="relative overflow-hidden bg-slate-50 px-6 py-24 md:py-32"
             aria-labelledby="service-features-title"
         >
+            {/* Dekorasi Background Halus */}
+            <div className="absolute top-0 left-1/2 -z-10 h-[400px] w-full -translate-x-1/2 rounded-full bg-blue-100/50 blur-3xl" />
+
             <div className="mx-auto w-full max-w-6xl">
-                {/* Header */}
-                <header className="max-w-3xl text-left">
+                {/* Header Section */}
+                <header className="mb-20 max-w-3xl text-left">
+                    <span className="mb-4 inline-block rounded-full bg-blue-100 px-4 py-1.5 text-xs font-bold tracking-widest text-blue-700 uppercase">
+                        Layanan Digital DJPB
+                    </span>
                     <h2
                         id="service-features-title"
-                        className="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-gray-900 md:text-5xl"
+                        className="mb-6 text-4xl leading-[1.1] font-extrabold tracking-tight text-slate-900 md:text-5xl"
                     >
-                        Solusi Terpadu untuk Aset dan Perbendaharaan
+                        Solusi Terpadu untuk{' '}
+                        <span className="text-blue-600">
+                            Aset & Perbendaharaan
+                        </span>
                     </h2>
-
-                    <p className="max-w-2xl text-lg leading-relaxed text-gray-700">
-                        Memudahkan pengelolaan aset dan perbendaharaan secara
-                        tertib, efisien, dan transparan melalui sistem yang
-                        modern dan terintegrasi.
+                    <p className="text-lg leading-relaxed text-slate-600">
+                        Transformasi digital untuk pengelolaan keuangan negara
+                        yang lebih tertib, efisien, dan transparan melalui
+                        ekosistem yang modern dan terintegrasi.
                     </p>
                 </header>
 
-                {/* Features */}
-                <div className="mt-20 grid grid-cols-1 gap-10 md:grid-cols-3">
-                    {/* Feature 1 */}
-                    <article className="group rounded-2xl border border-gray-200 bg-gray-50 p-8 text-left shadow-sm transition-all hover:bg-white hover:shadow-xl">
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-sm transition-all group-hover:shadow-md">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-8 w-8 text-green-600"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M5 13l4 4L19 7"
-                                />
-                            </svg>
+                {/* Features Grid */}
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                    {/* Feature 1 - Aset */}
+                    <article className="group relative flex flex-col justify-between rounded-2xl border border-t-4 border-slate-200 border-t-emerald-500 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-200/50">
+                        <div>
+                            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
+                                <ShieldCheck size={32} strokeWidth={1.5} />
+                            </div>
+                            <h3 className="mb-4 text-xl font-bold text-slate-900">
+                                Manajemen Aset Otomatis
+                            </h3>
+                            <p className="text-[15px] leading-relaxed text-slate-500">
+                                Optimalisasi siklus hidup aset negara mulai dari
+                                perencanaan, penatausahaan, hingga penghapusan
+                                secara real-time.
+                            </p>
                         </div>
-
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                            Manajemen Aset Otomatis
-                        </h3>
-
-                        <p className="text-sm leading-relaxed text-gray-600">
-                            Mengelola data aset secara terstruktur dengan fitur
-                            pelacakan, pendataan, dan pembaruan yang efisien.
-                        </p>
+                        <div className="mt-8 flex items-center text-sm font-semibold text-emerald-600 opacity-0 transition-all group-hover:opacity-100">
+                            Selengkapnya{' '}
+                            <ArrowRight size={16} className="ml-2" />
+                        </div>
                     </article>
 
-                    {/* Feature 2 */}
-                    <article className="group rounded-2xl border border-gray-200 bg-gray-50 p-8 text-left shadow-sm transition-all hover:bg-white hover:shadow-xl">
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-sm transition-all group-hover:shadow-md">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-8 w-8 text-red-500"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M5 5v14m0-14c3 0 3-2 6-2s3 2 6 2 3-2 6-2v14"
-                                />
-                            </svg>
+                    {/* Feature 2 - Anggaran */}
+                    <article className="group relative flex flex-col justify-between rounded-2xl border border-t-4 border-slate-200 border-t-blue-600 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-200/50">
+                        <div>
+                            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                                <PieChart size={32} strokeWidth={1.5} />
+                            </div>
+                            <h3 className="mb-4 text-xl font-bold text-slate-900">
+                                Pengelolaan Anggaran
+                            </h3>
+                            <p className="text-[15px] leading-relaxed text-slate-500">
+                                Monitoring penyerapan anggaran yang presisi
+                                untuk memastikan efektivitas belanja pemerintah
+                                di setiap lini.
+                            </p>
                         </div>
-
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                            Pengelolaan Anggaran
-                        </h3>
-
-                        <p className="text-sm leading-relaxed text-gray-600">
-                            Mengoptimalkan proses pencatatan dan pengawasan
-                            anggaran dengan sistem yang mudah digunakan.
-                        </p>
+                        <div className="mt-8 flex items-center text-sm font-semibold text-blue-600 opacity-0 transition-all group-hover:opacity-100">
+                            Selengkapnya{' '}
+                            <ArrowRight size={16} className="ml-2" />
+                        </div>
                     </article>
 
-                    {/* Feature 3 */}
-                    <article className="group rounded-2xl border border-gray-200 bg-gray-50 p-8 text-left shadow-sm transition-all hover:bg-white hover:shadow-xl">
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-sm transition-all group-hover:shadow-md">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-8 w-8 text-yellow-500"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M12 .587l3.668 7.568L24 9.748l-6 5.857L19.335 24 12 19.897 4.665 24 6 15.605 0 9.748l8.332-1.593z" />
-                            </svg>
+                    {/* Feature 3 - Laporan */}
+                    <article className="group relative flex flex-col justify-between rounded-2xl border border-t-4 border-slate-200 border-t-amber-500 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-200/50">
+                        <div>
+                            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-amber-50 text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+                                <FileText size={32} strokeWidth={1.5} />
+                            </div>
+                            <h3 className="mb-4 text-xl font-bold text-slate-900">
+                                Laporan Transparan
+                            </h3>
+                            <p className="text-[15px] leading-relaxed text-slate-500">
+                                Penyajian data keuangan yang akuntabel dan mudah
+                                diakses untuk pengambilan kebijakan yang
+                                berbasis data (data-driven).
+                            </p>
                         </div>
-
-                        <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                            Laporan yang Transparan
-                        </h3>
-
-                        <p className="text-sm leading-relaxed text-gray-600">
-                            Menyediakan laporan menyeluruh yang informatif,
-                            akurat, dan mudah dipahami untuk pengambilan
-                            keputusan.
-                        </p>
+                        <div className="mt-8 flex items-center text-sm font-semibold text-amber-600 opacity-0 transition-all group-hover:opacity-100">
+                            Selengkapnya{' '}
+                            <ArrowRight size={16} className="ml-2" />
+                        </div>
                     </article>
                 </div>
             </div>

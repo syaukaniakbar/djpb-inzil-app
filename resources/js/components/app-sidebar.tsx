@@ -36,12 +36,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Peminjaman Ruangan',
-        href: dashboard(),
+        href: '/booking-rooms',
         icon: Building2,
     },
     {
         title: 'Peminjaman Kendaraan',
-        href: dashboard(),
+        href: '/vehicle-borrowings',
         icon: Car,
     },
 ];
