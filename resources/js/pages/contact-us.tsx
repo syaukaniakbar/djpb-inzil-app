@@ -27,9 +27,7 @@ export default function ContactSection() {
                 </div>
             </motion.div>
 
-            {/* ====================== CONTENT ====================== */}
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-16 px-6 py-20 md:flex-row md:py-28">
-                {/* -------- CONTACT INFO -------- */}
                 <motion.div
                     initial="hidden"
                     whileInView="show"
@@ -129,8 +127,6 @@ export default function ContactSection() {
                         </div>
                     </motion.div>
                 </motion.div>
-
-                {/* -------- CONTACT FORM -------- */}
                 <motion.form
                     initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +134,6 @@ export default function ContactSection() {
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     className="flex-1 space-y-8 rounded-2xl border border-black/10 bg-white p-10 shadow-[0_8px_28px_rgba(0,0,0,0.08)]"
                 >
-                    {/* Name */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-neutral-800">
                             Your Name
@@ -149,8 +144,6 @@ export default function ContactSection() {
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         />
                     </div>
-
-                    {/* Email */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-neutral-800">
                             Your Email
@@ -161,8 +154,6 @@ export default function ContactSection() {
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         />
                     </div>
-
-                    {/* Message */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-neutral-800">
                             Message
@@ -173,8 +164,6 @@ export default function ContactSection() {
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         ></textarea>
                     </div>
-
-                    {/* Submit Button */}
                     <motion.button
                         type="submit"
                         className="w-full rounded-lg bg-black py-3 font-semibold text-white md:w-auto md:px-12"
@@ -186,7 +175,6 @@ export default function ContactSection() {
                 </motion.form>
             </div>
 
-            {/* -------- BACK LINK -------- */}
             <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
