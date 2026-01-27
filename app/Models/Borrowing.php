@@ -38,8 +38,8 @@ class Borrowing extends Model
     public function inventories()
     {
         return $this->belongsToMany(Inventory::class, 'borrowing_details')
-                    ->withPivot('quantity', 'notes')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'notes')
+            ->withTimestamps();
     }
 
     // Scope to get active borrowings (not yet returned)

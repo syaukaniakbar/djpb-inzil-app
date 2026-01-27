@@ -17,15 +17,14 @@ class Room extends Model
         return $this->hasMany(BookingRoom::class);
     }
 
-    // Check if room is available for a specific time range
     public function isAvailableForRange($startAt, $endAt): bool
     {
         $overlappingBooking = $this->bookingRooms()
             ->where(function ($query) use ($startAt, $endAt) {
-                $query->where('start_at', '<', $endAt)  // The new booking starts before the existing one ends
-                      ->where('end_at', '>', $startAt);  // The new booking ends after the existing one starts
+                $query->where('start_at', '<', $endAt)
+                    ->where('end_at', '>', $startAt);
             })
-            ->whereIn('status', ['pending', 'ongoing'])
+            ->whereIn('status', ['pending', 'ongoing', 'approved'])
             ->first();
 
         return !$overlappingBooking;
