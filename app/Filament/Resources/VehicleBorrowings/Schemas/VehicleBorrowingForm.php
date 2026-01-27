@@ -9,7 +9,6 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\Hidden;
 use App\Models\User;
 use App\Models\Vehicle;
-use Filament\Forms\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Forms\Components\Textarea;
 
@@ -30,25 +29,26 @@ class VehicleBorrowingForm
                     ->label('Tanggal Peminjaman')
                     ->required()
                     ->live()
-                    ->disabled(fn () => auth()->user()->role !== 'admin'),
+                    ->disabled(fn() => auth()->user()->role !== 'admin'),
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian')
                     ->required()
                     ->live()
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), 
-                
+                    ->disabled(fn() => auth()->user()->role !== 'admin'),
+
                 Select::make('vehicle_id')
                     ->label('Pilih Kendaraan')
                     ->required()
                     ->options(function (Get $get) {
                         $startAt = $get('start_at');
-                        $endAt   = $get('end_at');
+                        $endAt = $get('end_at');
 
-                        if (! $startAt || ! $endAt) {
+                        if (!$startAt || !$endAt) {
                             return [];
                         }
                         return Vehicle::all()
-                            ->filter(fn ($vehicle) =>
+                            ->filter(
+                                fn($vehicle) =>
                                 $vehicle->isAvailableForRange($startAt, $endAt)
                             )
                             ->pluck('name', 'id')
@@ -66,7 +66,7 @@ class VehicleBorrowingForm
                 TextInput::make('destination')
                     ->label('Tujuan Perjalanan')
                     ->required(),
-                
+
                 Textarea::make('admin_note')
                     ->label('Admin Note')
                     ->columnSpanFull(),

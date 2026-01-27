@@ -17,6 +17,7 @@ class UpdateLoanStatuses extends Command
         $this->updateVehicles();
         $this->updateRooms();
         $this->updateBorrowings();
+        \Log::info('UpdateLoanStatuses executed at ' . now());
 
         $this->info('Loan & Booking statuses updated.');
     }
@@ -41,14 +42,14 @@ class UpdateLoanStatuses extends Command
             ->where('end_at', '<', now())
             ->update(['status' => 'finished']);
     }
-    
+
     private function updateBorrowings()
     {
         // approved → ongoing
         Borrowing::where('status', 'approved')
             ->where('start_at', '<=', now())
             ->update(['status' => 'ongoing']);
-            
+
         // ongoing → finished jika end_at lewat
         Borrowing::where('status', 'ongoing')
             ->where('end_at', '<', now())

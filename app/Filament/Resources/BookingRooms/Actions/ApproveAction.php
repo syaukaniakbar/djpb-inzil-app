@@ -19,7 +19,7 @@ class ApproveAction
             ->action(function ($record) {
                 // Update data untuk menandai sebagai ongoing
                 $record->update([
-                    'status' => 'ongoing',
+                    'status' => 'approved',
                 ]);
 
                 Notification::make()
@@ -27,7 +27,7 @@ class ApproveAction
                     ->success()
                     ->send();
             })
-            ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
+            ->visible(fn($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
 
     }
 }

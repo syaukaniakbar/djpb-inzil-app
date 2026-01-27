@@ -30,26 +30,27 @@ class BookingRoomForm
                     ->label('Tanggal Peminjaman')
                     ->required()
                     ->live() // Make it live to trigger room availability check
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change dates
+                    ->disabled(fn() => auth()->user()->role !== 'admin'), // Only admin can change dates
 
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian')
                     ->required()
                     ->live() // Make it live to trigger room availability check
-                    ->disabled(fn () => auth()->user()->role !== 'admin'), // Only admin can change dates
+                    ->disabled(fn() => auth()->user()->role !== 'admin'), // Only admin can change dates
 
                 Select::make('room_id')
                     ->label('Pilih Ruangan')
                     ->options(function (Get $get) {
                         $startAt = $get('start_at');
-                        $endAt   = $get('end_at');
+                        $endAt = $get('end_at');
 
-                        if (! $startAt || ! $endAt) {
+                        if (!$startAt || !$endAt) {
                             return [];
                         }
 
                         return Room::all()
-                            ->filter(fn ($room) =>
+                            ->filter(
+                                fn($room) =>
                                 $room->isAvailableForRange($startAt, $endAt)
                             )
                             ->pluck('name', 'id')
@@ -59,18 +60,16 @@ class BookingRoomForm
                 Select::make('event_mode')
                     ->label('Jenis Acara')
                     ->options([
-                        'meeting' => 'Meeting',
-                        'presentation' => 'Presentasi',
-                        'training' => 'Training',
-                        'interview' => 'Interview',
-                        'other' => 'Lainnya',
+                        'Offline' => 'Offline',
+                        'Online' => 'Online',
+                        'Hybrid' => 'Hybrid',
                     ])
                     ->required(),
 
                 TextInput::make('event_name')
                     ->label('Nama Acara')
                     ->required(),
-                
+
                 Textarea::make('admin_note')
                     ->label('Catatan Admin')
                     ->columnSpanFull(),
