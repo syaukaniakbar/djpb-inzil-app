@@ -11,6 +11,11 @@ interface Vehicle {
     license_plate: string;
 }
 
+interface User {
+    id: number;
+    name: string;
+}
+
 interface VehicleBorrowingFormData {
     start_at: string;
     end_at: string;
@@ -20,27 +25,62 @@ interface VehicleBorrowingFormData {
 }
 
 interface Props {
+    borrowing: {
+        id: number;
+        start_at: string;
+        end_at: string | null;
+        returned_at: string | null;
+        purpose: string;
+        destination: string;
+        status: string;
+        admin_note: string | null;
+        user: User;
+        vehicle: Vehicle;
+    };
     vehicles: Vehicle[];
 }
 
-export default function VehicleBorrowingCreate({ vehicles }: Props) {
-    const { data, setData, post, processing, errors } =
+/* =======================
+ * Helper Functions
+ * ======================= */
+
+// Helper function to format datetime for datetime-local input
+const formatDateTimeLocal = (dateTimeString: string | null): string => {
+    if (!dateTimeString) return '';
+
+    const date = new Date(dateTimeString);
+    // Convert to local timezone and format as YYYY-MM-DDTHH:mm
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+/* =======================
+ * Component
+ * ======================= */
+
+export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
+    const { data, setData, put, processing, errors } =
         useForm<VehicleBorrowingFormData>({
-            start_at: '',
-            end_at: '',
-            purpose: '',
-            destination: '',
-            vehicle_id: null,
+            start_at: formatDateTimeLocal(borrowing.start_at),
+            end_at: formatDateTimeLocal(borrowing.end_at),
+            purpose: borrowing.purpose || '',
+            destination: borrowing.destination || '',
+            vehicle_id: borrowing.vehicle.id,
         });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/vehicle-borrowings/store');
+        put(`/vehicle-borrowings/${borrowing.id}`);
     };
 
     return (
         <AppLayout>
-            <Head title="Peminjaman Kendaraan" />
+            <Head title="Edit Peminjaman Kendaraan" />
 
             <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
                 <div className="mx-auto max-w-4xl">
@@ -57,11 +97,10 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                         {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-                                Form Peminjaman Kendaraan
+                                Edit Form Peminjaman Kendaraan
                             </h1>
                             <p className="mt-2 text-sm text-blue-100 opacity-90 md:text-base">
-                                Lengkapi detail di bawah untuk pengajuan unit
-                                kendaraan operasional.
+                                Silakan edit form berikut untuk memperbarui peminjaman kendaraan.
                             </p>
                         </div>
 
@@ -116,7 +155,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                                     )
                                                 }
                                                 className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.end_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
-                                                required
                                             />
                                             {errors.end_at && (
                                                 <p className="mt-1 text-xs font-medium text-red-500">
@@ -197,10 +235,10 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                                     Pilih Kategori Tujuan
                                                 </option>
                                                 <option value="dalam_kota">
-                                                    Dalam Kota
+                                                    📍 Dalam Kota
                                                 </option>
                                                 <option value="luar_kota">
-                                                    Luar Kota
+                                                    🛣️ Luar Kota
                                                 </option>
                                             </select>
                                         </div>
@@ -211,7 +249,7 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="Contoh: Kantor Pusat"
+                                                placeholder="Contoh: Kantor Cabang Bandung"
                                                 value={data.destination}
                                                 onChange={(e) =>
                                                     setData(
@@ -266,7 +304,7 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                     ) : (
                                         <span className="flex items-center">
                                             <Send className="mr-2 h-4 w-4" />
-                                            Ajukan Peminjaman
+                                            Perbarui Peminjaman
                                         </span>
                                     )}
                                 </button>

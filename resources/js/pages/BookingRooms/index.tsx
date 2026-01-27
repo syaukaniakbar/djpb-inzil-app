@@ -1,16 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 
-interface Vehicle {
+interface Room {
     id: number;
     name: string;
-    license_plate: string;
-    brand: string;
-    model: string;
-    color: string;
-    fuel_type: string;
-    registration_expiry: string;
-    year: number;
+    capacity: number;
 }
 
 interface User {
@@ -18,21 +12,20 @@ interface User {
     name: string;
 }
 
-interface VehicleBorrowing {
+interface BookingRoom {
     id: number;
     start_at: string;
     end_at: string;
-    returned_at: string | null;
-    purpose: string;
-    destination: string;
+    event_mode: string;
+    event_name: string;
     status: string;
     admin_note: string | null;
     user: User;
-    vehicle: Vehicle;
+    room: Room;
 }
 
 const statusBadge: Record<
-    VehicleBorrowing['status'],
+    BookingRoom['status'],
     { label: string; className: string }
 > = {
     pending: {
@@ -44,8 +37,12 @@ const statusBadge: Record<
         className: 'bg-blue-100 text-blue-700',
     },
     ongoing: {
-        label: 'Sedang Dipinjam',
+        label: 'Sedang Berlangsung',
         className: 'bg-yellow-100 text-yellow-700',
+    },
+    used: {
+        label: 'Telah Digunakan',
+        className: 'bg-purple-100 text-purple-700',
     },
     finished: {
         label: 'Selesai',
@@ -59,6 +56,14 @@ const statusBadge: Record<
         label: 'Dibatalkan',
         className: 'bg-slate-100 text-slate-600',
     },
+};
+
+const eventModeLabels: Record<string, string> = {
+    meeting: 'Meeting',
+    presentation: 'Presentasi',
+    training: 'Training',
+    interview: 'Interview',
+    other: 'Lainnya',
 };
 
 interface Pagination<T> {
@@ -76,15 +81,15 @@ interface Pagination<T> {
 }
 
 interface Props {
-    borrowings: Pagination<VehicleBorrowing>;
+    bookings: Pagination<BookingRoom>;
 }
 
-export default function Index({ borrowings }: Props) {
-    const data = borrowings.data;
+export default function Index({ bookings }: Props) {
+    const data = bookings.data;
 
     return (
         <AppLayout>
-            <Head title="Peminjaman Kendaraan" />
+            <Head title="Peminjaman Ruangan" />
 
             <div className="py-10">
                 <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
@@ -92,19 +97,18 @@ export default function Index({ borrowings }: Props) {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-2xl font-semibold text-gray-800">
-                                Riwayat Peminjaman Kendaraan
+                                Riwayat Peminjaman Ruangan
                             </h1>
                             <p className="text-sm text-gray-500">
-                                Daftar peminjaman kendaraan yang pernah
-                                dilakukan
+                                Daftar peminjaman ruangan yang pernah dilakukan
                             </p>
                         </div>
 
                         <Link
-                            href="/vehicle-borrowings/create"
+                            href="/booking-rooms/create"
                             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         >
-                            + Tambah Peminjaman Kendaraan
+                            + Ajukan Peminjaman Ruangan
                         </Link>
                     </div>
 
@@ -112,104 +116,98 @@ export default function Index({ borrowings }: Props) {
                         {/* Mobile Card View */}
                         <div className="md:hidden">
                             {data.length > 0 ? (
-                                data.map((borrowing) => (
+                                data.map((booking) => (
                                     <div
-                                        key={borrowing.id}
+                                        key={booking.id}
                                         className="mb-4 space-y-4 rounded-xl border border-gray-100 bg-white p-4"
                                     >
                                         {/* Header */}
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-gray-800">
-                                                    Peminjaman Kendaraan #{borrowing.id}
+                                                    Peminjaman Ruangan #
+                                                    {booking.id}
                                                 </p>
                                                 <p className="text-xs text-gray-500">
                                                     {new Date(
-                                                        borrowing.start_at,
+                                                        booking.start_at,
                                                     ).toLocaleDateString()}{' '}
                                                     –{' '}
                                                     {new Date(
-                                                        borrowing.end_at,
+                                                        booking.end_at,
                                                     ).toLocaleDateString()}
                                                 </p>
                                             </div>
 
                                             <span
-                                                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status]?.className || 'bg-gray-100 text-gray-700'}`}
+                                                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[booking.status]?.className || 'bg-gray-100 text-gray-700'}`}
                                             >
                                                 <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {statusBadge[borrowing.status]
+                                                {statusBadge[booking.status]
                                                     ?.label ||
                                                     'Status Tidak Dikenal'}
                                             </span>
                                         </div>
 
-                                        {/* Vehicle */}
+                                        {/* Room */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
-                                                Kendaraan
+                                                Ruangan
                                             </p>
                                             <p className="text-sm font-medium text-gray-700">
-                                                {borrowing.vehicle.name}
+                                                {booking.room.name}
                                             </p>
                                             <p className="text-xs text-gray-500">
-                                                Plat: {borrowing.vehicle.license_plate}
+                                                Kapasitas:{' '}
+                                                {booking.room.capacity} orang
                                             </p>
                                         </div>
 
-                                        {/* Purpose */}
+                                        {/* Event Mode */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
-                                                Jenis Perjalanan
+                                                Jenis Acara
                                             </p>
                                             <div className="mt-1">
-                                                {borrowing.purpose ===
-                                                'dalam_kota' ? (
+                                                {eventModeLabels[
+                                                    booking.event_mode
+                                                ] ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                                                         <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
-                                                        Dalam Kota
+                                                        {
+                                                            eventModeLabels[
+                                                                booking
+                                                                    .event_mode
+                                                            ]
+                                                        }
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
                                                         <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
-                                                        Luar Kota
+                                                        {booking.event_mode}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
 
-                                        {/* Destination */}
+                                        {/* Event Name */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
-                                                Tujuan Perjalanan
+                                                Nama Acara
                                             </p>
                                             <p className="text-sm text-gray-700">
-                                                {borrowing.destination}
-                                            </p>
-                                        </div>
-
-                                        {/* Returned At */}
-                                        <div>
-                                            <p className="text-xs font-medium text-gray-500">
-                                                Tanggal Pengembalian Aktual
-                                            </p>
-                                            <p className="text-sm text-gray-700">
-                                                {borrowing.returned_at
-                                                    ? new Date(
-                                                          borrowing.returned_at,
-                                                      ).toLocaleDateString()
-                                                    : '-'}
+                                                {booking.event_name}
                                             </p>
                                         </div>
 
                                         {/* Admin Note */}
-                                        {borrowing.admin_note && (
+                                        {booking.admin_note && (
                                             <div>
                                                 <p className="text-xs font-medium text-gray-500">
                                                     Catatan Admin
                                                 </p>
                                                 <p className="text-sm text-gray-700">
-                                                    {borrowing.admin_note}
+                                                    {booking.admin_note}
                                                 </p>
                                             </div>
                                         )}
@@ -219,14 +217,14 @@ export default function Index({ borrowings }: Props) {
                                             {/* Primary & Secondary Actions */}
                                             <div className="flex gap-3">
                                                 <Link
-                                                    href={`/vehicle-borrowings/${borrowing.id}`}
+                                                    href={`/booking-rooms/${booking.id}`}
                                                     className="flex-[2] rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                                                 >
                                                     Lihat Detail
                                                 </Link>
 
                                                 <Link
-                                                    href={`/vehicle-borrowings/${borrowing.id}/edit`}
+                                                    href={`/booking-rooms/${booking.id}/edit`}
                                                     className="flex-1 rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
                                                 >
                                                     Edit
@@ -236,7 +234,7 @@ export default function Index({ borrowings }: Props) {
                                             {/* WhatsApp Contact */}
                                             <a
                                                 href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                    `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`,
+                                                    `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`,
                                                 )}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
@@ -259,7 +257,7 @@ export default function Index({ borrowings }: Props) {
                                                             )
                                                         ) {
                                                             router.delete(
-                                                                `/vehicle-borrowings/${borrowing.id}`,
+                                                                `/booking-rooms/${booking.id}`,
                                                             );
                                                         }
                                                     }}
@@ -273,7 +271,7 @@ export default function Index({ borrowings }: Props) {
                                 ))
                             ) : (
                                 <div className="p-6 text-center text-sm text-gray-500">
-                                    Tidak ada data peminjaman kendaraan
+                                    Tidak ada data peminjaman ruangan
                                 </div>
                             )}
                         </div>
@@ -287,7 +285,7 @@ export default function Index({ borrowings }: Props) {
                                             ID
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                                            Kendaraan
+                                            Ruangan
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
                                             Tanggal Peminjaman
@@ -296,13 +294,10 @@ export default function Index({ borrowings }: Props) {
                                             Tanggal Pengembalian
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                                            Tanggal Pengembalian Aktual
+                                            Jenis Acara
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                                            Jenis Perjalanan
-                                        </th>
-                                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                                            Tujuan Perjalanan
+                                            Nama Acara
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
                                             Catatan Admin
@@ -318,61 +313,61 @@ export default function Index({ borrowings }: Props) {
 
                                 <tbody className="divide-y divide-gray-100 bg-white">
                                     {data.length > 0 ? (
-                                        data.map((borrowing) => (
+                                        data.map((booking) => (
                                             <tr
-                                                key={borrowing.id}
+                                                key={booking.id}
                                                 className="transition hover:bg-gray-50"
                                             >
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    #{borrowing.id}
+                                                    #{booking.id}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     <div className="font-medium">
-                                                        {borrowing.vehicle.name}
+                                                        {booking.room.name}
                                                     </div>
                                                     <div className="text-gray-500">
-                                                        {
-                                                            borrowing.vehicle
-                                                                .license_plate
-                                                        }
+                                                        Kapasitas:{' '}
+                                                        {booking.room.capacity}{' '}
+                                                        orang
                                                     </div>
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     {new Date(
-                                                        borrowing.start_at,
+                                                        booking.start_at,
                                                     ).toLocaleDateString()}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     {new Date(
-                                                        borrowing.end_at,
+                                                        booking.end_at,
                                                     ).toLocaleDateString()}
-                                                </td>
-
-                                                <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {borrowing.returned_at
-                                                        ? new Date(
-                                                              borrowing.returned_at,
-                                                          ).toLocaleDateString()
-                                                        : '-'}
                                                 </td>
 
                                                 <td className="px-4 py-3">
                                                     <div className="flex flex-col gap-1">
                                                         {/* Badge Label */}
                                                         <div>
-                                                            {borrowing.purpose ===
-                                                            'dalam_kota' ? (
+                                                            {eventModeLabels[
+                                                                booking
+                                                                    .event_mode
+                                                            ] ? (
                                                                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                                                                     <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
-                                                                    Dalam Kota
+                                                                    {
+                                                                        eventModeLabels[
+                                                                            booking
+                                                                                .event_mode
+                                                                        ]
+                                                                    }
                                                                 </span>
                                                             ) : (
                                                                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
                                                                     <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
-                                                                    Luar Kota
+                                                                    {
+                                                                        booking.event_mode
+                                                                    }
                                                                 </span>
                                                             )}
                                                         </div>
@@ -381,24 +376,24 @@ export default function Index({ borrowings }: Props) {
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     <div className="text-gray-500">
-                                                        {borrowing.destination}
+                                                        {booking.event_name}
                                                     </div>
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     <div className="text-gray-500">
-                                                        {borrowing.admin_note}
+                                                        {booking.admin_note}
                                                     </div>
                                                 </td>
 
                                                 <td className="px-4 py-3">
                                                     <span
-                                                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status].className}`}
+                                                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[booking.status].className}`}
                                                     >
                                                         <span className="h-1.5 w-1.5 rounded-full bg-current" />
                                                         {
                                                             statusBadge[
-                                                                borrowing.status
+                                                                booking.status
                                                             ].label
                                                         }
                                                     </span>
@@ -407,24 +402,24 @@ export default function Index({ borrowings }: Props) {
                                                 <td className="px-4 py-3 text-center">
                                                     <div className="flex flex-wrap justify-center gap-1">
                                                         <Link
-                                                            href={`/vehicle-borrowings/${borrowing.id}`}
+                                                            href={`/booking-rooms/${booking.id}`}
                                                             className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-green-700"
                                                         >
                                                             View
                                                         </Link>
                                                         <Link
-                                                            href={`/vehicle-borrowings/${borrowing.id}/edit`}
+                                                            href={`/booking-rooms/${booking.id}/edit`}
                                                             className="rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
                                                         >
                                                             Edit
                                                         </Link>
                                                         <a
                                                             href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                                `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`,
+                                                                `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`,
                                                             )}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="rounded-md border bg-green-100 px-2 py-1 text-xs font-medium text-green-700 whitespace-nowrap"
+                                                            className="rounded-md border bg-green-100 px-2 py-1 text-xs font-medium whitespace-nowrap text-green-700"
                                                         >
                                                             WA
                                                         </a>
@@ -438,7 +433,7 @@ export default function Index({ borrowings }: Props) {
                                                                     )
                                                                 ) {
                                                                     router.delete(
-                                                                        `/vehicle-borrowings/${borrowing.id}`,
+                                                                        `/booking-rooms/${booking.id}`,
                                                                     );
                                                                 }
                                                             }}
@@ -452,11 +447,11 @@ export default function Index({ borrowings }: Props) {
                                     ) : (
                                         <tr>
                                             <td
-                                                colSpan={10}
+                                                colSpan={9}
                                                 className="px-4 py-10 text-center text-sm text-gray-500"
                                             >
                                                 Tidak ada data peminjaman
-                                                kendaraan
+                                                ruangan
                                             </td>
                                         </tr>
                                     )}
@@ -465,10 +460,10 @@ export default function Index({ borrowings }: Props) {
                         </div>
 
                         {/* Pagination Controls */}
-                        {borrowings?.links && borrowings.links.length > 2 && (
+                        {bookings?.links && bookings.links.length > 2 && (
                             <div className="mt-4 flex flex-col items-center border-t border-gray-100 px-4 py-3">
                                 <div className="flex flex-wrap items-center justify-center gap-1">
-                                    {borrowings.links.map((link, index) => (
+                                    {bookings.links.map((link, index) => (
                                         <button
                                             key={index}
                                             onClick={() => {
@@ -513,18 +508,18 @@ export default function Index({ borrowings }: Props) {
                                     ))}
                                 </div>
 
-                                {borrowings.meta && (
+                                {bookings.meta && (
                                     <div className="mt-3 text-sm text-gray-600">
                                         Showing{' '}
-                                        {(borrowings.meta.current_page - 1) *
+                                        {(bookings.meta.current_page - 1) *
                                             10 +
                                             1}
                                         -
                                         {Math.min(
-                                            borrowings.meta.current_page * 10,
-                                            borrowings.meta.total,
+                                            bookings.meta.current_page * 10,
+                                            bookings.meta.total,
                                         )}{' '}
-                                        of {borrowings.meta.total} records
+                                        of {bookings.meta.total} records
                                     </div>
                                 )}
                             </div>

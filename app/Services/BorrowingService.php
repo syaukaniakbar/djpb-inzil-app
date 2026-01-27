@@ -12,27 +12,6 @@ use Illuminate\Support\Facades\DB;
 class BorrowingService
 {
     /**
-     * Validate borrowing data
-     *
-     * @param array $data
-     * @return array
-     */
-    private function validateBorrowingData(array $data): array
-    {
-        $validatedData = validator($data, [
-            'start_at' => 'required|date',
-            'end_at' => 'nullable|date|after_or_equal:start_at',
-            'notes' => 'nullable|string|max:255',
-            'items' => 'required|array|min:1',
-            'items.*.inventory_id' => 'required|exists:inventories,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.notes' => 'nullable|string|max:255'
-        ])->validate();
-
-        return $validatedData;
-    }
-
-    /**
      * Create a new borrowing with its details
      *
      * @param array $data
@@ -40,22 +19,20 @@ class BorrowingService
      */
     public function createBorrowing(array $data): Borrowing
     {
-        $validatedData = $this->validateBorrowingData($data);
-
         DB::beginTransaction();
 
         try {
             // Create the borrowing record with pending status
             $borrowing = Borrowing::create([
                 'user_id' => Auth::id(),
-                'start_at' => $validatedData['start_at'],
-                'end_at' => $validatedData['end_at'] ?? null,
-                'notes' => $validatedData['notes'] ?? null,
+                'start_at' => $data['start_at'],
+                'end_at' => $data['end_at'] ?? null,
+                'notes' => $data['notes'] ?? null,
                 'status' => 'pending', // Default to pending status
             ]);
 
             // Create borrowing detail records
-            foreach ($validatedData['items'] as $item) {
+            foreach ($data['items'] as $item) {
                 BorrowingDetail::create([
                     'borrowing_id' => $borrowing->id,
                     'inventory_id' => $item['inventory_id'],
@@ -66,9 +43,11 @@ class BorrowingService
 
             DB::commit();
 
-            return $borrowing->refresh()->load(['borrowingDetails' => function($query) {
-                $query->with('inventory');
-            }]);
+            return $borrowing->refresh()->load([
+                'borrowingDetails' => function ($query) {
+                    $query->with('inventory');
+                }
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
@@ -84,23 +63,22 @@ class BorrowingService
      */
     public function updateBorrowing(Borrowing $borrowing, array $data): Borrowing
     {
-        $validatedData = $this->validateBorrowingData($data);
 
         DB::beginTransaction();
 
         try {
             // Update the borrowing record
             $borrowing->update([
-                'start_at' => $validatedData['start_at'],
-                'end_at' => $validatedData['end_at'] ?? null,
-                'notes' => $validatedData['notes'] ?? null,
+                'start_at' => $data['start_at'],
+                'end_at' => $data['end_at'] ?? null,
+                'notes' => $data['notes'] ?? null,
             ]);
 
             // Delete existing borrowing details
             $borrowing->borrowingDetails()->delete();
 
             // Create updated borrowing detail records
-            foreach ($validatedData['items'] as $item) {
+            foreach ($data['items'] as $item) {
                 BorrowingDetail::create([
                     'borrowing_id' => $borrowing->id,
                     'inventory_id' => $item['inventory_id'],
@@ -111,9 +89,11 @@ class BorrowingService
 
             DB::commit();
 
-            return $borrowing->refresh()->load(['borrowingDetails' => function($query) {
-                $query->with('inventory');
-            }]);
+            return $borrowing->refresh()->load([
+                'borrowingDetails' => function ($query) {
+                    $query->with('inventory');
+                }
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
@@ -121,32 +101,23 @@ class BorrowingService
     }
 
     /**
-     * Delete a borrowing and its related details
+     * Cancel a borrowing by updating its status to canceled
      *
      * @param \App\Models\Borrowing $borrowing
      * @return bool
      */
-    public function deleteBorrowing(Borrowing $borrowing): bool
+    public function cancelBorrowing(Borrowing $borrowing): bool
     {
-        DB::beginTransaction();
-
         try {
-            // Delete all borrowing details first
-            $borrowing->borrowingDetails()->delete();
-
-            // Then delete the borrowing record
-            $borrowing->delete();
-
-            DB::commit();
+            // Update the borrowing status to canceled
+            $borrowing->update([
+                'status' => 'canceled',
+            ]);
 
             return true;
         } catch (\Exception $e) {
-            DB::rollback();
             throw $e;
         }
     }
-
-
-
 
 }

@@ -1,55 +1,70 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
-import { Calendar, Car, ChevronLeft, MapPin, Send } from 'lucide-react';
+import { Calendar, Home, MapPin, Send } from 'lucide-react';
 
 /* =======================
  * Interfaces (Tetap Sama)
  * ======================= */
-interface Vehicle {
+interface Room {
     id: number;
     name: string;
-    license_plate: string;
+    capacity: number;
 }
 
-interface VehicleBorrowingFormData {
+interface BookingRoomFormData {
     start_at: string;
     end_at: string;
-    purpose: string;
-    destination: string;
-    vehicle_id: number | null;
+    event_mode: string;
+    event_name: string;
+    room_id: number | null;
+    admin_note: string;
 }
 
 interface Props {
-    vehicles: Vehicle[];
+    rooms: Room[];
 }
 
-export default function VehicleBorrowingCreate({ vehicles }: Props) {
+export default function BookingRoomCreate({ rooms }: Props) {
     const { data, setData, post, processing, errors } =
-        useForm<VehicleBorrowingFormData>({
+        useForm<BookingRoomFormData>({
             start_at: '',
             end_at: '',
-            purpose: '',
-            destination: '',
-            vehicle_id: null,
+            event_mode: '',
+            event_name: '',
+            room_id: null,
+            admin_note: '',
         });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/vehicle-borrowings/store');
+        post('/booking-rooms/store');
     };
 
     return (
         <AppLayout>
-            <Head title="Peminjaman Kendaraan" />
+            <Head title="Peminjaman Ruangan" />
 
             <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
                 <div className="mx-auto max-w-4xl">
                     {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
                     <a
-                        href="/vehicle-borrowings"
+                        href="/booking-rooms"
                         className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
                     >
-                        <ChevronLeft className="mr-1 h-4 w-4" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-1 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
                         Kembali ke Daftar
                     </a>
 
@@ -57,11 +72,11 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                         {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-                                Form Peminjaman Kendaraan
+                                Form Peminjaman Ruangan
                             </h1>
                             <p className="mt-2 text-sm text-blue-100 opacity-90 md:text-base">
-                                Lengkapi detail di bawah untuk pengajuan unit
-                                kendaraan operasional.
+                                Lengkapi detail di bawah untuk pengajuan
+                                peminjaman ruangan.
                             </p>
                         </div>
 
@@ -127,66 +142,70 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 2: Kendaraan */}
+                                {/* Section 2: Ruangan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
-                                        <Car className="mr-3 h-5 w-5 text-blue-600" />
+                                        <Home className="mr-3 h-5 w-5 text-blue-600" />
                                         <h2 className="text-lg font-bold text-gray-800">
-                                            Unit Kendaraan
+                                            Ruangan
                                         </h2>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-semibold text-gray-700">
-                                            Pilih Unit Tersedia
+                                            Pilih Ruangan Tersedia
                                         </label>
                                         <select
-                                            value={data.vehicle_id ?? ''}
+                                            value={data.room_id ?? ''}
                                             onChange={(e) =>
                                                 setData(
-                                                    'vehicle_id',
+                                                    'room_id',
                                                     e.target.value
                                                         ? Number(e.target.value)
                                                         : null,
                                                 )
                                             }
-                                            className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.vehicle_id ? 'border-red-500' : ''}`}
+                                            className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.room_id ? 'border-red-500' : ''}`}
                                             required
                                         >
                                             <option value="">
-                                                Pilih Kendaraan...
+                                                Pilih Ruangan...
                                             </option>
-                                            {vehicles.map((v) => (
-                                                <option key={v.id} value={v.id}>
-                                                    {v.name} — {v.license_plate}
+                                            {rooms.map((room) => (
+                                                <option
+                                                    key={room.id}
+                                                    value={room.id}
+                                                >
+                                                    {room.name} — Kapasitas:{' '}
+                                                    {room.capacity} orang
                                                 </option>
                                             ))}
                                         </select>
-                                        {errors.vehicle_id && (
+                                        {errors.room_id && (
                                             <p className="mt-1 text-xs font-medium text-red-500">
-                                                {errors.vehicle_id}
+                                                {errors.room_id}
                                             </p>
                                         )}
                                     </div>
                                 </section>
 
-                                {/* Section 3: Detail Perjalanan */}
+                                {/* Section 3: Detail Acara */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <MapPin className="mr-3 h-5 w-5 text-blue-600" />
                                         <h2 className="text-lg font-bold text-gray-800">
-                                            Detail Perjalanan
+                                            Detail Acara
                                         </h2>
                                     </div>
                                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8">
                                         <div className="space-y-2">
                                             <label className="text-sm font-semibold text-gray-700">
-                                                Tujuan Peminjaman
+                                                Jenis Acara
                                             </label>
                                             <select
-                                                value={data.purpose}
+                                                value={data.event_mode}
                                                 onChange={(e) =>
                                                     setData(
-                                                        'purpose',
+                                                        'event_mode',
                                                         e.target.value,
                                                     )
                                                 }
@@ -194,28 +213,31 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                                 required
                                             >
                                                 <option value="">
-                                                    Pilih Kategori Tujuan
+                                                    Pilih Jenis Acara
                                                 </option>
-                                                <option value="dalam_kota">
-                                                    Dalam Kota
+                                                <option value="offline">
+                                                    Offline
                                                 </option>
-                                                <option value="luar_kota">
-                                                    Luar Kota
+                                                <option value="online">
+                                                    Online
+                                                </option>
+                                                <option value="hybrid">
+                                                    Hybrid
                                                 </option>
                                             </select>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-semibold text-gray-700">
-                                                Destinasi Spesifik
+                                                Nama Acara
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="Contoh: Kantor Pusat"
-                                                value={data.destination}
+                                                placeholder="Contoh: Rapat Bulanan Divisi IT"
+                                                value={data.event_name}
                                                 onChange={(e) =>
                                                     setData(
-                                                        'destination',
+                                                        'event_name',
                                                         e.target.value,
                                                     )
                                                 }
@@ -230,7 +252,7 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                             {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
                                 <a
-                                    href="/vehicle-borrowings"
+                                    href="/booking-rooms"
                                     className="order-2 flex h-12 items-center justify-center px-6 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-700 md:order-1"
                                 >
                                     Batalkan Pengajuan

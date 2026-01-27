@@ -8,6 +8,7 @@ use App\Services\BorrowingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\BorrowingRequest;
 
 
 
@@ -27,12 +28,24 @@ class BorrowingController extends Controller
     {
         return inertia('Borrowings/index', [
             'borrowings' => Borrowing::with([
-                'user',
-                'borrowingDetails.inventory',
+                'user:id',
+                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails.inventory:id,name',
             ])
-            ->where('user_id', Auth::id())  // Hanya ambil borrowing milik user yang login
-            ->latest()
-            ->paginate(10),
+                ->select([
+                    'id',
+                    'user_id',
+                    'start_at',
+                    'end_at',
+                    'returned_at',
+                    'admin_note',
+                    'status',
+                    'created_at',
+                ])
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->paginate(10)
+                ->withQueryString(),
         ]);
     }
 
@@ -47,24 +60,57 @@ class BorrowingController extends Controller
     /**
      * Store borrowing (INERTIA RESPONSE)
      */
-    public function store(Request $request)
+    public function store(BorrowingRequest $request)
     {
         try {
             $this->borrowingService->createBorrowing(
-                $request->all()
+                $request->validated()
             );
+
             return redirect()
                 ->route('borrowings.index')
                 ->with('success', 'Peminjaman berhasil dibuat');
 
-        } catch (ValidationException $e) {
-            throw $e;
-
-        } catch (\Exception $e) {
-            return back()->withErrors([
-                'general' => $e->getMessage(),
-            ]);
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'general' => $e->getMessage(),
+                ]);
         }
+    }
+
+
+    /**
+     * Show borrowing details
+     */
+    public function show(Borrowing $borrowing)
+    {
+        if ($borrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to view this borrowing');
+        }
+
+        $borrowingData = Borrowing::select([
+            'id',
+            'user_id',
+            'start_at',
+            'end_at',
+            'returned_at',
+            'admin_note',
+            'status',
+            'notes',
+            'created_at',
+        ])
+            ->with([
+                'user:id,name',
+                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails.inventory:id,name',
+            ])
+            ->findOrFail($borrowing->id);
+
+        return inertia('Borrowings/view', [
+            'borrowing' => $borrowingData,
+        ]);
     }
 
     /**
@@ -72,11 +118,31 @@ class BorrowingController extends Controller
      */
     public function edit(Borrowing $borrowing)
     {
+        // Ensure the user can only edit their own borrowings
+        if ($borrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to edit this borrowing');
+        }
+
+        $borrowingData = Borrowing::select([
+            'id',
+            'user_id',
+            'start_at',
+            'end_at',
+            'returned_at',
+            'admin_note',
+            'status',
+            'notes',
+            'created_at',
+        ])
+            ->with([
+                'user:id,name',
+                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails.inventory:id,name',
+            ])
+            ->findOrFail($borrowing->id);
+
         return inertia('Borrowings/edit', [
-            'borrowing' => $borrowing->load([
-                'borrowingDetails.inventory',
-                'user'
-            ]),
+            'borrowing' => $borrowingData,
             'inventories' => Inventory::select('id', 'name')->get(),
         ]);
     }
@@ -84,22 +150,18 @@ class BorrowingController extends Controller
     /**
      * Update borrowing (INERTIA RESPONSE)
      */
-    public function update(Request $request, Borrowing $borrowing)
+    public function update(BorrowingRequest $request, Borrowing $borrowing)
     {
         try {
             $updatedBorrowing = $this->borrowingService->updateBorrowing(
                 $borrowing,
-                $request->all()
+                $request->validated()
             );
-
             return redirect()
                 ->route('borrowings.index')
                 ->with('success', 'Peminjaman berhasil diperbarui');
 
-        } catch (ValidationException $e) {
-            throw $e;
-
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return back()->withErrors([
                 'general' => $e->getMessage(),
             ]);
@@ -107,22 +169,23 @@ class BorrowingController extends Controller
     }
 
     /**
-     * Delete a borrowing and its related details
+     * Cancel a borrowing by updating its status to canceled
      */
-    public function destroy(Borrowing $borrowing)
+    public function cancel(Borrowing $borrowing)
     {
         try {
-            $this->borrowingService->deleteBorrowing($borrowing);
+            $this->borrowingService->cancelBorrowing($borrowing);
 
             return redirect()
                 ->route('borrowings.index')
-                ->with('success', 'Peminjaman berhasil dihapus');
+                ->with('success', 'Peminjaman berhasil dibatalkan');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return back()->withErrors([
                 'general' => $e->getMessage(),
             ]);
         }
     }
+
 }
 

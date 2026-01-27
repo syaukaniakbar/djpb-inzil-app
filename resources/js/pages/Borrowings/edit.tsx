@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import { Calendar, ClipboardList, Send } from 'lucide-react';
 
 /* =======================
- * Interfaces (from index.tsx and create.tsx)
+ * Interfaces (Tetap Sama)
  * ======================= */
-
 interface Inventory {
     id: number;
     name: string;
@@ -30,7 +30,7 @@ interface BorrowingItem {
 
 interface BorrowingFormData {
     start_at: string;
-    end_at: string | null;
+    end_at: string;
     notes: string;
     items: BorrowingItem[];
 }
@@ -41,10 +41,16 @@ interface Props {
         start_at: string;
         end_at: string | null;
         returned_at: string | null;
-        status: string;
+        status:
+            | 'pending'
+            | 'approved'
+            | 'ongoing'
+            | 'finished'
+            | 'rejected'
+            | 'canceled';
         notes: string;
         user: User;
-        borrowing_details: BorrowingDetail[];
+        borrowing_details: BorrowingDetail[] | null;
     };
     inventories: Inventory[];
 }
@@ -73,16 +79,17 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
  * ======================= */
 
 export default function BorrowingEdit({ borrowing, inventories }: Props) {
-    const { data, setData, put, processing, errors } = useForm<BorrowingFormData>({
-        start_at: formatDateTimeLocal(borrowing.start_at),
-        end_at: formatDateTimeLocal(borrowing.end_at),
-        notes: borrowing.notes || '',
-        items: borrowing.borrowing_details.map(detail => ({
-            inventory_id: detail.inventory_id,
-            quantity: detail.quantity,
-            notes: detail.notes || ''
-        })),
-    });
+    const { data, setData, put, processing, errors } =
+        useForm<BorrowingFormData>({
+            start_at: formatDateTimeLocal(borrowing.start_at),
+            end_at: formatDateTimeLocal(borrowing.end_at),
+            notes: borrowing.notes || '',
+            items: borrowing.borrowing_details?.map((detail) => ({
+                inventory_id: detail.inventory_id,
+                quantity: detail.quantity,
+                notes: detail.notes || '',
+            })) || [],
+        });
 
     const addItem = () => {
         setData('items', [
@@ -119,232 +126,340 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
         <AppLayout>
             <Head title="Edit Peminjaman Barang" />
 
-            <div className="flex min-h-screen justify-center bg-gray-50 p-4">
-                <div className="w-full max-w-6xl px-4">
-                    <div className="rounded-xl border bg-white p-6 shadow-lg">
-                        <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">
-                            Edit Form Peminjaman Barang
-                        </h1>
-                        <p className="mb-6 text-center text-gray-600">
-                            Silakan edit form berikut untuk memperbarui peminjaman barang.
-                        </p>
+            <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
+                <div className="mx-auto max-w-4xl">
+                    {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
+                    <a
+                        href="/borrowings"
+                        className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-1 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                        Kembali ke Daftar
+                    </a>
 
-                        <form onSubmit={handleSubmit} className="space-y-8">
-                            {/* Tanggal */}
-                            <section className="space-y-4">
-                                <h2 className="text-xl font-semibold text-gray-700">
-                                    Tanggal Peminjaman
-                                </h2>
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <div>
-                                        <label className="mb-1 block font-medium text-gray-700">
-                                            Tanggal Mulai *
-                                        </label>
-                                        <input
-                                            type="datetime-local"
-                                            value={data.start_at}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'start_at',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-400 md:py-3 ${
-                                                errors.start_at
-                                                    ? 'border-red-500'
-                                                    : 'border-gray-300'
-                                            }`}
-                                            required
-                                        />
-                                        {errors.start_at && (
-                                            <p className="mt-1 text-sm text-red-600">
-                                                {errors.start_at}
-                                            </p>
-                                        )}
+                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl">
+                        {/* Header Section - Ukuran teks responsif */}
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
+                            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                                Edit Form Peminjaman Barang
+                            </h1>
+                            <p className="mt-2 text-sm text-blue-100 opacity-90 md:text-base">
+                                Silakan edit form berikut untuk memperbarui
+                                peminjaman barang.
+                            </p>
+                        </div>
+
+                        <form
+                            onSubmit={handleSubmit}
+                            className="p-5 sm:p-8 md:p-10"
+                        >
+                            <div className="space-y-8 md:space-y-12">
+                                {/* Section 1: Waktu */}
+                                <section>
+                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
+                                        <Calendar className="mr-3 h-5 w-5 text-blue-600" />
+                                        <h2 className="text-lg font-bold text-balance text-gray-800">
+                                            Periode Peminjaman
+                                        </h2>
                                     </div>
-
-                                    <div>
-                                        <label className="mb-1 block font-medium text-gray-700">
-                                            Tanggal Selesai
-                                        </label>
-                                        <input
-                                            type="datetime-local"
-                                            value={data.end_at}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'end_at',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className={`w-full rounded-md border px-3 py-2 focus:ring-2 focus:ring-blue-400 md:py-3 ${
-                                                errors.end_at
-                                                    ? 'border-red-500'
-                                                    : 'border-gray-300'
-                                            }`}
-                                        />
-                                        {errors.end_at && (
-                                            <p className="mt-1 text-sm text-red-600">
-                                                {errors.end_at}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* Catatan */}
-                            <section className="space-y-2">
-                                <label className="block font-medium text-gray-700">
-                                    Catatan Peminjaman
-                                </label>
-                                <textarea
-                                    rows={3}
-                                    value={data.notes}
-                                    onChange={(e) =>
-                                        setData('notes', e.target.value)
-                                    }
-                                    placeholder="Misal: Untuk keperluan pribadi, proyek, maupun kegiatan dinas"
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400 md:py-3"
-                                />
-                                {errors.notes && (
-                                    <p className="mt-1 text-sm text-red-600">
-                                        {errors.notes}
-                                    </p>
-                                )}
-                            </section>
-
-                            {/* Daftar Barang */}
-                            <section className="space-y-4">
-                                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                                    <h2 className="text-xl font-semibold text-gray-700">
-                                        Barang yang Dipinjam
-                                    </h2>
-                                    <button
-                                        type="button"
-                                        onClick={addItem}
-                                        className="flex cursor-pointer items-center gap-2 rounded bg-blue-600 px-4 py-2 text-sm text-white transition hover:bg-blue-700 md:text-base"
-                                    >
-                                        + Tambah Barang
-                                    </button>
-                                </div>
-
-                                {data.items.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="relative grid grid-cols-1 gap-3 rounded border bg-gray-50 p-4 md:grid-cols-12"
-                                    >
-                                        {/* Inventory */}
-                                        <div className="md:col-span-5">
-                                            <label className="mb-1 block font-medium text-gray-700">
-                                                Barang *
-                                            </label>
-                                            <select
-                                                value={item.inventory_id ?? ''}
-                                                onChange={(e) =>
-                                                    updateItem(
-                                                        index,
-                                                        'inventory_id',
-                                                        e.target.value
-                                                            ? Number(
-                                                                  e.target
-                                                                      .value,
-                                                              )
-                                                            : null,
-                                                    )
-                                                }
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400"
-                                                required
-                                            >
-                                                <option value="">
-                                                    Pilih Barang
-                                                </option>
-                                                {inventories.map((inv) => (
-                                                    <option
-                                                        key={inv.id}
-                                                        value={inv.id}
-                                                    >
-                                                        {inv.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        {/* Quantity */}
-                                        <div className="md:col-span-2">
-                                            <label className="mb-1 block font-medium text-gray-700">
-                                                Jumlah *
+                                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-semibold text-gray-700">
+                                                Tanggal & Waktu Mulai
                                             </label>
                                             <input
-                                                type="number"
-                                                min={1}
-                                                value={item.quantity}
+                                                type="datetime-local"
+                                                value={data.start_at}
                                                 onChange={(e) =>
-                                                    updateItem(
-                                                        index,
-                                                        'quantity',
-                                                        Number(
-                                                            e.target.value,
-                                                        ) || 1,
+                                                    setData(
+                                                        'start_at',
+                                                        e.target.value,
                                                     )
                                                 }
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.start_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                                                 required
                                             />
+                                            {errors.start_at && (
+                                                <p className="mt-1 text-xs font-medium text-red-500">
+                                                    {errors.start_at}
+                                                </p>
+                                            )}
                                         </div>
 
-                                        {/* Notes */}
-                                        <div className="md:col-span-4">
-                                            <label className="mb-1 block font-medium text-gray-700">
-                                                Catatan Barang
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-semibold text-gray-700">
+                                                Tanggal & Waktu Selesai
                                             </label>
                                             <input
-                                                type="text"
-                                                value={item.notes ?? ''}
+                                                type="datetime-local"
+                                                value={data.end_at}
                                                 onChange={(e) =>
-                                                    updateItem(
-                                                        index,
+                                                    setData(
+                                                        'end_at',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.end_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                                            />
+                                            {errors.end_at && (
+                                                <p className="mt-1 text-xs font-medium text-red-500">
+                                                    {errors.end_at}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="text-sm font-semibold text-gray-700">
+                                                Tujuan / Catatan Umum
+                                            </label>
+                                            <textarea
+                                                rows={2}
+                                                value={data.notes}
+                                                onChange={(e) =>
+                                                    setData(
                                                         'notes',
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="Berikan Keterangan (Opsional)"
-                                                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                                                placeholder="Contoh: Untuk keperluan dokumentasi event gathering..."
+                                                className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
                                             />
                                         </div>
+                                    </div>
+                                </section>
 
-                                        {/* Remove */}
-                                        {data.items.length > 1 && (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeItem(index)
-                                                }
-                                                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white transition hover:bg-red-700"
-                                                title="Hapus barang ini"
+                                {/* Section 2: Daftar Barang */}
+                                <section>
+                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
+                                        <ClipboardList className="mr-3 h-5 w-5 text-blue-600" />
+                                        <h2 className="text-lg font-bold text-gray-800">
+                                            Barang yang Dipinjam
+                                        </h2>
+                                    </div>
+                                    <div className="space-y-4">
+                                        {data.items.map((item, index) => (
+                                            <div
+                                                key={index}
+                                                className="group relative grid grid-cols-1 gap-4 rounded-xl border border-gray-100 bg-gray-50/30 p-5 transition-all hover:border-blue-200 hover:bg-white md:grid-cols-12"
                                             >
-                                                &times;
-                                            </button>
+                                                <div className="md:col-span-6">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                        Pilih Barang
+                                                    </label>
+                                                    <select
+                                                        value={
+                                                            item.inventory_id ??
+                                                            ''
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                index,
+                                                                'inventory_id',
+                                                                e.target.value
+                                                                    ? Number(
+                                                                          e
+                                                                              .target
+                                                                              .value,
+                                                                      )
+                                                                    : null,
+                                                            )
+                                                        }
+                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                        required
+                                                    >
+                                                        <option value="">
+                                                            Pilih Barang...
+                                                        </option>
+                                                        {inventories.map(
+                                                            (inv) => (
+                                                                <option
+                                                                    key={inv.id}
+                                                                    value={
+                                                                        inv.id
+                                                                    }
+                                                                >
+                                                                    {inv.name}
+                                                                </option>
+                                                            ),
+                                                        )}
+                                                    </select>
+                                                </div>
+
+                                                <div className="md:col-span-2">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                        Jumlah
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        min={1}
+                                                        value={item.quantity}
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                index,
+                                                                'quantity',
+                                                                Number(
+                                                                    e.target
+                                                                        .value,
+                                                                ) || 1,
+                                                            )
+                                                        }
+                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="md:col-span-4">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                        Keterangan Barang
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={item.notes ?? ''}
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                index,
+                                                                'notes',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="Kondisi, spesifikasi, dll"
+                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                    />
+                                                </div>
+
+                                                {/* Delete Button */}
+                                                {data.items.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeItem(index)
+                                                        }
+                                                        className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border border-red-100 bg-white text-red-500 shadow-sm transition-all hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100"
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="h-4 w-4"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M6 18L18 6M6 6l12 12"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        <button
+                                            type="button"
+                                            onClick={addItem}
+                                            className="mt-4 inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 transition-colors hover:bg-emerald-100"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="mr-1 h-3.5 w-3.5"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                />
+                                            </svg>
+                                            Tambah Barang
+                                        </button>
+
+                                        {errors.items && (
+                                            <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-4 w-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
+                                                </svg>
+                                                <span>
+                                                    Pastikan semua barang dan
+                                                    jumlah telah diisi dengan
+                                                    benar.
+                                                </span>
+                                            </div>
                                         )}
                                     </div>
-                                ))}
-                            </section>
+                                </section>
+                            </div>
 
-                            <div className="flex flex-col gap-3 md:flex-row md:justify-end">
+                            {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
+                            <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
+                                <a
+                                    href="/borrowings"
+                                    className="order-2 flex h-12 items-center justify-center px-6 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-700 md:order-1"
+                                >
+                                    Batalkan Pengajuan
+                                </a>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full cursor-pointer rounded bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50 md:w-auto"
+                                    className="order-1 flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:order-2 md:h-14"
                                 >
-                                    {processing
-                                        ? 'Memproses...'
-                                        : 'Perbarui Peminjaman'}
+                                    {processing ? (
+                                        <span className="flex items-center">
+                                            <svg
+                                                className="mr-2 h-4 w-4 animate-spin"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    strokeWidth="4"
+                                                    fill="none"
+                                                ></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                            Memproses...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center">
+                                            <Send className="mr-2 h-4 w-4" />
+                                            Perbarui Peminjaman
+                                        </span>
+                                    )}
                                 </button>
-
-                                <Link
-                                    href="/borrowings"
-                                    className="w-full cursor-pointer rounded border px-5 py-3 text-center text-gray-700 transition hover:bg-gray-100 md:w-auto"
-                                >
-                                    Batal
-                                </Link>
                             </div>
                         </form>
                     </div>
