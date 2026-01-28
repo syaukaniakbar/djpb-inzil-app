@@ -1,78 +1,53 @@
-import { ChevronRight, Globe, Layers, ShieldCheck } from 'lucide-react';
+import { ChevronRight, ShieldCheck } from 'lucide-react';
 
 export default function About() {
     return (
         <section
             aria-labelledby="hero-heading"
-            className="relative overflow-hidden bg-[#0a192f] px-6 py-28 sm:py-32"
+            className="relative overflow-hidden bg-[#0b1c33] px-6 py-24 sm:py-32"
         >
-            {/* Background Decorative - Efek Cahaya Halus agar tidak flat */}
-            <div className="absolute top-0 left-1/2 -z-10 h-[500px] w-full -translate-x-1/2 rounded-full bg-blue-900/20 blur-[120px]" />
+            {/* Subtle Background Accent */}
+            <div className="pointer-events-none absolute inset-0 -z-10">
+                <div className="absolute right-0 top-0 h-64 w-64 bg-blue-900/20 blur-3xl" />
+            </div>
 
-            <div className="mx-auto max-w-5xl text-center">
-                {/* Badge Atas */}
-                <div className="mb-8 flex justify-center">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-medium tracking-wide text-blue-300">
+            <div className="mx-auto max-w-5xl">
+                {/* Badge */}
+                <div className="mb-6 flex justify-start sm:justify-center">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-amber-400">
                         <ShieldCheck size={14} />
-                        Standar Akuntabilitas Keuangan Negara
+                        Tata Kelola Aset Negara
                     </span>
                 </div>
 
-                {/* Heading - Menggunakan Kerning yang lebih rapat untuk kesan premium */}
+                {/* Heading */}
                 <h1
                     id="hero-heading"
-                    className="text-4xl leading-[1.15] font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl"
+                    className="text-left text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-center sm:text-5xl lg:text-6xl"
                 >
-                    Manajemen <span className="text-blue-400">Peminjaman</span>{' '}
-                    &{' '}
-                    <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                        Aset Perbendaharaan
-                    </span>{' '}
-                    yang Lebih Tertib dan Terkendali
+                    Sistem Manajemen
+                    <span className="mt-2 block text-blue-400">
+                        Peminjaman Aset Perbendaharaan
+                    </span>
                 </h1>
 
-                {/* Subtext - Menjelaskan Nilai UX */}
-                <p className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-slate-400">
-                    Transformasi tata kelola inventaris DJPB melalui sistem
-                    monitoring real-time, mengedepankan transparansi untuk
-                    efisiensi birokrasi yang lebih baik.
+                {/* Description */}
+                <p className="mt-6 max-w-2xl text-left text-base leading-relaxed text-slate-200 sm:mx-auto sm:mt-8 sm:text-center sm:text-lg">
+                    Mendukung pengelolaan aset DJPB yang tertib, transparan,
+                    dan akuntabel melalui sistem digital terintegrasi
+                    sesuai standar pengelolaan keuangan negara.
                 </p>
 
-                {/* CTA Buttons - Menambah interaksi UX */}
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-                    <button className="flex items-center gap-2 rounded-full bg-blue-600 px-7 py-3 text-sm font-bold text-white transition-all hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-                        Mulai Peminjaman <ChevronRight size={18} />
+                {/* CTA */}
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+                    <button className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
+                        Ajukan Peminjaman
+                        <ChevronRight size={18} />
                     </button>
-                    <button className="rounded-full border border-slate-700 bg-slate-800/50 px-7 py-3 text-sm font-bold text-slate-200 transition-all hover:border-slate-500 hover:bg-slate-800">
-                        Pelajari Alur Aset
-                    </button>
-                </div>
 
-                {/* Integration Info (Menggantikan Logo Brand Luar) */}
-                <div className="mt-20">
-                    <p className="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
-                        Terintegrasi Dengan Ekosistem Digital
-                    </p>
-                    <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
-                        <div className="flex items-center gap-2 text-slate-300 transition-opacity hover:opacity-100">
-                            <Layers size={20} className="text-blue-400" />
-                            <span className="text-sm font-bold tracking-wider">
-                                SIMAK-BMN
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-300 transition-opacity hover:opacity-100">
-                            <Globe size={20} className="text-emerald-400" />
-                            <span className="text-sm font-bold tracking-wider">
-                                SATU DATA
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-300 transition-opacity hover:opacity-100">
-                            <ShieldCheck size={20} className="text-amber-400" />
-                            <span className="text-sm font-bold tracking-wider">
-                                ISO 27001
-                            </span>
-                        </div>
-                    </div>
+                    <button className="cursor-pointer w-full rounded-md border border-slate-600 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white sm:w-auto">
+                        Lihat Panduan Sistem
+                    </button>
                 </div>
             </div>
         </section>
