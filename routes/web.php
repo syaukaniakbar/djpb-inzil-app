@@ -3,6 +3,7 @@
 use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\VehicleBorrowingController;
 use App\Http\Controllers\BookingRoomController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -18,9 +19,7 @@ Route::get('/contact-us', function () {
 })->name('contact-us');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Borrowing routes
     Route::get('/borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
@@ -38,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/vehicle-borrowings/{vehicleBorrowing}', [VehicleBorrowingController::class, 'show'])->name('vehicle-borrowings.show');
     Route::get('/vehicle-borrowings/{vehicleBorrowing}/edit', [VehicleBorrowingController::class, 'edit'])->name('vehicle-borrowings.edit');
     Route::put('/vehicle-borrowings/{vehicleBorrowing}', [VehicleBorrowingController::class, 'update'])->name('vehicle-borrowings.update');
-    Route::delete('/vehicle-borrowings/{vehicleBorrowing}', [VehicleBorrowingController::class, 'destroy'])->name('vehicle-borrowings.destroy');
+    Route::patch('/vehicle-borrowings/{vehicleBorrowing}/cancel', [VehicleBorrowingController::class, 'cancel'])->name('vehicle-borrowings.cancel');
 
     // Booking Room routes
     Route::get('/booking-rooms', [BookingRoomController::class, 'index'])->name('booking-rooms.index');
@@ -47,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/booking-rooms/{bookingRoom}', [BookingRoomController::class, 'show'])->name('booking-rooms.show');
     Route::get('/booking-rooms/{bookingRoom}/edit', [BookingRoomController::class, 'edit'])->name('booking-rooms.edit');
     Route::put('/booking-rooms/{bookingRoom}', [BookingRoomController::class, 'update'])->name('booking-rooms.update');
-    Route::delete('/booking-rooms/{bookingRoom}', [BookingRoomController::class, 'destroy'])->name('booking-rooms.destroy');
+    Route::patch('/booking-rooms/{bookingRoom}/cancel', [BookingRoomController::class, 'cancel'])->name('booking-rooms.cancel');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
