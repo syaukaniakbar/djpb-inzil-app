@@ -30,7 +30,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Peminjaman Asset',
+        title: 'Persediaan',
         href: '/borrowings',
         icon: Package,
     },
