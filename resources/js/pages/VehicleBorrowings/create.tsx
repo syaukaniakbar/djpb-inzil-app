@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { Calendar, Car, ChevronLeft, MapPin, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 /* =======================
  * Interfaces (Tetap Sama)
@@ -32,6 +33,52 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
             destination: '',
             vehicle_id: null,
         });
+
+    // State for available vehicles
+    const [availableVehicles, setAvailableVehicles] = useState<Vehicle[]>(vehicles);
+    const [loadingVehicles, setLoadingVehicles] = useState(false);
+
+    // Effect to fetch available vehicles when start_at or end_at changes
+    useEffect(() => {
+        if (data.start_at && data.end_at) {
+            setLoadingVehicles(true);
+
+            // Construct the API URL with query parameters
+            const params = new URLSearchParams({
+                start_at: data.start_at,
+                end_at: data.end_at
+            });
+
+            fetch(`/api/vehicles/available-vehicles?${params}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        setAvailableVehicles(result.vehicles);
+
+                        // If the previously selected vehicle is no longer available, reset selection
+                        if (data.vehicle_id && !result.vehicles.some((vehicle: Vehicle) => vehicle.id === data.vehicle_id)) {
+                            setData('vehicle_id', null);
+                        }
+                    } else {
+                        console.error('API Error:', result.message);
+                        // On API error, show all vehicles as fallback
+                        setAvailableVehicles(vehicles);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching available vehicles:', error);
+                    // On network error, show all vehicles as fallback
+                    setAvailableVehicles(vehicles);
+                })
+                .finally(() => {
+                    setLoadingVehicles(false);
+                });
+        } else {
+            // If no dates selected, show all vehicles
+            setAvailableVehicles(vehicles);
+            setData('vehicle_id', null);
+        }
+    }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -151,16 +198,25 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                             }
                                             className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.vehicle_id ? 'border-red-500' : ''}`}
                                             required
+                                            disabled={loadingVehicles}
                                         >
                                             <option value="">
-                                                Pilih Kendaraan...
+                                                {loadingVehicles ? 'Memuat kendaraan...' : 'Pilih Kendaraan...'}
                                             </option>
-                                            {vehicles.map((v) => (
-                                                <option key={v.id} value={v.id}>
+                                            {availableVehicles.map((v) => (
+                                                <option
+                                                    key={v.id}
+                                                    value={v.id}
+                                                >
                                                     {v.name} — {v.license_plate}
                                                 </option>
                                             ))}
                                         </select>
+                                        {loadingVehicles && (
+                                            <p className="mt-1 text-xs font-medium text-blue-500">
+                                                Memeriksa ketersediaan kendaraan...
+                                            </p>
+                                        )}
                                         {errors.vehicle_id && (
                                             <p className="mt-1 text-xs font-medium text-red-500">
                                                 {errors.vehicle_id}

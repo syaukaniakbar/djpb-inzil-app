@@ -4,20 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\VehicleBorrowing;
 use App\Models\Vehicle;
+use App\Services\VehicleBorrowingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\VehicleBorrowingRequest;
 
 class VehicleBorrowingController extends Controller
 {
+    protected VehicleBorrowingService $vehicleBorrowingService;
+
+    public function __construct(VehicleBorrowingService $vehicleBorrowingService)
+    {
+        $this->vehicleBorrowingService = $vehicleBorrowingService;
+    }
+
     public function index()
     {
         $borrowings = VehicleBorrowing::with([
             'user',
             'vehicle',
         ])
-        ->where('user_id', Auth::id())  // Hanya ambil borrowing milik user yang login
-        ->latest()
-        ->paginate(10);
+            ->where('user_id', Auth::id())  // Hanya ambil borrowing milik user yang login
+            ->latest()
+            ->paginate(10);
 
         return inertia('VehicleBorrowings/index', [
             'borrowings' => $borrowings,
@@ -33,22 +42,24 @@ class VehicleBorrowingController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(VehicleBorrowingRequest $request)
     {
-        $validated = $request->validate([
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at',
-            'purpose' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'vehicle_id' => 'required|exists:vehicles,id',
-        ]);
+        try {
+            $this->vehicleBorrowingService->createVehicleBorrowing(
+                $request->validated()
+            );
 
-        $validated['user_id'] = Auth::id();
-        $validated['status'] = 'pending'; // Default status
+            return redirect()
+                ->route('vehicle-borrowings.index')
+                ->with('success', 'Peminjaman kendaraan berhasil diajukan');
 
-        VehicleBorrowing::create($validated);
-
-        return redirect()->route('vehicle-borrowings.index')->with('success', 'Peminjaman kendaraan berhasil diajukan.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'general' => $e->getMessage(),
+                ]);
+        }
     }
 
     public function show(VehicleBorrowing $vehicleBorrowing)
@@ -78,24 +89,30 @@ class VehicleBorrowingController extends Controller
         ]);
     }
 
-    public function update(Request $request, VehicleBorrowing $vehicleBorrowing)
+    public function update(VehicleBorrowingRequest $request, VehicleBorrowing $vehicleBorrowing)
     {
         // Ensure the user can only update their own borrowings
         if ($vehicleBorrowing->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to update this borrowing');
         }
 
-        $validated = $request->validate([
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at',
-            'purpose' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'vehicle_id' => 'required|exists:vehicles,id',
-        ]);
+        try {
+            $this->vehicleBorrowingService->updateVehicleBorrowing(
+                $vehicleBorrowing,
+                $request->validated()
+            );
 
-        $vehicleBorrowing->update($validated);
+            return redirect()
+                ->route('vehicle-borrowings.index')
+                ->with('success', 'Peminjaman kendaraan berhasil diperbarui');
 
-        return redirect()->route('vehicle-borrowings.index')->with('success', 'Peminjaman kendaraan berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'general' => $e->getMessage(),
+                ]);
+        }
     }
 
     public function destroy(VehicleBorrowing $vehicleBorrowing)
@@ -108,5 +125,26 @@ class VehicleBorrowingController extends Controller
         $vehicleBorrowing->delete();
 
         return redirect()->back()->with('success', 'Peminjaman kendaraan berhasil dihapus.');
+    }
+
+    public function cancel(VehicleBorrowing $vehicleBorrowing)
+    {
+        // Ensure the user can only cancel their own borrowings
+        if ($vehicleBorrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to cancel this borrowing');
+        }
+
+        try {
+            $this->vehicleBorrowingService->cancelVehicleBorrowing($vehicleBorrowing);
+
+            return redirect()
+                ->route('vehicle-borrowings.index')
+                ->with('success', 'Peminjaman kendaraan berhasil dibatalkan');
+
+        } catch (\Throwable $e) {
+            return back()->withErrors([
+                'general' => $e->getMessage(),
+            ]);
+        }
     }
 }

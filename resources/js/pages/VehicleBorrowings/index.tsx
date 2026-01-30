@@ -126,11 +126,23 @@ export default function Index({ borrowings }: Props) {
                                                 <p className="text-xs text-gray-500">
                                                     {new Date(
                                                         borrowing.start_at,
-                                                    ).toLocaleDateString()}{' '}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}{' '}
                                                     –{' '}
                                                     {new Date(
                                                         borrowing.end_at,
-                                                    ).toLocaleDateString()}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </p>
                                             </div>
 
@@ -164,7 +176,7 @@ export default function Index({ borrowings }: Props) {
                                             </p>
                                             <div className="mt-1">
                                                 {borrowing.purpose ===
-                                                'dalam_kota' ? (
+                                                    'dalam_kota' ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                                                         <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
                                                         Dalam Kota
@@ -196,8 +208,14 @@ export default function Index({ borrowings }: Props) {
                                             <p className="text-sm text-gray-700">
                                                 {borrowing.returned_at
                                                     ? new Date(
-                                                          borrowing.returned_at,
-                                                      ).toLocaleDateString()
+                                                        borrowing.returned_at,
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })
                                                     : '-'}
                                             </p>
                                         </div>
@@ -249,25 +267,27 @@ export default function Index({ borrowings }: Props) {
                                             </a>
 
                                             {/* Destructive Action */}
-                                            <div className="pt-1 text-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                'Apakah Anda yakin ingin membatalkan peminjaman ini?',
-                                                            )
-                                                        ) {
-                                                            router.delete(
-                                                                `/vehicle-borrowings/${borrowing.id}`,
-                                                            );
-                                                        }
-                                                    }}
-                                                    className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
-                                                >
-                                                    Batalkan Peminjaman
-                                                </button>
-                                            </div>
+                                            {borrowing.status === 'pending' && (
+                                                <div className="pt-1 text-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (
+                                                                confirm(
+                                                                    'Apakah Anda yakin ingin membatalkan peminjaman ini?',
+                                                                )
+                                                            ) {
+                                                                router.patch(
+                                                                    `/vehicle-borrowings/${borrowing.id}/cancel`,
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
+                                                    >
+                                                        Batalkan Peminjaman
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
@@ -321,130 +341,127 @@ export default function Index({ borrowings }: Props) {
                                         data.map((borrowing) => (
                                             <tr
                                                 key={borrowing.id}
-                                                className="transition hover:bg-gray-50"
+                                                className="transition hover:bg-gray-50 border-b border-gray-100"
                                             >
-                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                <td className="px-4 py-3 text-sm text-gray-700 font-mono">
                                                     #{borrowing.id}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    <div className="font-medium">
+                                                    <div className="font-semibold text-gray-900">
                                                         {borrowing.vehicle.name}
                                                     </div>
-                                                    <div className="text-gray-500">
-                                                        {
-                                                            borrowing.vehicle
-                                                                .license_plate
-                                                        }
+                                                    <div className="text-gray-500 text-xs">
+                                                        {borrowing.vehicle.license_plate}
                                                     </div>
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {new Date(
-                                                        borrowing.start_at,
-                                                    ).toLocaleDateString()}
+                                                <td className="px-4 py-3 text-sm text-gray-600">
+                                                    {new Date(borrowing.start_at).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {new Date(
-                                                        borrowing.end_at,
-                                                    ).toLocaleDateString()}
+                                                <td className="px-4 py-3 text-sm text-gray-600">
+                                                    {new Date(borrowing.end_at).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                <td className="px-4 py-3 text-sm text-gray-600">
                                                     {borrowing.returned_at
-                                                        ? new Date(
-                                                              borrowing.returned_at,
-                                                          ).toLocaleDateString()
+                                                        ? new Date(borrowing.returned_at).toLocaleString('id-ID', {
+                                                            day: 'numeric',
+                                                            month: 'short',
+                                                            year: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })
                                                         : '-'}
                                                 </td>
 
                                                 <td className="px-4 py-3">
-                                                    <div className="flex flex-col gap-1">
-                                                        {/* Badge Label */}
-                                                        <div>
-                                                            {borrowing.purpose ===
-                                                            'dalam_kota' ? (
-                                                                <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                                                                    <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
-                                                                    Dalam Kota
-                                                                </span>
-                                                            ) : (
-                                                                <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
-                                                                    <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
-                                                                    Luar Kota
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
+                                                    {borrowing.purpose === 'dalam_kota' ? (
+                                                        <span className="inline-flex items-center gap-1.5 rounded border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                                            Dalam Kota
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1.5 rounded border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-700">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                                                            Luar Kota
+                                                        </span>
+                                                    )}
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm text-gray-700">
-                                                    <div className="text-gray-500">
-                                                        {borrowing.destination}
-                                                    </div>
+                                                <td className="px-4 py-3 text-sm text-gray-600 max-w-[150px] truncate">
+                                                    {borrowing.destination}
                                                 </td>
 
-                                                <td className="px-4 py-3 text-sm text-gray-700">
-                                                    <div className="text-gray-500">
-                                                        {borrowing.admin_note}
-                                                    </div>
+                                                <td className="px-4 py-3 text-sm text-gray-500 italic max-w-[150px] truncate">
+                                                    {borrowing.admin_note || '-'}
                                                 </td>
 
                                                 <td className="px-4 py-3">
                                                     <span
-                                                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status].className}`}
+                                                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge[borrowing.status].className}`}
                                                     >
                                                         <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                        {
-                                                            statusBadge[
-                                                                borrowing.status
-                                                            ].label
-                                                        }
+                                                        {statusBadge[borrowing.status].label}
                                                     </span>
                                                 </td>
-
-                                                <td className="px-4 py-3 text-center">
-                                                    <div className="flex flex-wrap justify-center gap-1">
+                                                <td className="px-4 py-3 w-44">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {/* Tombol View - Mengikuti bg-green-600 */}
                                                         <Link
                                                             href={`/vehicle-borrowings/${borrowing.id}`}
-                                                            className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-green-700"
+                                                            className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
                                                         >
                                                             View
                                                         </Link>
+
+                                                        {/* Tombol Edit - Mengikuti bg-blue-600 */}
                                                         <Link
                                                             href={`/vehicle-borrowings/${borrowing.id}/edit`}
-                                                            className="rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
+                                                            className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
                                                         >
                                                             Edit
                                                         </Link>
+
+                                                        {/* Tombol WhatsApp - Mengikuti bg-green-100 & text-green-700 */}
                                                         <a
                                                             href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                                `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`,
+                                                                `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`
                                                             )}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="rounded-md border bg-green-100 px-2 py-1 text-xs font-medium text-green-700 whitespace-nowrap"
+                                                            className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-200 shadow-sm"
                                                         >
-                                                            WA
+                                                            WhatsApp Admin
                                                         </a>
-                                                        <button
-                                                            className="rounded-md bg-red-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-red-700"
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                if (
-                                                                    confirm(
-                                                                        'Apakah Anda yakin ingin menghapus peminjaman ini?',
-                                                                    )
-                                                                ) {
-                                                                    router.delete(
-                                                                        `/vehicle-borrowings/${borrowing.id}`,
-                                                                    );
-                                                                }
-                                                            }}
-                                                        >
-                                                            Del
-                                                        </button>
+
+                                                        {/* Tombol Cancel - Mengikuti bg-red-600 */}
+                                                        {borrowing.status === 'pending' && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                                                        router.patch(`/vehicle-borrowings/${borrowing.id}/cancel`);
+                                                                    }
+                                                                }}
+                                                                className="w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
