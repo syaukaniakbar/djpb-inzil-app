@@ -15,6 +15,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Import users from Excel file first
+        Excel::import(new UsersImport, database_path('seeders/data/users.xlsx'));
+
         // Insert the main admin user
         DB::table('users')->insert([
             'name' => 'Admin',
@@ -29,8 +32,5 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-
-        // Import users from Excel file
-        Excel::import(new UsersImport, database_path('seeders/data/users.xlsx'));
     }
 }

@@ -12,18 +12,19 @@ class UsersImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         return new User([
-            'name'              => $row['nama'],
-            'email'             => $row['email'],
+            'name' => $row['nama'],
+            'email' => $row['email'],
             'email_verified_at' => now(),
             'birth_date' => Carbon::createFromFormat('d/m/Y', $row['tanggal_lahir']),
-            'nip'               => $row['nip'],
-            'password'          => bcrypt($row['nip']),
-            'role'              => 'user',
-            'position_id'       => $row['jabatan'],
-            'department_id'     => $row['bagianbidang'],
-            'profile_photo'     => $row['photo_profile'],
-            'created_at'        => now(),
-            'updated_at'        => now(),
+            'nip' => $row['nip'],
+            'password' => bcrypt($row['nip']),
+            'role' => 'user',
+            'position_id' => $row['jabatan'],
+            'department_id' => $row['bagianbidang'],
+            'profile_photo' => $row['photo_profile'] ?? null,
+            'phone' => $row['phone'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }

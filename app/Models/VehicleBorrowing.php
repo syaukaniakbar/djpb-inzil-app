@@ -23,7 +23,7 @@ class VehicleBorrowing extends Model
 
     protected $casts = [
         'start_at' => 'datetime',
-        'end_at'   => 'datetime',
+        'end_at' => 'datetime',
         'returned_at' => 'datetime',
     ];
 
@@ -37,27 +37,9 @@ class VehicleBorrowing extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
-    // Scope to get active borrowings (not yet returned)
     public function scopeActive($query)
     {
-        return $query->whereNull('returned_at')->whereIn('status', ['ongoing', 'pending']);
-    }
-
-    // Scope to get completed borrowings
-    public function scopeCompleted($query)
-    {
-        return $query->whereNotNull('returned_at');
-    }
-
-    // Check if borrowing is currently active
-    public function isActive(): bool
-    {
-        return is_null($this->returned_at) && in_array($this->status, ['ongoing', 'pending']);
-    }
-
-    // Check if borrowing is overdue
-    public function isOverdue(): bool
-    {
-        return !$this->isActive() && $this->end_at < now();
+        return $query->whereNull('returned_at')
+            ->whereIn('status', ['pending', 'approved', 'ongoing']);
     }
 }

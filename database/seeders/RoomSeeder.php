@@ -15,12 +15,11 @@ class RoomSeeder extends Seeder
     public function run(): void
     {
         DB::table('rooms')->insert([
-            ['name' => 'RUANG AULA', 'capacity' => 50, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
-            ['name' => 'RUANG UJIAN I', 'capacity' => 20, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
-            ['name' => 'RUANG UJIAN II', 'capacity' => 20, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
-            ['name' => 'RUANG KONFERENSI I', 'capacity' => 15, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
-            ['name' => 'RUANG KONFERENSI II', 'capacity' => 18, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
-            ['name' => 'RUANG KONFERENSI III', 'capacity' => 30, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
+            ['name' => 'AULA', 'capacity' => 50, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
+            ['name' => 'RUANG RAPAT LANTAI I', 'capacity' => 20, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
+            ['name' => 'RUANG RAPAT LANTAI II', 'capacity' => 20, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
+            ['name' => 'RUANG RAPAT MO', 'capacity' => 15, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
+            ['name' => 'Mini TLC FO', 'capacity' => 18, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now(),],
         ]);
     }
 }

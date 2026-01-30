@@ -42,21 +42,19 @@ class Borrowing extends Model
             ->withTimestamps();
     }
 
-    // Scope to get active borrowings (not yet returned)
     public function scopeActive($query)
     {
-        return $query->whereNull('returned_at');
+        return $query->whereNull('returned_at')
+            ->whereIn('status', ['pending', 'approved', 'ongoing']);
     }
 
-    // Scope to get completed borrowings
-    public function scopeCompleted($query)
+    public function scopePending($query)
     {
-        return $query->whereNotNull('returned_at');
+        return $query->where('status', 'pending');
     }
 
-    // Check if borrowing is currently active
-    public function isActive(): bool
+    public function scopeCanceled($query)
     {
-        return is_null($this->returned_at);
+        return $query->where('status', 'canceled');
     }
 }
