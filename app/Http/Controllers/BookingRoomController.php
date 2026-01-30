@@ -4,20 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\BookingRoom;
 use App\Models\Room;
+use App\Services\BookingRoomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\BookingRoomRequest;
 
 class BookingRoomController extends Controller
 {
+    protected BookingRoomService $bookingRoomService;
+
+    public function __construct(BookingRoomService $bookingRoomService)
+    {
+        $this->bookingRoomService = $bookingRoomService;
+    }
+
     public function index()
     {
         $bookings = BookingRoom::with([
             'user',
             'room',
         ])
-        ->where('user_id', Auth::id())  // Hanya ambil booking milik user yang login
-        ->latest()
-        ->paginate(10);
+            ->where('user_id', Auth::id())  // Hanya ambil booking milik user yang login
+            ->latest()
+            ->paginate(10);
 
         return inertia('BookingRooms/index', [
             'bookings' => $bookings,
@@ -33,23 +42,24 @@ class BookingRoomController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(BookingRoomRequest $request)
     {
-        $validated = $request->validate([
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at',
-            'event_mode' => 'required|string|max:255',
-            'event_name' => 'required|string|max:255',
-            'room_id' => 'required|exists:rooms,id',
-            'admin_note' => 'nullable|string|max:500',
-        ]);
+        try {
+            $this->bookingRoomService->createBookingRoom(
+                $request->validated()
+            );
 
-        $validated['user_id'] = Auth::id();
-        $validated['status'] = 'pending'; // Default status
+            return redirect()
+                ->route('booking-rooms.index')
+                ->with('success', 'Peminjaman ruangan berhasil diajukan');
 
-        BookingRoom::create($validated);
-
-        return redirect()->route('booking-rooms.index')->with('success', 'Peminjaman ruangan berhasil diajukan.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'general' => $e->getMessage(),
+                ]);
+        }
     }
 
     public function show(BookingRoom $bookingRoom)
@@ -79,25 +89,30 @@ class BookingRoomController extends Controller
         ]);
     }
 
-    public function update(Request $request, BookingRoom $bookingRoom)
+    public function update(BookingRoomRequest $request, BookingRoom $bookingRoom)
     {
         // Ensure the user can only update their own bookings
         if ($bookingRoom->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to update this booking');
         }
 
-        $validated = $request->validate([
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after:start_at',
-            'event_mode' => 'required|string|max:255',
-            'event_name' => 'required|string|max:255',
-            'room_id' => 'required|exists:rooms,id',
-            'admin_note' => 'nullable|string|max:500',
-        ]);
+        try {
+            $this->bookingRoomService->updateBookingRoom(
+                $bookingRoom,
+                $request->validated()
+            );
 
-        $bookingRoom->update($validated);
+            return redirect()
+                ->route('booking-rooms.index')
+                ->with('success', 'Peminjaman ruangan berhasil diperbarui');
 
-        return redirect()->route('booking-rooms.index')->with('success', 'Peminjaman ruangan berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'general' => $e->getMessage(),
+                ]);
+        }
     }
 
     public function destroy(BookingRoom $bookingRoom)
@@ -110,5 +125,26 @@ class BookingRoomController extends Controller
         $bookingRoom->delete();
 
         return redirect()->back()->with('success', 'Peminjaman ruangan berhasil dihapus.');
+    }
+
+    public function cancel(BookingRoom $bookingRoom)
+    {
+        // Ensure the user can only cancel their own bookings
+        if ($bookingRoom->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to cancel this booking');
+        }
+
+        try {
+            $this->bookingRoomService->cancelBookingRoom($bookingRoom);
+
+            return redirect()
+                ->route('booking-rooms.index')
+                ->with('success', 'Peminjaman ruangan berhasil dibatalkan');
+
+        } catch (\Throwable $e) {
+            return back()->withErrors([
+                'general' => $e->getMessage(),
+            ]);
+        }
     }
 }

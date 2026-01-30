@@ -176,8 +176,8 @@ export default function Index({ bookings }: Props) {
                                                         <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
                                                         {
                                                             eventModeLabels[
-                                                                booking
-                                                                    .event_mode
+                                                            booking
+                                                                .event_mode
                                                             ]
                                                         }
                                                     </span>
@@ -247,25 +247,27 @@ export default function Index({ bookings }: Props) {
                                             </a>
 
                                             {/* Destructive Action */}
-                                            <div className="pt-1 text-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                'Apakah Anda yakin ingin membatalkan peminjaman ini?',
-                                                            )
-                                                        ) {
-                                                            router.delete(
-                                                                `/booking-rooms/${booking.id}`,
-                                                            );
-                                                        }
-                                                    }}
-                                                    className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
-                                                >
-                                                    Batalkan Peminjaman
-                                                </button>
-                                            </div>
+                                            {booking.status === 'pending' && (
+                                                <div className="pt-1 text-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (
+                                                                confirm(
+                                                                    'Apakah Anda yakin ingin membatalkan peminjaman ini?',
+                                                                )
+                                                            ) {
+                                                                router.patch(
+                                                                    `/booking-rooms/${booking.id}/cancel`,
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
+                                                    >
+                                                        Batalkan Peminjaman
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
@@ -357,8 +359,8 @@ export default function Index({ bookings }: Props) {
                                                                     <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
                                                                     {
                                                                         eventModeLabels[
-                                                                            booking
-                                                                                .event_mode
+                                                                        booking
+                                                                            .event_mode
                                                                         ]
                                                                     }
                                                                 </span>
@@ -399,47 +401,43 @@ export default function Index({ bookings }: Props) {
                                                     </span>
                                                 </td>
 
-                                                <td className="px-4 py-3 text-center">
-                                                    <div className="flex flex-wrap justify-center gap-1">
+                                                <td className="px-4 py-3 w-44">
+                                                    <div className="flex flex-col gap-1.5">
                                                         <Link
                                                             href={`/booking-rooms/${booking.id}`}
-                                                            className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-green-700"
+                                                            className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
                                                         >
                                                             View
                                                         </Link>
                                                         <Link
                                                             href={`/booking-rooms/${booking.id}/edit`}
-                                                            className="rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-700"
+                                                            className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
                                                         >
                                                             Edit
                                                         </Link>
                                                         <a
                                                             href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                                `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`,
+                                                                `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`
                                                             )}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="rounded-md border bg-green-100 px-2 py-1 text-xs font-medium whitespace-nowrap text-green-700"
+                                                            className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 transition hover:bg-green-200 shadow-sm"
                                                         >
-                                                            WA
+                                                            WhatsApp Admin
                                                         </a>
-                                                        <button
-                                                            className="rounded-md bg-red-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-red-700"
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                if (
-                                                                    confirm(
-                                                                        'Apakah Anda yakin ingin menghapus peminjaman ini?',
-                                                                    )
-                                                                ) {
-                                                                    router.delete(
-                                                                        `/booking-rooms/${booking.id}`,
-                                                                    );
-                                                                }
-                                                            }}
-                                                        >
-                                                            Del
-                                                        </button>
+                                                        {booking.status === 'pending' && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                                                        router.patch(`/booking-rooms/${booking.id}/cancel`);
+                                                                    }
+                                                                }}
+                                                                className="cursor-pointer w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

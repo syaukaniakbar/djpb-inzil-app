@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { Calendar, Home, MapPin, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 /* =======================
  * Interfaces (Tetap Sama)
@@ -34,6 +35,52 @@ export default function BookingRoomCreate({ rooms }: Props) {
             room_id: null,
             admin_note: '',
         });
+
+    // State for available rooms
+    const [availableRooms, setAvailableRooms] = useState<Room[]>(rooms);
+    const [loadingRooms, setLoadingRooms] = useState(false);
+
+    // Effect to fetch available rooms when start_at or end_at changes
+    useEffect(() => {
+        if (data.start_at && data.end_at) {
+            setLoadingRooms(true);
+
+            // Construct the API URL with query parameters
+            const params = new URLSearchParams({
+                start_at: data.start_at,
+                end_at: data.end_at
+            });
+
+            fetch(`/api/booking-rooms/available-rooms?${params}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        setAvailableRooms(result.rooms);
+
+                        // If the previously selected room is no longer available, reset selection
+                        if (data.room_id && !result.rooms.some((room: Room) => room.id === data.room_id)) {
+                            setData('room_id', null);
+                        }
+                    } else {
+                        console.error('API Error:', result.message);
+                        // On API error, show all rooms as fallback
+                        setAvailableRooms(rooms);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching available rooms:', error);
+                    // On network error, show all rooms as fallback
+                    setAvailableRooms(rooms);
+                })
+                .finally(() => {
+                    setLoadingRooms(false);
+                });
+        } else {
+            // If no dates selected, show all rooms
+            setAvailableRooms(rooms);
+            setData('room_id', null);
+        }
+    }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -166,11 +213,12 @@ export default function BookingRoomCreate({ rooms }: Props) {
                                             }
                                             className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.room_id ? 'border-red-500' : ''}`}
                                             required
+                                            disabled={loadingRooms}
                                         >
                                             <option value="">
-                                                Pilih Ruangan...
+                                                {loadingRooms ? 'Memuat ruangan...' : 'Pilih Ruangan...'}
                                             </option>
-                                            {rooms.map((room) => (
+                                            {availableRooms.map((room) => (
                                                 <option
                                                     key={room.id}
                                                     value={room.id}
@@ -180,6 +228,11 @@ export default function BookingRoomCreate({ rooms }: Props) {
                                                 </option>
                                             ))}
                                         </select>
+                                        {loadingRooms && (
+                                            <p className="mt-1 text-xs font-medium text-blue-500">
+                                                Memeriksa ketersediaan ruangan...
+                                            </p>
+                                        )}
                                         {errors.room_id && (
                                             <p className="mt-1 text-xs font-medium text-red-500">
                                                 {errors.room_id}
