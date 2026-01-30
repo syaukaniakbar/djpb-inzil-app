@@ -115,18 +115,6 @@ class BookingRoomController extends Controller
         }
     }
 
-    public function destroy(BookingRoom $bookingRoom)
-    {
-        // Ensure the user can only delete their own bookings
-        if ($bookingRoom->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized to delete this booking');
-        }
-
-        $bookingRoom->delete();
-
-        return redirect()->back()->with('success', 'Peminjaman ruangan berhasil dihapus.');
-    }
-
     public function cancel(BookingRoom $bookingRoom)
     {
         // Ensure the user can only cancel their own bookings

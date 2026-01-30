@@ -131,11 +131,23 @@ export default function Index({ bookings }: Props) {
                                                 <p className="text-xs text-gray-500">
                                                     {new Date(
                                                         booking.start_at,
-                                                    ).toLocaleDateString()}{' '}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}{' '}
                                                     –{' '}
                                                     {new Date(
                                                         booking.end_at,
-                                                    ).toLocaleDateString()}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </p>
                                             </div>
 
@@ -338,13 +350,25 @@ export default function Index({ bookings }: Props) {
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     {new Date(
                                                         booking.start_at,
-                                                    ).toLocaleDateString()}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
                                                     {new Date(
                                                         booking.end_at,
-                                                    ).toLocaleDateString()}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </td>
 
                                                 <td className="px-4 py-3">

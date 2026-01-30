@@ -23,7 +23,7 @@ class BookingRoomService
             $existingBooking = BookingRoom::where('room_id', $data['room_id'])
                 ->where(function ($query) use ($data) {
                     $query->where('start_at', '<', $data['end_at'])
-                          ->where('end_at', '>', $data['start_at']);
+                        ->where('end_at', '>', $data['start_at']);
                 })
                 ->whereIn('status', ['pending', 'approved', 'ongoing'])
                 ->lockForUpdate() // Lock the rows to prevent concurrent modifications
@@ -71,7 +71,7 @@ class BookingRoomService
                 ->where('id', '!=', $bookingRoom->id) // Exclude current booking
                 ->where(function ($query) use ($data) {
                     $query->where('start_at', '<', $data['end_at'])
-                          ->where('end_at', '>', $data['start_at']);
+                        ->where('end_at', '>', $data['start_at']);
                 })
                 ->whereIn('status', ['pending', 'approved', 'ongoing'])
                 ->lockForUpdate() // Lock the rows to prevent concurrent modifications
@@ -113,10 +113,10 @@ class BookingRoomService
         try {
             // Check if booking room can be canceled (not already finished, canceled, or ongoing)
             if (in_array($bookingRoom->status, ['finished', 'canceled', 'ongoing', 'used'])) {
-                throw new \Exception('Peminjaman ruangan tidak dapat dibatalkan karena sudah ' . 
-                    ($bookingRoom->status === 'finished' ? 'selesai' : 
-                     ($bookingRoom->status === 'canceled' ? 'dibatalkan' : 
-                      ($bookingRoom->status === 'ongoing' ? 'sedang berlangsung' : 'telah digunakan'))));
+                throw new \Exception('Peminjaman ruangan tidak dapat dibatalkan karena sudah ' .
+                    ($bookingRoom->status === 'finished' ? 'selesai' :
+                        ($bookingRoom->status === 'canceled' ? 'dibatalkan' :
+                            ($bookingRoom->status === 'ongoing' ? 'sedang berlangsung' : 'telah digunakan'))));
             }
 
             // Update the booking room status to canceled

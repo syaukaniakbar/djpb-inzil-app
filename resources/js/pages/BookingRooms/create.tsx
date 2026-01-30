@@ -36,50 +36,43 @@ export default function BookingRoomCreate({ rooms }: Props) {
             admin_note: '',
         });
 
-    // State for available rooms
     const [availableRooms, setAvailableRooms] = useState<Room[]>(rooms);
     const [loadingRooms, setLoadingRooms] = useState(false);
 
-    // Effect to fetch available rooms when start_at or end_at changes
     useEffect(() => {
-        if (data.start_at && data.end_at) {
-            setLoadingRooms(true);
-
-            // Construct the API URL with query parameters
-            const params = new URLSearchParams({
-                start_at: data.start_at,
-                end_at: data.end_at
-            });
-
-            fetch(`/api/booking-rooms/available-rooms?${params}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        setAvailableRooms(result.rooms);
-
-                        // If the previously selected room is no longer available, reset selection
-                        if (data.room_id && !result.rooms.some((room: Room) => room.id === data.room_id)) {
-                            setData('room_id', null);
-                        }
-                    } else {
-                        console.error('API Error:', result.message);
-                        // On API error, show all rooms as fallback
-                        setAvailableRooms(rooms);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching available rooms:', error);
-                    // On network error, show all rooms as fallback
-                    setAvailableRooms(rooms);
-                })
-                .finally(() => {
-                    setLoadingRooms(false);
-                });
-        } else {
-            // If no dates selected, show all rooms
+        if (!data.start_at || !data.end_at) {
             setAvailableRooms(rooms);
             setData('room_id', null);
+            return;
         }
+
+        setLoadingRooms(true);
+
+        const params = new URLSearchParams({
+            start_at: data.start_at,
+            end_at: data.end_at,
+        });
+
+        fetch(`/api/rooms/available-rooms?${params}`)
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    setAvailableRooms(result.rooms);
+
+                    if (
+                        data.room_id &&
+                        !result.rooms.some((r: Room) => r.id === data.room_id)
+                    ) {
+                        setData('room_id', null);
+                    }
+                } else {
+                    setAvailableRooms(rooms);
+                }
+            })
+            .catch(() => {
+                setAvailableRooms(rooms);
+            })
+            .finally(() => setLoadingRooms(false));
     }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
