@@ -52,7 +52,14 @@ class BorrowingController extends Controller
     public function create()
     {
         return inertia('Borrowings/create', [
-            'inventories' => Inventory::select('id', 'name')->get(),
+            'inventories' => Inventory::all()->map(function ($inventory) {
+                return [
+                    'id' => $inventory->id,
+                    'name' => $inventory->name,
+                    'quantity' => $inventory->quantity,
+                    'available_quantity' => $inventory->available_quantity,
+                ];
+            }),
         ]);
     }
 
@@ -141,9 +148,19 @@ class BorrowingController extends Controller
             ])
             ->findOrFail($borrowing->id);
 
+        // Get inventories with available quantity calculated excluding the current borrowing
+        $inventories = Inventory::all()->map(function ($inventory) use ($borrowing) {
+            return [
+                'id' => $inventory->id,
+                'name' => $inventory->name,
+                'quantity' => $inventory->quantity,
+                'available_quantity' => $inventory->getAvailableQuantityExcludingBorrowing($borrowing),
+            ];
+        });
+
         return inertia('Borrowings/edit', [
             'borrowing' => $borrowingData,
-            'inventories' => Inventory::select('id', 'name')->get(),
+            'inventories' => $inventories,
         ]);
     }
 
@@ -173,12 +190,41 @@ class BorrowingController extends Controller
      */
     public function cancel(Borrowing $borrowing)
     {
+        // Ensure the user can only cancel their own borrowings
+        if ($borrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to cancel this borrowing');
+        }
+
         try {
             $this->borrowingService->cancelBorrowing($borrowing);
 
             return redirect()
                 ->route('borrowings.index')
                 ->with('success', 'Peminjaman berhasil dibatalkan');
+
+        } catch (\Throwable $e) {
+            return back()->withErrors([
+                'general' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Return a borrowing by updating its status to returned
+     */
+    public function return(Borrowing $borrowing)
+    {
+        // Ensure the user can only return their own borrowings
+        if ($borrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to return this borrowing');
+        }
+
+        try {
+            $this->borrowingService->returnBorrowing($borrowing);
+
+            return redirect()
+                ->route('borrowings.index')
+                ->with('success', 'Peminjaman berhasil dikembalikan');
 
         } catch (\Throwable $e) {
             return back()->withErrors([

@@ -1,13 +1,13 @@
 export type BorrowingItem = {
-    inventory_id: number | '';
+    inventory_id: number | null;
     quantity: number;
     notes?: string;
 };
 
 export type BorrowingFormData = {
     start_at: string;
-    end_at?: string;
-    notes?: string;
+    end_at: string;
+    notes: string;
     items: BorrowingItem[];
 };
 

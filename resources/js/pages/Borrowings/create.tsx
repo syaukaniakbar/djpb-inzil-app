@@ -2,12 +2,11 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { Calendar, ClipboardList, Send } from 'lucide-react';
 
-/* =======================
- * Interfaces (Tetap Sama)
- * ======================= */
 interface Inventory {
     id: number;
     name: string;
+    quantity: number;
+    available_quantity: number;
 }
 
 interface BorrowingItem {
@@ -42,6 +41,20 @@ export default function BorrowingCreate({ inventories }: Props) {
             ],
         });
 
+    // Helper function to get available quantity for an inventory item
+    const getAvailableQuantity = (inventoryId: number | null): number => {
+        if (!inventoryId) return 0;
+        const inventory = inventories.find(inv => inv.id === inventoryId);
+        return inventory ? inventory.available_quantity : 0;
+    };
+
+    // Helper function to validate quantity against available stock
+    const validateQuantity = (inventoryId: number | null, quantity: number): boolean => {
+        if (!inventoryId || quantity <= 0) return false;
+        const available = getAvailableQuantity(inventoryId);
+        return quantity <= available;
+    };
+
     const addItem = () => {
         setData('items', [
             ...data.items,
@@ -69,6 +82,30 @@ export default function BorrowingCreate({ inventories }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Filter out items that don't have an inventory selected
+        const filledItems = data.items.filter(item => item.inventory_id !== null);
+
+        // Validate filled items before submitting
+        const invalidItems = filledItems.filter(item =>
+            item.inventory_id && !validateQuantity(item.inventory_id, item.quantity)
+        );
+
+        if (invalidItems.length > 0) {
+            alert('Jumlah barang yang diminta melebihi jumlah yang tersedia. Silakan periksa kembali.');
+            return;
+        }
+
+        // Also check if there are any items with null inventory but with quantity > 0
+        const incompleteItems = data.items.filter(item =>
+            item.inventory_id === null && (item.quantity > 0 || item.notes)
+        );
+
+        if (incompleteItems.length > 0) {
+            alert('Harap pilih barang untuk setiap item yang ingin dipinjam.');
+            return;
+        }
+
         post('/borrowings/store');
     };
 
@@ -212,22 +249,28 @@ export default function BorrowingCreate({ inventories }: Props) {
                                                     </label>
                                                     <select
                                                         value={
-                                                            item.inventory_id ??
-                                                            ''
+                                                            item.inventory_id ? item.inventory_id.toString() : ''
                                                         }
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                index,
-                                                                'inventory_id',
-                                                                e.target.value
-                                                                    ? Number(
-                                                                          e
-                                                                              .target
-                                                                              .value,
-                                                                      )
-                                                                    : null,
-                                                            )
-                                                        }
+                                                        onChange={(e) => {
+                                                            const selectedValue = e.target.value;
+                                                            const newInventoryId = selectedValue ? Number(selectedValue) : null;
+
+                                                            // Adjust quantity if it exceeds available stock for the new inventory
+                                                            let newQuantity = item.quantity;
+                                                            if (newInventoryId) {
+                                                                const available = getAvailableQuantity(newInventoryId);
+                                                                newQuantity = Math.min(item.quantity, available);
+                                                            }
+
+                                                            // Update both fields at once to avoid race condition
+                                                            const newItems = [...data.items];
+                                                            newItems[index] = {
+                                                                ...newItems[index],
+                                                                inventory_id: newInventoryId,
+                                                                quantity: newQuantity
+                                                            };
+                                                            setData('items', newItems);
+                                                        }}
                                                         className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
                                                         required
                                                     >
@@ -242,7 +285,7 @@ export default function BorrowingCreate({ inventories }: Props) {
                                                                         inv.id
                                                                     }
                                                                 >
-                                                                    {inv.name}
+                                                                    {inv.name} (Tersedia: {inv.available_quantity})
                                                                 </option>
                                                             ),
                                                         )}
@@ -253,23 +296,35 @@ export default function BorrowingCreate({ inventories }: Props) {
                                                     <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
                                                         Jumlah
                                                     </label>
-                                                    <input
-                                                        type="number"
-                                                        min={1}
-                                                        value={item.quantity}
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                index,
-                                                                'quantity',
-                                                                Number(
-                                                                    e.target
-                                                                        .value,
-                                                                ) || 1,
-                                                            )
-                                                        }
-                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
-                                                        required
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            min={1}
+                                                            max={item.inventory_id ? getAvailableQuantity(item.inventory_id) : 1}
+                                                            value={item.quantity}
+                                                            onChange={(e) => {
+                                                                const value = Math.max(1, Number(e.target.value) || 1);
+                                                                const maxAvailable = item.inventory_id ? getAvailableQuantity(item.inventory_id) : 1;
+                                                                const clampedValue = Math.min(value, maxAvailable);
+
+                                                                updateItem(
+                                                                    index,
+                                                                    'quantity',
+                                                                    clampedValue,
+                                                                );
+                                                            }}
+                                                            className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${item.inventory_id && !validateQuantity(item.inventory_id, item.quantity)
+                                                                ? 'border-red-500 ring-1 ring-red-500'
+                                                                : ''
+                                                                }`}
+                                                            required
+                                                        />
+                                                        {item.inventory_id && (
+                                                            <div className="mt-1 text-xs text-gray-500">
+                                                                Tersedia: {getAvailableQuantity(item.inventory_id)}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
 
                                                 <div className="md:col-span-4">

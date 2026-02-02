@@ -114,11 +114,23 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                 <p className="text-xs text-gray-500">
                                                     {new Date(
                                                         borrowing.start_at,
-                                                    ).toLocaleDateString()}{' '}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}{' '}
                                                     –{' '}
                                                     {new Date(
                                                         borrowing.end_at,
-                                                    ).toLocaleDateString()}
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
                                                 </p>
                                             </div>
 
@@ -161,7 +173,13 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                 {borrowing.returned_at
                                                     ? new Date(
                                                         borrowing.returned_at,
-                                                    ).toLocaleDateString()
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })
                                                     : '-'}
                                             </p>
                                         </div>
@@ -212,26 +230,27 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                 </span>
                                             </a>
 
-                                            {/* Destructive Action */}
-                                            <div className="pt-1 text-center">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                'Apakah Anda yakin ingin membatalkan peminjaman ini?',
-                                                            )
-                                                        ) {
-                                                            router.delete(
-                                                                `/borrowings/${borrowing.id}`,
-                                                            );
-                                                        }
-                                                    }}
-                                                    className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
-                                                >
-                                                    Batalkan Peminjaman
-                                                </button>
-                                            </div>
+                                            {borrowing.status === 'pending' && (
+                                                <div className="pt-1 text-center">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (
+                                                                confirm(
+                                                                    'Apakah Anda yakin ingin membatalkan peminjaman ini?',
+                                                                )
+                                                            ) {
+                                                                router.patch(
+                                                                    `/borrowings/${borrowing.id}/cancel`,
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-xs font-medium text-red-600 transition hover:text-red-700 hover:underline focus:outline-none"
+                                                    >
+                                                        Batalkan Peminjaman
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
@@ -285,18 +304,36 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                             <td className="px-4 py-3 text-sm">
                                                 {new Date(
                                                     borrowing.start_at,
-                                                ).toLocaleDateString()}
+                                                ).toLocaleString('id-ID', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {new Date(
                                                     borrowing.end_at,
-                                                ).toLocaleDateString()}
+                                                ).toLocaleString('id-ID', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
                                                 {borrowing.returned_at
                                                     ? new Date(
                                                         borrowing.returned_at,
-                                                    ).toLocaleDateString()
+                                                    ).toLocaleString('id-ID', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })
                                                     : '-'}
                                             </td>
                                             <td className="px-4 py-3 text-sm">
@@ -328,47 +365,46 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                         'Status Tidak Dikenal'}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-3 text-center">
-                                                <div className="flex justify-center gap-2">
+                                            <td className="px-4 py-3 w-44">
+                                                <div className="flex flex-col gap-1.5">
                                                     <Link
                                                         href={`/borrowings/${borrowing.id}`}
-                                                        className="rounded-md bg-green-600 px-3 py-1 text-xs font-medium text-white"
+                                                        className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
                                                     >
                                                         View
                                                     </Link>
+
                                                     <Link
                                                         href={`/borrowings/${borrowing.id}/edit`}
-                                                        className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white"
+                                                        className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
                                                     >
                                                         Edit
                                                     </Link>
+
+
                                                     <a
                                                         href={`https://wa.me/6281234567890?text=${encodeURIComponent(
-                                                            `Halo Admin, Saya ingin konfirmasi peminjaman ID: ${borrowing.id}.`,
+                                                            `Halo Admin, Saya ingin konfirmasi peminjaman ID: ${borrowing.id}.`
                                                         )}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="rounded-md border bg-green-100 px-3 py-1 text-xs font-medium text-green-700"
+                                                        className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 transition hover:bg-green-200 shadow-sm"
                                                     >
-                                                        Hubungi Admin via
-                                                        WhatsApp
+                                                        Konfirmasi WA
                                                     </a>
-                                                    <button
-                                                        className="rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white"
-                                                        onClick={() => {
-                                                            if (
-                                                                confirm(
-                                                                    'Apakah Anda yakin ingin menghapus peminjaman ini?',
-                                                                )
-                                                            ) {
-                                                                router.delete(
-                                                                    `/borrowings/${borrowing.id}`,
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        Cancel
-                                                    </button>
+
+                                                    {borrowing.status === 'pending' && (
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                                                    router.patch(`/borrowings/${borrowing.id}/cancel`);
+                                                                }
+                                                            }}
+                                                            className="w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>

@@ -9,6 +9,7 @@ import {
     User,
     XCircle,
 } from 'lucide-react';
+import { JSX } from 'react';
 
 interface Inventory {
     id: number;
@@ -33,12 +34,12 @@ interface Borrowing {
     end_at: string;
     returned_at: string | null;
     status:
-        | 'pending'
-        | 'approved'
-        | 'ongoing'
-        | 'finished'
-        | 'rejected'
-        | 'canceled';
+    | 'pending'
+    | 'approved'
+    | 'ongoing'
+    | 'finished'
+    | 'rejected'
+    | 'canceled';
     notes: string;
     user: User | null;
     borrowing_details: BorrowingDetail[];
@@ -204,8 +205,8 @@ export default function View({ borrowing }: Props) {
                                             <dd className="mt-1 text-sm text-gray-900">
                                                 {borrowing.returned_at
                                                     ? new Date(
-                                                          borrowing.returned_at,
-                                                      ).toLocaleString('id-ID')
+                                                        borrowing.returned_at,
+                                                    ).toLocaleString('id-ID')
                                                     : 'Belum dikembalikan'}
                                             </dd>
                                         </div>
@@ -250,7 +251,7 @@ export default function View({ borrowing }: Props) {
                                         </thead>
                                         <tbody className="divide-y divide-gray-100 bg-white">
                                             {borrowing.borrowing_details &&
-                                            borrowing.borrowing_details.length >
+                                                borrowing.borrowing_details.length >
                                                 0 ? (
                                                 borrowing.borrowing_details.map(
                                                     (detail) => (
@@ -303,12 +304,35 @@ export default function View({ borrowing }: Props) {
                             Kembali ke Daftar
                         </Link>
 
-                        <Link
-                            href={`/borrowings/${borrowing.id}/edit`}
-                            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        >
-                            Edit Peminjaman
-                        </Link>
+                        {borrowing.status === 'pending' && (
+                            <form
+                                onSubmit={(e) => {
+                                    if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                method="post"
+                                action={`/borrowings/${borrowing.id}/cancel`}
+                            >
+                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                                <input type="hidden" name="_method" value="PATCH" />
+                                <button
+                                    type="submit"
+                                    className="inline-flex items-center justify-center rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                                >
+                                    Batalkan Peminjaman
+                                </button>
+                            </form>
+                        )}
+
+                        {borrowing.status === 'pending' && (
+                            <Link
+                                href={`/borrowings/${borrowing.id}/edit`}
+                                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                Edit Peminjaman
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
