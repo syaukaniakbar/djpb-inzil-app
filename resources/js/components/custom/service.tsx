@@ -4,15 +4,22 @@ import {
     Car,
     Package
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import type { JSX } from 'react';
 
-export default function Service() {
+export default function Service(): JSX.Element {
     return (
-        <section className="relative overflow-hidden bg-slate-50 px-6 py-24 md:py-32">
-            {/* Soft background accent */}
+        <motion.section id="service"
+            className="relative overflow-hidden bg-slate-50 px-6 py-24 md:py-20"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+
             <div className="absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-blue-100/60 to-transparent" />
 
             <div className="mx-auto max-w-6xl">
-                {/* Header */}
                 <header className="mb-16 max-w-3xl">
                     <span className="mb-4 inline-block rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold tracking-widest text-blue-700 uppercase">
                         Layanan Digital DJPB
@@ -31,10 +38,7 @@ export default function Service() {
                         efisien, tertib, dan transparan.
                     </p>
                 </header>
-
-                {/* Cards */}
                 <div className="grid gap-8 md:grid-cols-3">
-                    {/* Ruangan */}
                     <article className="group rounded-2xl border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl">
                         <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
                             <Building2 size={26} />
@@ -51,7 +55,6 @@ export default function Service() {
                         </p>
                     </article>
 
-                    {/* Kendaraan */}
                     <article className="group rounded-2xl border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl">
                         <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
                             <Car size={26} />
@@ -67,8 +70,6 @@ export default function Service() {
                             pengelolaan jadwal penggunaan.
                         </p>
                     </article>
-
-                    {/* Aset */}
                     <article className="group rounded-2xl border border-slate-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl">
                         <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
                             <Package size={26} />
@@ -86,6 +87,6 @@ export default function Service() {
                     </article>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

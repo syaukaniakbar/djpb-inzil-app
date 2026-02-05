@@ -1,52 +1,125 @@
-import { useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { HiOutlineMenu, HiX } from 'react-icons/hi';
+import { AnimatePresence, motion } from 'framer-motion';
+import { usePage, Link } from '@inertiajs/react';
+
+const NAV_HEIGHT = 80;
+
+/* Smooth Scroll */
+const smoothScrollTo = (id: string): void => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const y =
+        el.getBoundingClientRect().top +
+        window.scrollY -
+        NAV_HEIGHT;
+
+    window.scrollTo({
+        top: y,
+        behavior: 'smooth',
+    });
+};
 
 const navLinks = [
-    { name: 'Beranda', href: '#', isButton: false },
-    { name: 'Layanan', href: '#', isButton: false },
-    { name: 'Tentang Inzil', href: '#', isButton: false },
+    { name: 'Beranda', href: '/', isButton: false },
+    { name: 'Layanan', href: '#service', isButton: false },
+    { name: 'Tentang Inzil', href: '#about', isButton: false },
     { name: 'Contact Us', href: '/contact-us', isButton: true },
 ];
 
-export default function Navbar({ links = navLinks }) {
+type NavLink = typeof navLinks[number];
+
+type NavbarProps = {
+    links?: NavLink[];
+};
+
+export default function Navbar({ links = navLinks }: NavbarProps) {
     const [open, setOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    const { url } = usePage();
+    const isHome = url === '/' || url === '';
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleClick = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        href: string
+    ): void => {
+        if (!href.startsWith('#')) return;
+
+        e.preventDefault();
+        const sectionId = href.replace('#', '');
+
+        if (isHome) {
+            smoothScrollTo(sectionId);
+        } else {
+            window.location.href = `/#${sectionId}`;
+        }
+    };
+
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (!hash) return;
+
+        const id = hash.replace('#', '');
+        setTimeout(() => smoothScrollTo(id), 120);
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = open ? 'hidden' : '';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [open]);
 
     return (
         <>
-            {/* NAVBAR */}
-            <nav className="sticky top-0 z-40 w-full bg-white">
-                <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-3 md:px-8">
-                    {/* BRANDING */}
-                    <a href="#" className="group flex items-center gap-3">
+            <nav
+                className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled
+                    ? 'bg-white/90 backdrop-blur-md shadow-sm'
+                    : 'bg-white'
+                    }`}
+            >
+                <div className="mx-auto flex max-w-screen-xl items-center justify-between px-4 py-4 md:px-8">
+                    <Link href="/" className="flex items-center gap-3">
                         <img
                             src="/images/kemenkeu-logo.png"
-                            className="h-11 w-auto transition-transform duration-300 group-hover:scale-[1.05] md:h-14"
+                            className="h-12 w-auto object-contain"
                             alt="Logo Kemenkeu"
                         />
-
-                        <div className="leading-tight">
-                            <h1 className="text-xs font-semibold tracking-wide text-neutral-900 md:text-sm">
-                                KEMENKEU RI
-                            </h1>
-                            <p className="text-[10px] leading-tight text-neutral-600 md:text-[13px]">
-                                Ditjen Perbendaharaan
-                                <br />
-                                Kanwil Prov. Kaltim
-                            </p>
+                        <div className="flex flex-col">
+                            <span className="text-xs font-bold uppercase text-gray-600">
+                                INZIL APP
+                            </span>
+                            <span className="text-xs font-extrabold uppercase text-gray-900">
+                                DITJEN PERBENDAHARAAN
+                            </span>
+                            <span className="text-xs font-semibold text-gray-600">
+                                KANWIL DJPb PROV. KALTIM
+                            </span>
                         </div>
-                    </a>
+                    </Link>
 
-                    {/* DESKTOP NAV */}
-                    <ul className="hidden items-center gap-10 text-[15px] font-medium text-neutral-700 md:flex">
+                    <ul className="hidden items-center gap-8 md:flex">
                         {links.map((item) => (
                             <li key={item.name}>
                                 <a
                                     href={item.href}
-                                    className={
-                                        item.isButton
-                                            ? 'rounded-xl bg-blue-700 px-6 py-3 text-white shadow-sm transition-all hover:bg-blue-800 hover:shadow-md'
-                                            : 'relative px-2 py-1 transition-colors hover:text-neutral-900'
+                                    onClick={(e) =>
+                                        handleClick(e, item.href)
                                     }
+                                    className={`text-sm font-medium transition ${item.isButton
+                                        ? 'rounded bg-blue-700 px-6 py-2.5 text-white shadow-lg hover:bg-blue-800'
+                                        : 'text-gray-600 hover:text-blue-700'
+                                        }`}
                                 >
                                     {item.name}
                                 </a>
@@ -54,10 +127,9 @@ export default function Navbar({ links = navLinks }) {
                         ))}
                     </ul>
 
-                    {/* MOBILE MENU BUTTON */}
                     <button
-                        className="block rounded-lg p-2 text-neutral-700 transition hover:bg-neutral-100 md:hidden"
                         onClick={() => setOpen(true)}
+                        className="rounded p-2 text-gray-600 hover:bg-gray-100 md:hidden"
                         aria-label="Open menu"
                     >
                         <HiOutlineMenu size={28} />
@@ -65,53 +137,61 @@ export default function Navbar({ links = navLinks }) {
                 </div>
             </nav>
 
-            {/* OVERLAY */}
-            {open && (
-                <div
-                    className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
-                    onClick={() => setOpen(false)}
-                ></div>
-            )}
-
-            {/* MOBILE DRAWER */}
-            <div
-                className={`fixed top-0 right-0 z-40 h-full w-72 rounded-l-2xl bg-white shadow-2xl transition-transform duration-300 md:hidden ${
-                    open ? 'translate-x-0' : 'translate-x-full'
-                }`}
-            >
-                {/* HEADER */}
-                <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-5">
-                    <span className="text-lg font-semibold text-neutral-900">
-                        Menu
-                    </span>
-
-                    <button
-                        className="rounded-lg p-2 text-neutral-700 transition hover:bg-neutral-100"
-                        aria-label="Close menu"
-                        onClick={() => setOpen(false)}
-                    >
-                        <HiX size={28} />
-                    </button>
-                </div>
-
-                {/* MOBILE LINKS */}
-                <div className="flex flex-col space-y-5 px-6 py-6 text-[16px] font-medium text-neutral-700">
-                    {links.map((item) => (
-                        <a
-                            key={item.name}
-                            href={item.href}
+            <AnimatePresence>
+                {open && (
+                    <>
+                        <motion.div
+                            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
                             onClick={() => setOpen(false)}
-                            className={
-                                item.isButton
-                                    ? 'mt-3 rounded-xl bg-blue-700 px-4 py-3 text-center text-white shadow-sm transition-all hover:bg-blue-800 hover:shadow-md'
-                                    : 'border-b border-neutral-100 pb-3 transition-colors hover:text-neutral-900'
-                            }
+                        />
+                        <motion.div
+                            className="fixed right-0 top-0 z-50 h-full w-[85%] max-w-sm bg-white shadow-2xl md:hidden"
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                         >
-                            {item.name}
-                        </a>
-                    ))}
-                </div>
-            </div>
+                            <div className="flex items-center justify-between border-b px-6 py-5">
+                                <span className="font-semibold">Menu</span>
+                                <button
+                                    onClick={() => setOpen(false)}
+                                    className="rounded-full p-2 hover:bg-gray-100"
+                                    aria-label="Close menu"
+                                >
+                                    <HiX size={28} />
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col space-y-2 p-6">
+                                {links.map((item, index) => (
+                                    <motion.a
+                                        key={item.name}
+                                        href={item.href}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{
+                                            delay: 0.1 + index * 0.05,
+                                        }}
+                                        onClick={(e) => {
+                                            handleClick(e, item.href);
+                                            setOpen(false);
+                                        }}
+                                        className={`rounded-lg px-4 py-3 text-base font-medium ${item.isButton
+                                            ? 'mt-4 bg-blue-700 text-center text-white'
+                                            : 'text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {item.name}
+                                    </motion.a>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </>
     );
 }

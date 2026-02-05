@@ -1,10 +1,17 @@
 import { ChevronRight, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import type { JSX } from 'react';
 
-export default function About() {
+export default function About(): JSX.Element {
     return (
-        <section
+        <motion.section
+            id="about"
             aria-labelledby="hero-heading"
             className="relative overflow-hidden bg-[#0b1c33] px-6 py-24 sm:py-32"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
         >
             {/* Subtle Background Accent */}
             <div className="pointer-events-none absolute inset-0 -z-10">
@@ -14,9 +21,9 @@ export default function About() {
             <div className="mx-auto max-w-5xl">
                 {/* Badge */}
                 <div className="mb-6 flex justify-start sm:justify-center">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-amber-400">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-blue-400">
                         <ShieldCheck size={14} />
-                        Tata Kelola Aset Negara
+                        Tata Kelola Aset Internal
                     </span>
                 </div>
 
@@ -40,16 +47,16 @@ export default function About() {
 
                 {/* CTA */}
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
-                    <button className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
+                    <a href="/login" className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
                         Ajukan Peminjaman
                         <ChevronRight size={18} />
-                    </button>
+                    </a>
 
-                    <button className="cursor-pointer w-full rounded-md border border-slate-600 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white sm:w-auto">
+                    <a className="cursor-pointer w-full rounded-md border border-slate-600 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white sm:w-auto">
                         Lihat Panduan Sistem
-                    </button>
+                    </a>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }
