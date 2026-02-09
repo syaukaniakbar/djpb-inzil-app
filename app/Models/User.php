@@ -77,6 +77,11 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
+
     public function vehicleBorrowings()
     {
         return $this->hasMany(VehicleBorrowing::class);

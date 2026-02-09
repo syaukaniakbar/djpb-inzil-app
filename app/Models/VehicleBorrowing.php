@@ -40,6 +40,6 @@ class VehicleBorrowing extends Model
     public function scopeActive($query)
     {
         return $query->whereNull('returned_at')
-            ->whereIn('status', ['pending', 'approved', 'ongoing']);
+            ->whereIn('status', ['approved', 'ongoing']);
     }
 }

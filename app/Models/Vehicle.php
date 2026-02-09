@@ -35,4 +35,5 @@ class Vehicle extends Model
 
         return !$overlappingBorrowing;
     }
+
 }

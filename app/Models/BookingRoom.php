@@ -35,7 +35,7 @@ class BookingRoom extends Model
     }
     public function scopeActive($query)
     {
-        return $query->whereIn('status', ['pending', 'approved', 'ongoing']);
+        return $query->whereIn('status', ['approved', 'ongoing']);
     }
 
 }
