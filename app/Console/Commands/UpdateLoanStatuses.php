@@ -49,10 +49,5 @@ class UpdateLoanStatuses extends Command
         Borrowing::where('status', 'approved')
             ->where('start_at', '<=', now())
             ->update(['status' => 'ongoing']);
-
-        // ongoing → finished jika end_at lewat
-        Borrowing::where('status', 'ongoing')
-            ->where('end_at', '<', now())
-            ->update(['status' => 'finished']);
     }
 }
