@@ -29,34 +29,24 @@ class BorrowingResource extends Resource
     protected static BackedEnum|string|null $navigationIcon =
         Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'Borrowings';
-    protected static ?string $modelLabel = 'Borrowing';
-    protected static ?string $pluralModelLabel = 'Borrowings';
-
-    protected static string | UnitEnum | null $navigationGroup = 'Peminjaman Asset';
+    protected static ?string $navigationLabel = 'Peminjaman Aset';
+    protected static ?string $pluralLabel = 'Riwayat Peminjaman Aset';
+    protected static ?string $modelLabel = 'Peminjaman Aset';
+    protected static string|UnitEnum|null $navigationGroup = 'Peminjaman';
 
     protected static ?int $navigationSort = 2;
 
-    /** ------------------------------------------------------------------
-     *  Form (Filament 4 – Schema based)
-     *  ------------------------------------------------------------------ */
     public static function form(Schema $schema): Schema
     {
         return BorrowingForm::configure($schema)
             ->columns(2);
     }
 
-    /** ------------------------------------------------------------------
-     *  Table
-     *  ------------------------------------------------------------------ */
     public static function table(Table $table): Table
     {
         return BorrowingsTable::configure($table);
     }
 
-    /** ------------------------------------------------------------------
-     *  Relations
-     *  ------------------------------------------------------------------ */
     public static function getRelations(): array
     {
         return [
@@ -64,15 +54,12 @@ class BorrowingResource extends Resource
         ];
     }
 
-    /** ------------------------------------------------------------------
-     *  Pages
-     *  ------------------------------------------------------------------ */
     public static function getPages(): array
     {
         return [
-            'index'  => ListBorrowings::route('/'),
+            'index' => ListBorrowings::route('/'),
             'create' => CreateBorrowing::route('/create'),
-            'edit'   => EditBorrowing::route('/{record}/edit'),
+            'edit' => EditBorrowing::route('/{record}/edit'),
         ];
     }
 }

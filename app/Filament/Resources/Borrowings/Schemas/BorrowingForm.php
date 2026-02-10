@@ -7,6 +7,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Hidden;
 
 class BorrowingForm
 {
@@ -34,6 +35,8 @@ class BorrowingForm
                 Textarea::make('admin_note')
                     ->label('Admin Note')
                     ->columnSpanFull(),
+                Hidden::make('status')
+                    ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
             ]);
     }
 }

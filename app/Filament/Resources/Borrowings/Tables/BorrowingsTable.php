@@ -17,45 +17,52 @@ class BorrowingsTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('User')
+                    ->label('Pengguna')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('borrowingDetails.inventory.name')
+                    ->label('Aset')
                     ->numeric()
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('start_at')
-                    ->label('Start Date')
+                    ->label('Tanggal Peminjaman')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('end_at')
-                    ->label('End Date')
+                    ->label('Tanggal Pengembalian')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('returned_at')
-                    ->label('Returned Date')
+                    ->label('Tanggal Pengembalian Aktual')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('notes')
+                    ->label('Catatan')
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('admin_note')
-                    ->label('Admin Note')
+                    ->label('Catatan Admin')
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
-                        'success' => 'approved',
+                        'success' => ['approved', 'finished'],
                         'info' => 'ongoing',
                         'danger' => 'rejected',
-                        'success' => 'finished',
                         'secondary' => 'canceled',
                     ])
-                ->sortable(),
+                    ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -73,8 +80,15 @@ class BorrowingsTable
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->label('Hapus')
+                        ->modalHeading('Hapus Data Peminjaman')
+                        ->modalDescription('Apakah Anda yakin ingin menghapus data peminjaman ini?')
+                        ->modalSubmitActionLabel('Ya, Hapus')
+                        ->modalCancelActionLabel('Batal'),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data Peminjaman')
+            ->emptyStateDescription('Klik tombol "Ajukan Peminjaman" untuk membuat data baru.');
     }
 }
