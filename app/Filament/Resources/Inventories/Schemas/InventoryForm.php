@@ -13,14 +13,18 @@ class InventoryForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nama Aset')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('serial_number')
+                    ->label('No. Seri')
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Textarea::make('description')
+                    ->label('Deskripsi')
                     ->columnSpanFull(),
                 TextInput::make('category')
+                    ->label('Kategori')
                     ->maxLength(255),
             ]);
     }

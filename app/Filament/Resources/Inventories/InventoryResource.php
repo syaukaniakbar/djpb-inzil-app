@@ -31,42 +31,30 @@ class InventoryResource extends Resource
     protected static BackedEnum|string|null $navigationIcon =
         Heroicon::OutlinedCube;
 
-    protected static ?string $navigationLabel = 'Inventories';
-    protected static ?string $modelLabel = 'Inventory';
-    protected static ?string $pluralModelLabel = 'Inventories';
+    protected static ?string $navigationLabel = 'Inventaris Persediaan';
+    protected static ?string $pluralLabel = 'Riwayat Inventaris Persediaan';
+    protected static ?string $modelLabel = 'Inventaris Persediaan';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Aset';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Peminjaman Asset';
 
     protected static ?int $navigationSort = 1;
 
-    /** ------------------------------------------------------------------
-     *  Form (Filament 4 – Schema based)
-     *  ------------------------------------------------------------------ */
     public static function form(Schema $schema): Schema
     {
         return InventoryForm::configure($schema)
             ->columns(2);
     }
 
-    /** ------------------------------------------------------------------
-     *  Infolist (Filament 4)
-     *  ------------------------------------------------------------------ */
     public static function infolist(Schema $schema): Schema
     {
         return InventoryInfolist::configure($schema);
     }
 
-    /** ------------------------------------------------------------------
-     *  Table
-     *  ------------------------------------------------------------------ */
     public static function table(Table $table): Table
     {
         return InventoriesTable::configure($table);
     }
 
-    /** ------------------------------------------------------------------
-     *  Relations
-     *  ------------------------------------------------------------------ */
     public static function getRelations(): array
     {
         return [
@@ -74,16 +62,13 @@ class InventoryResource extends Resource
         ];
     }
 
-    /** ------------------------------------------------------------------
-     *  Pages
-     *  ------------------------------------------------------------------ */
     public static function getPages(): array
     {
         return [
-            'index'  => ListInventories::route('/'),
+            'index' => ListInventories::route('/'),
             'create' => CreateInventory::route('/create'),
-            'view'   => ViewInventory::route('/{record}'),
-            'edit'   => EditInventory::route('/{record}/edit'),
+            'view' => ViewInventory::route('/{record}'),
+            'edit' => EditInventory::route('/{record}/edit'),
         ];
     }
 }
