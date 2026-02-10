@@ -12,32 +12,32 @@ class BookingRoomInfolist
         return $schema
             ->components([
                 TextEntry::make('user.name')
-                ->label('Pengguna')
+                    ->label('Pengguna')
                     ->numeric(),
-                    
+
                 TextEntry::make('room.name')
-                ->label('Ruangan')
+                    ->label('Ruangan')
                     ->numeric(),
                 TextEntry::make('start_at')
-                ->label('Tanggal Peminjaman')
+                    ->label('Tanggal Peminjaman')
                     ->dateTime(),
                 TextEntry::make('end_at')
-                ->label('Tanggal Pengembalian')
+                    ->label('Tanggal Pengembalian')
                     ->dateTime(),
                 TextEntry::make('event_mode')
-                ->badge()
-                ->label('Jenis Acara'),
+                    ->badge()
+                    ->label('Jenis Acara'),
                 TextEntry::make('event_name')
-                ->label('Nama Acara'),
+                    ->label('Nama Acara'),
                 TextEntry::make('status')
-                ->label('Status')
+                    ->label('Status')
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
+                        'success' => ['approved', 'finished'],
                         'info' => 'ongoing',
-                        'primary' => 'used',
-                        'success' => 'finished',
-                        'danger' => 'canceled',
+                        'danger' => 'rejected',
+                        'secondary' => 'canceled',
                     ]),
                 TextEntry::make('admin_note')
                     ->label('Admin Note'),

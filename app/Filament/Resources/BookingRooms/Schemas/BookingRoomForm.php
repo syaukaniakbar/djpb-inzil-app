@@ -29,40 +29,52 @@ class BookingRoomForm
                 DateTimePicker::make('start_at')
                     ->label('Tanggal Peminjaman')
                     ->required()
-                    ->live() // Make it live to trigger room availability check
-                    ->disabled(fn() => auth()->user()->role !== 'admin'), // Only admin can change dates
+                    ->live()
+                    ->disabled(fn() => auth()->user()->role !== 'admin'),
 
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian')
                     ->required()
-                    ->live() // Make it live to trigger room availability check
-                    ->disabled(fn() => auth()->user()->role !== 'admin'), // Only admin can change dates
+                    ->live()
+                    ->disabled(fn() => auth()->user()->role !== 'admin'),
 
                 Select::make('room_id')
                     ->label('Pilih Ruangan')
-                    ->options(function (Get $get) {
+                    ->required()
+                    ->options(function ($get) {
                         $startAt = $get('start_at');
                         $endAt = $get('end_at');
+                        $roomId = $get('room_id');
 
                         if (!$startAt || !$endAt) {
-                            return [];
+                            return Room::where('id', $roomId)
+                                ->pluck('name', 'id')
+                                ->toArray();
                         }
 
-                        return Room::all()
-                            ->filter(
-                                fn($room) =>
-                                $room->isAvailableForRange($startAt, $endAt)
-                            )
+                        return Room::query()
+                            ->where(function ($query) use ($startAt, $endAt, $roomId) {
+                                $query
+                                    ->whereDoesntHave('bookingRooms', function ($q) use ($startAt, $endAt) {
+                                        $q->whereIn('status', ['pending', 'approved', 'ongoing'])
+                                            ->where('start_at', '<', $endAt)
+                                            ->where('end_at', '>', $startAt);
+                                    })
+                                    ->orWhere('id', $roomId);
+                            })
                             ->pluck('name', 'id')
                             ->toArray();
-                    }),
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->live(),
 
                 Select::make('event_mode')
                     ->label('Jenis Acara')
                     ->options([
-                        'Offline' => 'Offline',
-                        'Online' => 'Online',
-                        'Hybrid' => 'Hybrid',
+                        'offline' => 'Offline',
+                        'online' => 'Online',
+                        'hybrid' => 'Hybrid',
                     ])
                     ->required(),
 
@@ -72,10 +84,11 @@ class BookingRoomForm
 
                 Textarea::make('admin_note')
                     ->label('Catatan Admin')
+                    ->placeholder('Opsional')
                     ->columnSpanFull(),
 
                 Hidden::make('status')
-                    ->default('pending'),
+                    ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
             ]);
     }
 }

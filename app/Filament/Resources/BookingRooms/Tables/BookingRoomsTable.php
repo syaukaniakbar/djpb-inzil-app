@@ -45,8 +45,9 @@ class BookingRoomsTable
 
                 TextColumn::make('event_mode')
                     ->label('Jenis Acara')
-                    ->formatStateUsing(fn ($state) =>
-                        match($state) {
+                    ->formatStateUsing(
+                        fn($state) =>
+                        match ($state) {
                             'meeting' => 'Meeting',
                             'presentation' => 'Presentasi',
                             'training' => 'Training',
@@ -66,22 +67,19 @@ class BookingRoomsTable
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('status')
-                ->badge()
-                ->colors([
-                    'warning' => 'pending',
-                    'success' => 'approved',
-                    'info' => 'ongoing',
-                    'danger' => 'rejected',
-                    'success' => 'finished',
-                    'secondary' => 'canceled',
-                ])
-                ->sortable(),
-
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'success' => ['approved', 'finished'],
+                        'info' => 'ongoing',
+                        'danger' => 'rejected',
+                        'secondary' => 'canceled',
+                    ])
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -91,10 +89,11 @@ class BookingRoomsTable
                 SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
+                        'approved' => 'Approved',
                         'ongoing' => 'Ongoing',
-                        'used' => 'Used',
                         'finished' => 'Finished',
                         'canceled' => 'Canceled',
+                        'rejected' => 'Rejected',
                     ]),
 
                 SelectFilter::make('event_mode')
@@ -115,7 +114,12 @@ class BookingRoomsTable
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->label('Hapus')
+                        ->modalHeading('Hapus Data Peminjaman')
+                        ->modalDescription('Apakah Anda yakin ingin menghapus data peminjaman ruangan ini?')
+                        ->modalSubmitActionLabel('Ya, Hapus')
+                        ->modalCancelActionLabel('Batal'),
                 ]),
             ])
             ->emptyStateHeading('Tidak Ada Data Peminjaman Ruangan')
