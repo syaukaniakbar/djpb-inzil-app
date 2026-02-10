@@ -1,70 +1,27 @@
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import type { PageProps as InertiaPageProps } from '@inertiajs/core';
-import type { ReactNode } from 'react';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import formatDateTime from '@/utils/date';
+
 import {
-    AlertCircle,
     Box,
     Car,
-    CheckCircle,
-    Clock,
     DoorOpen,
     History,
     PackageCheck,
     CalendarCheck,
-    XCircle
 } from 'lucide-react';
 
-
-const statusConfig: Record<
-    string,
-    { label: string; className: string; icon: ReactNode }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <AlertCircle className="h-3 w-3" />,
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
-        icon: <CheckCircle className="h-3 w-3" />,
-    },
-    ongoing: {
-        label: 'Sedang Dipinjam',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <Clock className="h-3 w-3" />,
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700 border-green-200',
-        icon: <CheckCircle className="h-3 w-3" />,
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700 border-red-200',
-        icon: <XCircle className="h-3 w-3" />,
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600 border-slate-200',
-        icon: <XCircle className="h-3 w-3" />,
-    },
-    used: {
-        label: 'Telah Digunakan',
-        className: 'bg-purple-100 text-purple-700 border-purple-200',
-        icon: <CheckCircle className="h-3 w-3" />,
-    },
-};
 
 interface Borrowing {
     id: number;
     user: { name: string };
     borrowing_details?: { inventory: { name: string } }[];
     created_at: string;
-    status: string;
+    status: LoanStatus;
 }
 
 interface VehicleBorrowing {
@@ -72,7 +29,7 @@ interface VehicleBorrowing {
     user: { name: string };
     vehicle: { name: string };
     created_at: string;
-    status: string;
+    status: LoanStatus;
 }
 
 interface BookingRoom {
@@ -80,7 +37,7 @@ interface BookingRoom {
     user: { name: string };
     room: { name: string };
     created_at: string;
-    status: string;
+    status: LoanStatus;
 }
 
 interface Stats {
@@ -146,37 +103,11 @@ const EmptyState = ({ label }: { label: string }) => (
     </div>
 );
 
-const StatusBadge = ({ status }: { status: string }) => {
-    const config = statusConfig[status];
-    if (!config) {
-        return (
-            <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">
-                <AlertCircle className="h-3 w-3" />
-                Status Tidak Dikenal
-            </span>
-        );
-    }
-
-    return (
-        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${config.className}`}>
-            {config.icon}
-            {config.label}
-        </span>
-    );
-};
 
 export default function Dashboard() {
     const { stats, recentBorrowings, recentVehicleBorrowings, recentBookingRooms, userBorrowings, userVehicleBorrowings, userBookingRooms } = usePage<PageProps>().props;
 
     const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: dashboard().url }];
-
-    const formatDate = (date: string) => new Date(date).toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'short', year: 'numeric'
-    });
-
-    const formatDateTime = (date: string) => new Date(date).toLocaleString('id-ID', {
-        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

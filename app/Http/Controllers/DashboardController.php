@@ -15,7 +15,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Data statistik umum (kecuali jumlah pengguna terdaftar)
+
         $stats = [
             'activeBorrowings' => Borrowing::active()->count(),
             'activeVehicleBorrowings' => VehicleBorrowing::active()->count(),
@@ -25,7 +25,6 @@ class DashboardController extends Controller
             'totalRooms' => Room::count(),
         ];
 
-        // Data aktivitas terbaru
         $recentBorrowings = Borrowing::with(['user', 'borrowingDetails.inventory'])
             ->latest()
             ->limit(5)
@@ -41,7 +40,6 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Data berdasarkan pengguna yang login
         $userBorrowings = $request->user() ?
             Borrowing::where('user_id', $request->user()->id)
                 ->with(['borrowingDetails.inventory'])
