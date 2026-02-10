@@ -1,5 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
+import Pagination from '@/components/custom/pagination';
+import { PaginatedResponse } from '@/types/pagination';
+import formatDateTime from '@/utils/date';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 
 interface Room {
     id: number;
@@ -18,70 +22,20 @@ interface BookingRoom {
     end_at: string;
     event_mode: string;
     event_name: string;
-    status: string;
+    status: LoanStatus;
     admin_note: string | null;
     user: User;
     room: Room;
 }
 
-const statusBadge: Record<
-    BookingRoom['status'],
-    { label: string; className: string }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700',
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700',
-    },
-    ongoing: {
-        label: 'Sedang Berlangsung',
-        className: 'bg-yellow-100 text-yellow-700',
-    },
-    used: {
-        label: 'Telah Digunakan',
-        className: 'bg-purple-100 text-purple-700',
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700',
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700',
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600',
-    },
-};
-
 const eventModeLabels: Record<string, string> = {
-    meeting: 'Meeting',
-    presentation: 'Presentasi',
-    training: 'Training',
-    interview: 'Interview',
-    other: 'Lainnya',
+    online: 'Online',
+    offline: 'Offline',
+    hybrid: 'Hybrid',
 };
-
-interface Pagination<T> {
-    data: T[];
-    links?: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
-    meta?: {
-        current_page: number;
-        last_page: number;
-        total: number;
-    };
-}
 
 interface Props {
-    bookings: Pagination<BookingRoom>;
+    bookings: PaginatedResponse<BookingRoom>;
 }
 
 export default function Index({ bookings }: Props) {
@@ -112,7 +66,7 @@ export default function Index({ bookings }: Props) {
                         </Link>
                     </div>
 
-                    <div className="overflow-hidden rounded-xl bg-white shadow">
+                    <div className="overflow-hidden rounded-xl">
                         {/* Mobile Card View */}
                         <div className="md:hidden">
                             {data.length > 0 ? (
@@ -129,36 +83,15 @@ export default function Index({ bookings }: Props) {
                                                     {booking.id}
                                                 </p>
                                                 <p className="text-xs text-gray-500">
-                                                    {new Date(
-                                                        booking.start_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}{' '}
+                                                    {formatDateTime(booking.start_at)}
+                                                    {' '}
                                                     –{' '}
-                                                    {new Date(
-                                                        booking.end_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(booking.end_at)}
                                                 </p>
                                             </div>
 
-                                            <span
-                                                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[booking.status]?.className || 'bg-gray-100 text-gray-700'}`}
-                                            >
-                                                <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {statusBadge[booking.status]
-                                                    ?.label ||
-                                                    'Status Tidak Dikenal'}
-                                            </span>
+                                            <StatusBadge status={booking.status} />
+
                                         </div>
 
                                         {/* Room */}
@@ -225,42 +158,42 @@ export default function Index({ bookings }: Props) {
                                         )}
 
                                         {/* Actions */}
-                                        <div className="mt-5 space-y-4 border-t border-gray-100 pt-5">
-                                            {/* Primary & Secondary Actions */}
-                                            <div className="flex gap-3">
-                                                <Link
-                                                    href={`/booking-rooms/${booking.id}`}
-                                                    className="flex-[2] rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-                                                >
-                                                    Lihat Detail
-                                                </Link>
-
-                                                <Link
-                                                    href={`/booking-rooms/${booking.id}/edit`}
-                                                    className="flex-1 rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
-                                                >
-                                                    Edit
-                                                </Link>
-                                            </div>
-
-                                            {/* WhatsApp Contact */}
-                                            <a
-                                                href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                    `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`,
-                                                )}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none"
+                                        <div className="space-y-2">
+                                            {/* Primary Action: selalu ada */}
+                                            <Link
+                                                href={`/booking-rooms/${booking.id}`}
+                                                className="block rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                                             >
-                                                <span>Hubungi Admin</span>
-                                                <span className="text-xs font-normal text-green-600">
-                                                    via WhatsApp
-                                                </span>
-                                            </a>
+                                                Lihat Detail
+                                            </Link>
 
-                                            {/* Destructive Action */}
+                                            {/* Action khusus status pending */}
                                             {booking.status === 'pending' && (
-                                                <div className="pt-1 text-center">
+                                                <>
+                                                    {/* Secondary: Edit */}
+                                                    <Link
+                                                        href={`/booking-rooms/${booking.id}/edit`}
+                                                        className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
+                                                    >
+                                                        Edit
+                                                    </Link>
+
+                                                    {/* WhatsApp */}
+                                                    <a
+                                                        href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                            `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
+                                                        )}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none"
+                                                    >
+                                                        <span>Konfirmasi Admin</span>
+                                                        <span className="text-xs font-normal text-green-600">
+                                                            via WhatsApp
+                                                        </span>
+                                                    </a>
+
+                                                    {/* Cancel */}
                                                     <button
                                                         type="button"
                                                         onClick={() => {
@@ -274,11 +207,11 @@ export default function Index({ bookings }: Props) {
                                                                 );
                                                             }
                                                         }}
-                                                        className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
+                                                        className="cursor-pointer w-full rounded-xl py-3 text-center text-sm font-medium text-red-600"
                                                     >
                                                         Batalkan Peminjaman
                                                     </button>
-                                                </div>
+                                                </>
                                             )}
                                         </div>
                                     </div>
@@ -348,27 +281,11 @@ export default function Index({ bookings }: Props) {
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {new Date(
-                                                        booking.start_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(booking.start_at)}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-700">
-                                                    {new Date(
-                                                        booking.end_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(booking.end_at)}
                                                 </td>
 
                                                 <td className="px-4 py-3">
@@ -413,54 +330,61 @@ export default function Index({ bookings }: Props) {
                                                 </td>
 
                                                 <td className="px-4 py-3">
-                                                    <span
-                                                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[booking.status].className}`}
-                                                    >
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                        {
-                                                            statusBadge[
-                                                                booking.status
-                                                            ].label
-                                                        }
-                                                    </span>
+                                                    <StatusBadge status={booking.status} />
                                                 </td>
 
                                                 <td className="px-4 py-3 w-44">
                                                     <div className="flex flex-col gap-1.5">
+                                                        {/* View - selalu ada */}
                                                         <Link
                                                             href={`/booking-rooms/${booking.id}`}
                                                             className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
                                                         >
                                                             View
                                                         </Link>
-                                                        <Link
-                                                            href={`/booking-rooms/${booking.id}/edit`}
-                                                            className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <a
-                                                            href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                                `Halo Admin, saya ingin konfirmasi peminjaman ruangan dengan ID: ${booking.id}.`
-                                                            )}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 transition hover:bg-green-200 shadow-sm"
-                                                        >
-                                                            WhatsApp Admin
-                                                        </a>
+
+                                                        {/* Action khusus status pending */}
                                                         {booking.status === 'pending' && (
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.preventDefault();
-                                                                    if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
-                                                                        router.patch(`/booking-rooms/${booking.id}/cancel`);
-                                                                    }
-                                                                }}
-                                                                className="cursor-pointer w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
-                                                            >
-                                                                Cancel
-                                                            </button>
+                                                            <>
+                                                                {/* Edit */}
+                                                                <Link
+                                                                    href={`/booking-rooms/${booking.id}/edit`}
+                                                                    className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
+                                                                >
+                                                                    Edit
+                                                                </Link>
+
+                                                                {/* Konfirmasi Admin via WhatsApp */}
+                                                                <a
+                                                                    href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                                        `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
+                                                                    )}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 transition hover:bg-green-200 shadow-sm"
+                                                                >
+                                                                    Konfirmasi Admin
+                                                                </a>
+                                                                {/* Cancel */}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        if (
+                                                                            confirm(
+                                                                                'Apakah Anda yakin ingin membatalkan peminjaman ini?',
+                                                                            )
+                                                                        ) {
+                                                                            router.patch(
+                                                                                `/booking-rooms/${booking.id}/cancel`,
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                    className="cursor-pointer w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                                >
+                                                                    Batalkan
+                                                                </button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </td>
@@ -480,72 +404,10 @@ export default function Index({ bookings }: Props) {
                                 </tbody>
                             </table>
                         </div>
-
-                        {/* Pagination Controls */}
-                        {bookings?.links && bookings.links.length > 2 && (
-                            <div className="mt-4 flex flex-col items-center border-t border-gray-100 px-4 py-3">
-                                <div className="flex flex-wrap items-center justify-center gap-1">
-                                    {bookings.links.map((link, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => {
-                                                if (link.url && !link.active) {
-                                                    // Parse the URL to extract query parameters
-                                                    const url = new URL(
-                                                        link.url,
-                                                    );
-                                                    const params: Record<string, string> = {};
-                                                    for (const [
-                                                        key,
-                                                        value,
-                                                    ] of url.searchParams.entries()) {
-                                                        params[key] = value;
-                                                    }
-
-                                                    // Use Inertia router to navigate to the page while preserving other query parameters
-                                                    router.get(
-                                                        window.location
-                                                            .pathname,
-                                                        params,
-                                                        {
-                                                            preserveState: true,
-                                                            preserveScroll: true,
-                                                            replace: true,
-                                                        },
-                                                    );
-                                                }
-                                            }}
-                                            disabled={!link.url || link.active}
-                                            className={`rounded px-3 py-2 text-sm ${link.active
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                } ${!link.url || link.active
-                                                    ? 'cursor-not-allowed opacity-50'
-                                                    : 'cursor-pointer'
-                                                }`}
-                                            dangerouslySetInnerHTML={{
-                                                __html: link.label,
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-
-                                {bookings.meta && (
-                                    <div className="mt-3 text-sm text-gray-600">
-                                        Showing{' '}
-                                        {(bookings.meta.current_page - 1) *
-                                            10 +
-                                            1}
-                                        -
-                                        {Math.min(
-                                            bookings.meta.current_page * 10,
-                                            bookings.meta.total,
-                                        )}{' '}
-                                        of {bookings.meta.total} records
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <Pagination
+                            links={bookings?.links}
+                            meta={bookings?.meta}
+                        />
                     </div>
                 </div>
             </div>

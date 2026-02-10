@@ -10,6 +10,7 @@ import {
     User,
     XCircle,
 } from 'lucide-react';
+import { JSX } from 'react';
 
 interface Room {
     id: number;
@@ -178,6 +179,7 @@ export default function View({ booking }: Props) {
                                                 Tanggal Selesai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
+
                                                 {new Date(
                                                     booking.end_at,
                                                 ).toLocaleString('id-ID')}
