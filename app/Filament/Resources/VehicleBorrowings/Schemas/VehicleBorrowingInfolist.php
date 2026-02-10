@@ -13,7 +13,7 @@ class VehicleBorrowingInfolist
             ->components([
                 TextEntry::make('user.name')
                     ->label('Pengguna')
-                    ->url(fn ($record) => route('filament.admin.resources.users.edit', ['record' => $record->user->id]))
+                    ->url(fn($record) => route('filament.admin.resources.users.edit', ['record' => $record->user->id]))
                     ->openUrlInNewTab(),
 
                 TextEntry::make('vehicle.name')
@@ -29,14 +29,14 @@ class VehicleBorrowingInfolist
                 TextEntry::make('end_at')
                     ->dateTime()
                     ->label('Tanggal Pengembalian'),
-            
+
                 TextEntry::make('returned_at')
                     ->dateTime()
                     ->label('Tanggal Pengembalian Aktual'),
 
                 TextEntry::make('purpose')
                     ->label('Jenis Perjalanan')
-                    ->formatStateUsing(fn ($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
+                    ->formatStateUsing(fn($state) => $state === 'dalam_kota' ? 'Dalam Kota' : 'Luar Kota')
                     ->badge(),
 
                 TextEntry::make('destination')
@@ -49,10 +49,9 @@ class VehicleBorrowingInfolist
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
-                        'success' => 'approved',
+                        'success' => ['approved', 'finished'],
                         'info' => 'ongoing',
                         'danger' => 'rejected',
-                        'primary' => 'finished',
                         'secondary' => 'canceled',
                     ]),
 

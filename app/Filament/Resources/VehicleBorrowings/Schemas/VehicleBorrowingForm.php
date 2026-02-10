@@ -30,6 +30,7 @@ class VehicleBorrowingForm
                     ->required()
                     ->live()
                     ->disabled(fn() => auth()->user()->role !== 'admin'),
+
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian')
                     ->required()
@@ -39,21 +40,37 @@ class VehicleBorrowingForm
                 Select::make('vehicle_id')
                     ->label('Pilih Kendaraan')
                     ->required()
-                    ->options(function (Get $get) {
+                    ->options(function ($get) {
                         $startAt = $get('start_at');
                         $endAt = $get('end_at');
+                        $vehicleId = $get('vehicle_id');
 
                         if (!$startAt || !$endAt) {
-                            return [];
+                            return Vehicle::where('id', $vehicleId)
+                                ->pluck('name', 'id')
+                                ->toArray();
                         }
-                        return Vehicle::all()
-                            ->filter(
-                                fn($vehicle) =>
-                                $vehicle->isAvailableForRange($startAt, $endAt)
-                            )
+
+                        return Vehicle::query()
+                            ->where(function ($query) use ($startAt, $endAt, $vehicleId) {
+                                $query
+                                    ->whereDoesntHave('vehicleBorrowings', function ($q) use ($startAt, $endAt) {
+                                        $q->whereIn('status', [
+                                            'pending',
+                                            'approved',
+                                            'ongoing',
+                                        ])
+                                            ->where('start_at', '<', $endAt)
+                                            ->where('end_at', '>', $startAt);
+                                    })
+                                    ->orWhere('id', $vehicleId);
+                            })
                             ->pluck('name', 'id')
                             ->toArray();
-                    }),
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->live(),
 
                 Select::make('purpose')
                     ->label('Jenis Perjalanan')
@@ -69,11 +86,12 @@ class VehicleBorrowingForm
 
                 Textarea::make('admin_note')
                     ->label('Admin Note')
+                    ->placeholder('Opsional')
                     ->columnSpanFull(),
 
-                // Admin-specific fields
                 Hidden::make('status')
-                    ->default('pending'),
+                    ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
+
 
 
             ]);
