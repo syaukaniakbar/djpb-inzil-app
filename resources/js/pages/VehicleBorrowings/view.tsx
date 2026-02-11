@@ -1,14 +1,13 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
+import formatDateTime from '@/utils/date';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+
 import {
-    AlertCircle,
     Car,
-    CheckCircle,
-    Clock,
     Info,
     MapPin,
     User,
-    XCircle,
 } from 'lucide-react';
 
 interface Vehicle {
@@ -35,47 +34,11 @@ interface VehicleBorrowing {
     returned_at: string | null;
     purpose: string;
     destination: string;
-    status: string;
+    status: LoanStatus;
     admin_note: string | null;
     user: User;
     vehicle: Vehicle;
 }
-
-const statusConfig: Record<
-    VehicleBorrowing['status'],
-    { label: string; className: string; icon: JSX.Element }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <AlertCircle className="h-4 w-4" />,
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    ongoing: {
-        label: 'Sedang Dipinjam',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <Clock className="h-4 w-4" />,
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700 border-green-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700 border-red-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600 border-slate-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-};
 
 interface Props {
     borrowing: VehicleBorrowing;
@@ -123,21 +86,15 @@ export default function View({ borrowing }: Props) {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium ${statusConfig[borrowing.status].className}`}
-                                >
-                                    {statusConfig[borrowing.status].icon}
-                                    <span>
-                                        {statusConfig[borrowing.status].label}
-                                    </span>
-                                </span>
+                                <StatusBadge
+                                    status={borrowing.status}
+                                />
                             </div>
                         </div>
                     </div>
 
                     {/* Main Content Cards */}
                     <div className="space-y-6">
-                        {/* Borrowing Information Card */}
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                             <div className="border-b border-gray-100 bg-gray-50/50 px-6 py-4">
                                 <h2 className="flex items-center font-semibold text-gray-800">
@@ -162,9 +119,7 @@ export default function View({ borrowing }: Props) {
                                                 Tanggal Mulai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
-                                                {new Date(
-                                                    borrowing.start_at,
-                                                ).toLocaleString('id-ID')}
+                                                {formatDateTime(borrowing.start_at)}
                                             </dd>
                                         </div>
 
@@ -173,9 +128,7 @@ export default function View({ borrowing }: Props) {
                                                 Tanggal Selesai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
-                                                {new Date(
-                                                    borrowing.end_at,
-                                                ).toLocaleString('id-ID')}
+                                                {formatDateTime(borrowing.end_at)}
                                             </dd>
                                         </div>
                                     </div>
@@ -197,9 +150,7 @@ export default function View({ borrowing }: Props) {
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
                                                 {borrowing.returned_at
-                                                    ? new Date(
-                                                          borrowing.returned_at,
-                                                      ).toLocaleString('id-ID')
+                                                    ? formatDateTime(borrowing.returned_at)
                                                     : 'Belum dikembalikan'}
                                             </dd>
                                         </div>
@@ -218,7 +169,6 @@ export default function View({ borrowing }: Props) {
                             </div>
                         </div>
 
-                        {/* Vehicle Information Card */}
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                             <div className="border-b border-gray-100 bg-gray-50/50 px-6 py-4">
                                 <h2 className="flex items-center font-semibold text-gray-800">
@@ -292,7 +242,6 @@ export default function View({ borrowing }: Props) {
                             </div>
                         </div>
 
-                        {/* Trip Information Card */}
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                             <div className="border-b border-gray-100 bg-gray-50/50 px-6 py-4">
                                 <h2 className="flex items-center font-semibold text-gray-800">
@@ -320,7 +269,7 @@ export default function View({ borrowing }: Props) {
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
                                                 {borrowing.purpose ===
-                                                'dalam_kota'
+                                                    'dalam_kota'
                                                     ? 'Dalam Kota'
                                                     : 'Luar Kota'}
                                             </dd>

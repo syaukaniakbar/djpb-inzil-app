@@ -48,7 +48,6 @@ export default function Index({ borrowings }: Props) {
 
             <div className="py-10">
                 <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-2xl font-semibold text-gray-800">
@@ -93,7 +92,6 @@ export default function Index({ borrowings }: Props) {
                                             <StatusBadge status={borrowing.status} />
                                         </div>
 
-                                        {/* Vehicle */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Kendaraan
@@ -106,7 +104,6 @@ export default function Index({ borrowings }: Props) {
                                             </p>
                                         </div>
 
-                                        {/* Purpose */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Jenis Perjalanan
@@ -127,7 +124,6 @@ export default function Index({ borrowings }: Props) {
                                             </div>
                                         </div>
 
-                                        {/* Destination */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Tujuan Perjalanan
@@ -137,7 +133,6 @@ export default function Index({ borrowings }: Props) {
                                             </p>
                                         </div>
 
-                                        {/* Returned At */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Tanggal Pengembalian Aktual
@@ -149,7 +144,6 @@ export default function Index({ borrowings }: Props) {
                                             </p>
                                         </div>
 
-                                        {/* Admin Note */}
                                         {borrowing.admin_note && (
                                             <div>
                                                 <p className="text-xs font-medium text-gray-500">
@@ -163,7 +157,7 @@ export default function Index({ borrowings }: Props) {
 
                                         {/* Actions */}
                                         <div className="mt-5 space-y-2 border-t border-gray-100 pt-5">
-                                            {/* Primary Action: selalu ada */}
+                                            {/* Detail - selalu ada */}
                                             <Link
                                                 href={`/vehicle-borrowings/${borrowing.id}`}
                                                 className="block rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"

@@ -3,9 +3,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { Calendar, Car, ChevronLeft, MapPin, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-/* =======================
- * Interfaces (Tetap Sama)
- * ======================= */
 interface Vehicle {
     id: number;
     name: string;
@@ -34,16 +31,13 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
             vehicle_id: null,
         });
 
-    // State for available vehicles
     const [availableVehicles, setAvailableVehicles] = useState<Vehicle[]>(vehicles);
     const [loadingVehicles, setLoadingVehicles] = useState(false);
 
-    // Effect to fetch available vehicles when start_at or end_at changes
     useEffect(() => {
         if (data.start_at && data.end_at) {
             setLoadingVehicles(true);
 
-            // Construct the API URL with query parameters
             const params = new URLSearchParams({
                 start_at: data.start_at,
                 end_at: data.end_at
@@ -55,26 +49,22 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                     if (result.success) {
                         setAvailableVehicles(result.vehicles);
 
-                        // If the previously selected vehicle is no longer available, reset selection
                         if (data.vehicle_id && !result.vehicles.some((vehicle: Vehicle) => vehicle.id === data.vehicle_id)) {
                             setData('vehicle_id', null);
                         }
                     } else {
                         console.error('API Error:', result.message);
-                        // On API error, show all vehicles as fallback
                         setAvailableVehicles(vehicles);
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching available vehicles:', error);
-                    // On network error, show all vehicles as fallback
                     setAvailableVehicles(vehicles);
                 })
                 .finally(() => {
                     setLoadingVehicles(false);
                 });
         } else {
-            // If no dates selected, show all vehicles
             setAvailableVehicles(vehicles);
             setData('vehicle_id', null);
         }
@@ -91,7 +81,7 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
 
             <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
                 <div className="mx-auto max-w-4xl">
-                    {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
+
                     <a
                         href="/vehicle-borrowings"
                         className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
@@ -101,7 +91,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                     </a>
 
                     <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl">
-                        {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
                                 Form Peminjaman Kendaraan
@@ -117,7 +106,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                             className="p-5 sm:p-8 md:p-10"
                         >
                             <div className="space-y-8 md:space-y-12">
-                                {/* Section 1: Waktu */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Calendar className="mr-3 h-5 w-5 text-blue-600" />
@@ -174,7 +162,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 2: Kendaraan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Car className="mr-3 h-5 w-5 text-blue-600" />
@@ -225,7 +212,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 3: Detail Perjalanan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <MapPin className="mr-3 h-5 w-5 text-blue-600" />
@@ -283,7 +269,6 @@ export default function VehicleBorrowingCreate({ vehicles }: Props) {
                                 </section>
                             </div>
 
-                            {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
                                 <a
                                     href="/vehicle-borrowings"

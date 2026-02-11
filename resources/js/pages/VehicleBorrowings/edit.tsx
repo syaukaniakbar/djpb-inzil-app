@@ -40,10 +40,6 @@ interface Props {
     vehicles: Vehicle[];
 }
 
-/* =======================
- * Helper Functions
- * ======================= */
-
 // Helper function to format datetime for datetime-local input
 const formatDateTimeLocal = (dateTimeString: string | null): string => {
     if (!dateTimeString) return '';
@@ -58,10 +54,6 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
-
-/* =======================
- * Component
- * ======================= */
 
 export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
     const { data, setData, put, processing, errors } =
@@ -84,7 +76,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
 
             <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
                 <div className="mx-auto max-w-4xl">
-                    {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
                     <a
                         href="/vehicle-borrowings"
                         className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
@@ -94,7 +85,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
                     </a>
 
                     <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl">
-                        {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
                                 Edit Form Peminjaman Kendaraan
@@ -109,7 +99,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
                             className="p-5 sm:p-8 md:p-10"
                         >
                             <div className="space-y-8 md:space-y-12">
-                                {/* Section 1: Waktu */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Calendar className="mr-3 h-5 w-5 text-blue-600" />
@@ -165,7 +154,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 2: Kendaraan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Car className="mr-3 h-5 w-5 text-blue-600" />
@@ -207,7 +195,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 3: Detail Perjalanan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <MapPin className="mr-3 h-5 w-5 text-blue-600" />
@@ -265,7 +252,6 @@ export default function VehicleBorrowingEdit({ borrowing, vehicles }: Props) {
                                 </section>
                             </div>
 
-                            {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
                                 <a
                                     href="/vehicle-borrowings"
