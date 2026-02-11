@@ -115,18 +115,6 @@ class VehicleBorrowingController extends Controller
         }
     }
 
-    public function destroy(VehicleBorrowing $vehicleBorrowing)
-    {
-        // Ensure the user can only delete their own borrowings
-        if ($vehicleBorrowing->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized to delete this borrowing');
-        }
-
-        $vehicleBorrowing->delete();
-
-        return redirect()->back()->with('success', 'Peminjaman kendaraan berhasil dihapus.');
-    }
-
     public function cancel(VehicleBorrowing $vehicleBorrowing)
     {
         // Ensure the user can only cancel their own borrowings
