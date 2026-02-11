@@ -46,7 +46,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
 
             <div className="py-10">
                 <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-2xl font-semibold text-gray-800">
@@ -66,6 +65,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                     </div>
 
                     <div className="overflow-hidden rounded-xl bg-white">
+                        {/* Mobile Card View */}
                         <div className="md:hidden">
                             {data.length > 0 ? (
                                 data?.map((borrowing) => (
@@ -73,7 +73,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                         key={borrowing.id}
                                         className="mb-4 space-y-4 rounded-xl border border-gray-100 bg-white p-4"
                                     >
-                                        {/* Header */}
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-gray-800">
@@ -90,7 +89,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                             <StatusBadge status={borrowing.status} />
                                         </div>
 
-                                        {/* Items */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Barang
@@ -110,7 +108,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                             </ul>
                                         </div>
 
-                                        {/* Return */}
                                         <div>
                                             <p className="text-xs text-gray-500">
                                                 Pengembalian Aktual
@@ -123,7 +120,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
 
                                         </div>
 
-                                        {/* Admin Note */}
                                         {borrowing.admin_note && (
                                             <div>
                                                 <p className="text-xs text-gray-500">
@@ -137,7 +133,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
 
                                         {/* Actions */}
                                         <div className="mt-5 space-y-2 border-t border-gray-100 pt-5">
-                                            {/* Primary Action: selalu ada */}
+                                            {/* Detail - selalu ada */}
                                             <Link
                                                 href={`/borrowings/${borrowing.id}`}
                                                 className="block rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
@@ -148,15 +144,12 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                             {/* Action khusus status pending */}
                                             {borrowing.status === 'pending' && (
                                                 <>
-                                                    {/* Edit */}
                                                     <Link
                                                         href={`/borrowings/${borrowing.id}/edit`}
                                                         className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
                                                     >
                                                         Ubah
                                                     </Link>
-
-                                                    {/* WhatsApp */}
                                                     <a
                                                         href={`https://wa.me/62895704149841?text=${encodeURIComponent(
                                                             `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
@@ -170,8 +163,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                             via WhatsApp
                                                         </span>
                                                     </a>
-
-                                                    {/* Cancel */}
                                                     <button
                                                         type="button"
                                                         onClick={() => {
@@ -192,7 +183,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                 </>
                                             )}
 
-                                            {/* Return Item — hanya saat ongoing */}
+                                            {/* Action khusus status ongoing */}
                                             {borrowing.status === 'ongoing' && !borrowing.returned_at && (
                                                 <button
                                                     type="button"
@@ -294,9 +285,11 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                             <td className="px-4 py-3">
                                                 <StatusBadge status={borrowing.status} />
                                             </td>
+
+                                            {/* Actions */}
                                             <td className="px-4 py-3 w-44">
                                                 <div className="flex flex-col gap-1.5">
-                                                    {/* View — primary */}
+                                                    {/* Detail - selalu ada */}
                                                     <Link
                                                         href={`/borrowings/${borrowing.id}`}
                                                         className="cursor-pointer w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700 shadow-sm"
@@ -307,15 +300,12 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                     {/* Action khusus status pending */}
                                                     {borrowing.status === 'pending' && (
                                                         <>
-                                                            {/* Edit — secondary */}
                                                             <Link
                                                                 href={`/borrowings/${borrowing.id}/edit`}
                                                                 className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
                                                             >
                                                                 Ubah
                                                             </Link>
-
-                                                            {/* WhatsApp — communication */}
                                                             <a
                                                                 href={`https://wa.me/62895704149841?text=${encodeURIComponent(
                                                                     `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
@@ -326,8 +316,6 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                             >
                                                                 WhatsApp Admin
                                                             </a>
-
-                                                            {/* Cancel — destructive (subtle) */}
                                                             <button
                                                                 type="button"
                                                                 onClick={() => {
@@ -342,7 +330,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                         </>
                                                     )}
 
-                                                    {/* Return Item — primary contextual */}
+                                                    {/* Action khusus status ongoing */}
                                                     {borrowing.status === 'ongoing' && !borrowing.returned_at && (
                                                         <button
                                                             type="button"

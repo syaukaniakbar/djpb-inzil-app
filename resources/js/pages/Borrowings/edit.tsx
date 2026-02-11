@@ -28,13 +28,7 @@ interface Props {
         start_at: string;
         end_at: string | null;
         returned_at: string | null;
-        status:
-        | 'pending'
-        | 'approved'
-        | 'ongoing'
-        | 'finished'
-        | 'rejected'
-        | 'canceled';
+        status: string;
         notes: string;
         user: User;
         borrowing_details: BorrowingDetail[] | null;
@@ -42,16 +36,12 @@ interface Props {
     inventories: Inventory[];
 }
 
-/* =======================
- * Helper Functions
- * ======================= */
 
 // Helper function to format datetime for datetime-local input
 const formatDateTimeLocal = (dateTimeString: string | null): string => {
     if (!dateTimeString) return '';
 
     const date = new Date(dateTimeString);
-    // Convert to local timezone and format as YYYY-MM-DDTHH:mm
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -60,10 +50,6 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
-
-/* =======================
- * Component
- * ======================= */
 
 export default function BorrowingEdit({ borrowing, inventories }: Props) {
     const { data, setData, put, processing, errors } =
@@ -345,8 +331,8 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                                 );
                                                             }}
                                                             className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${item.inventory_id && !validateQuantity(item.inventory_id, item.quantity)
-                                                                    ? 'border-red-500 ring-1 ring-red-500'
-                                                                    : ''
+                                                                ? 'border-red-500 ring-1 ring-red-500'
+                                                                : ''
                                                                 }`}
                                                             required
                                                         />

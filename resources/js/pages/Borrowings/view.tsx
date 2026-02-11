@@ -1,5 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
+import formatDateTime from '@/utils/date';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 import {
     AlertCircle,
     CheckCircle,
@@ -33,53 +35,11 @@ interface Borrowing {
     start_at: string;
     end_at: string;
     returned_at: string | null;
-    status:
-    | 'pending'
-    | 'approved'
-    | 'ongoing'
-    | 'finished'
-    | 'rejected'
-    | 'canceled';
+    status: LoanStatus;
     notes: string;
     user: User | null;
     borrowing_details: BorrowingDetail[];
 }
-
-const statusConfig: Record<
-    Borrowing['status'],
-    { label: string; className: string; icon: JSX.Element }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <AlertCircle className="h-4 w-4" />,
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    ongoing: {
-        label: 'Sedang Dipinjam',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <Clock className="h-4 w-4" />,
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700 border-green-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700 border-red-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600 border-slate-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-};
 
 interface Props {
     borrowing: Borrowing;
@@ -126,17 +86,7 @@ export default function View({ borrowing }: Props) {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium ${statusConfig[borrowing.status]?.className || 'border-gray-200 bg-gray-100 text-gray-700'}`}
-                                >
-                                    {statusConfig[borrowing.status]?.icon || (
-                                        <Info className="h-4 w-4" />
-                                    )}
-                                    <span>
-                                        {statusConfig[borrowing.status]
-                                            ?.label || 'Status Tidak Dikenal'}
-                                    </span>
-                                </span>
+                                <StatusBadge status={borrowing.status} />
                             </div>
                         </div>
                     </div>
@@ -168,9 +118,7 @@ export default function View({ borrowing }: Props) {
                                                 Tanggal Mulai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
-                                                {new Date(
-                                                    borrowing.start_at,
-                                                ).toLocaleString('id-ID')}
+                                                {formatDateTime(borrowing.start_at)}
                                             </dd>
                                         </div>
 
@@ -179,9 +127,7 @@ export default function View({ borrowing }: Props) {
                                                 Tanggal Selesai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
-                                                {new Date(
-                                                    borrowing.end_at,
-                                                ).toLocaleString('id-ID')}
+                                                {formatDateTime(borrowing.end_at)}
                                             </dd>
                                         </div>
                                     </div>
@@ -204,9 +150,7 @@ export default function View({ borrowing }: Props) {
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
                                                 {borrowing.returned_at
-                                                    ? new Date(
-                                                        borrowing.returned_at,
-                                                    ).toLocaleString('id-ID')
+                                                    ? formatDateTime(borrowing.returned_at)
                                                     : 'Belum dikembalikan'}
                                             </dd>
                                         </div>
