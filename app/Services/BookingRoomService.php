@@ -111,24 +111,32 @@ class BookingRoomService
         DB::beginTransaction();
 
         try {
-            // Check if booking room can be canceled (not already finished, canceled, or ongoing)
-            if (in_array($bookingRoom->status, ['finished', 'canceled', 'ongoing', 'used'])) {
-                throw new \Exception('Peminjaman ruangan tidak dapat dibatalkan karena sudah ' .
-                    ($bookingRoom->status === 'finished' ? 'selesai' :
-                        ($bookingRoom->status === 'canceled' ? 'dibatalkan' :
-                            ($bookingRoom->status === 'ongoing' ? 'sedang berlangsung' : 'telah digunakan'))));
+            // Status yang TIDAK boleh dibatalkan
+            $notCancelableStatuses = [
+                'approved',
+                'ongoing',
+                'finished',
+                'canceled',
+                'rejected',
+            ];
+
+            if (in_array($bookingRoom->status, $notCancelableStatuses)) {
+                throw new \Exception(
+                    'Peminjaman ruangan tidak dapat dibatalkan karena status saat ini: ' .
+                    strtoupper($bookingRoom->status)
+                );
             }
 
-            // Update the booking room status to canceled
+            // Hanya pending & approved yang bisa sampai sini
             $bookingRoom->update([
                 'status' => 'canceled',
             ]);
 
             DB::commit();
-
             return true;
-        } catch (\Exception $e) {
-            DB::rollback();
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
             throw $e;
         }
     }
