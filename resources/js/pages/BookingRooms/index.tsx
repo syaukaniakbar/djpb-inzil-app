@@ -47,7 +47,6 @@ export default function Index({ bookings }: Props) {
 
             <div className="py-10">
                 <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-2xl font-semibold text-gray-800">
@@ -75,7 +74,6 @@ export default function Index({ bookings }: Props) {
                                         key={booking.id}
                                         className="mb-4 space-y-4 rounded-xl border border-gray-100 bg-white p-4"
                                     >
-                                        {/* Header */}
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-gray-800">
@@ -93,8 +91,6 @@ export default function Index({ bookings }: Props) {
                                             <StatusBadge status={booking.status} />
 
                                         </div>
-
-                                        {/* Room */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Ruangan
@@ -107,8 +103,6 @@ export default function Index({ bookings }: Props) {
                                                 {booking.room.capacity} orang
                                             </p>
                                         </div>
-
-                                        {/* Event Mode */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Jenis Acara
@@ -134,8 +128,6 @@ export default function Index({ bookings }: Props) {
                                                 )}
                                             </div>
                                         </div>
-
-                                        {/* Event Name */}
                                         <div>
                                             <p className="text-xs font-medium text-gray-500">
                                                 Nama Acara
@@ -144,8 +136,6 @@ export default function Index({ bookings }: Props) {
                                                 {booking.event_name}
                                             </p>
                                         </div>
-
-                                        {/* Admin Note */}
                                         {booking.admin_note && (
                                             <div>
                                                 <p className="text-xs font-medium text-gray-500">
@@ -159,7 +149,7 @@ export default function Index({ bookings }: Props) {
 
                                         {/* Actions */}
                                         <div className="space-y-2">
-                                            {/* Primary Action: selalu ada */}
+                                            {/* Detail - selalu ada */}
                                             <Link
                                                 href={`/booking-rooms/${booking.id}`}
                                                 className="block cursor-pointer rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
@@ -170,15 +160,12 @@ export default function Index({ bookings }: Props) {
                                             {/* Action khusus status pending */}
                                             {booking.status === 'pending' && (
                                                 <>
-                                                    {/* Secondary: Edit */}
                                                     <Link
                                                         href={`/booking-rooms/${booking.id}/edit`}
                                                         className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
                                                     >
                                                         Ubah
                                                     </Link>
-
-                                                    {/* WhatsApp */}
                                                     <a
                                                         href={`https://wa.me/62895704149841?text=${encodeURIComponent(
                                                             `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
@@ -193,7 +180,6 @@ export default function Index({ bookings }: Props) {
                                                         </span>
                                                     </a>
 
-                                                    {/* Cancel */}
                                                     <button
                                                         type="button"
                                                         onClick={() => {
@@ -290,7 +276,6 @@ export default function Index({ bookings }: Props) {
 
                                                 <td className="px-4 py-3">
                                                     <div className="flex flex-col gap-1">
-                                                        {/* Badge Label */}
                                                         <div>
                                                             {eventModeLabels[
                                                                 booking
@@ -333,9 +318,10 @@ export default function Index({ bookings }: Props) {
                                                     <StatusBadge status={booking.status} />
                                                 </td>
 
+                                                {/* Actions */}
                                                 <td className="px-4 py-3 w-44">
                                                     <div className="flex flex-col gap-1.5">
-                                                        {/* View - selalu ada */}
+                                                        {/* Detail - selalu ada */}
                                                         <Link
                                                             href={`/booking-rooms/${booking.id}`}
                                                             className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
@@ -346,15 +332,12 @@ export default function Index({ bookings }: Props) {
                                                         {/* Action khusus status pending */}
                                                         {booking.status === 'pending' && (
                                                             <>
-                                                                {/* Edit */}
                                                                 <Link
                                                                     href={`/booking-rooms/${booking.id}/edit`}
                                                                     className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
                                                                 >
                                                                     Ubah
                                                                 </Link>
-
-                                                                {/* Konfirmasi Admin via WhatsApp */}
                                                                 <a
                                                                     href={`https://wa.me/62895704149841?text=${encodeURIComponent(
                                                                         `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
@@ -365,7 +348,6 @@ export default function Index({ bookings }: Props) {
                                                                 >
                                                                     WhatsApp Admin
                                                                 </a>
-                                                                {/* Cancel */}
                                                                 <button
                                                                     type="button"
                                                                     onClick={(e) => {

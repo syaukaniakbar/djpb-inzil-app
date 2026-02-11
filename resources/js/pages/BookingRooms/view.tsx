@@ -1,16 +1,13 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import {
-    AlertCircle,
-    CheckCircle,
-    Clock,
     Home,
     Info,
     MapPin,
     User,
-    XCircle,
 } from 'lucide-react';
-import { JSX } from 'react';
+import formatDateTime from '@/utils/date';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 
 interface Room {
     id: number;
@@ -29,52 +26,11 @@ interface BookingRoom {
     end_at: string;
     event_mode: string;
     event_name: string;
-    status: string;
+    status: LoanStatus;
     admin_note: string | null;
     user: User;
     room: Room;
 }
-
-const statusConfig: Record<
-    BookingRoom['status'],
-    { label: string; className: string; icon: JSX.Element }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <AlertCircle className="h-4 w-4" />,
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    ongoing: {
-        label: 'Sedang Berlangsung',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        icon: <Clock className="h-4 w-4" />,
-    },
-    used: {
-        label: 'Telah Digunakan',
-        className: 'bg-purple-100 text-purple-700 border-purple-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700 border-green-200',
-        icon: <CheckCircle className="h-4 w-4" />,
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700 border-red-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600 border-slate-200',
-        icon: <XCircle className="h-4 w-4" />,
-    },
-};
 
 const eventModeLabels: Record<string, string> = {
     meeting: 'Meeting',
@@ -129,14 +85,7 @@ export default function View({ booking }: Props) {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium ${statusConfig[booking.status].className}`}
-                                >
-                                    {statusConfig[booking.status].icon}
-                                    <span>
-                                        {statusConfig[booking.status].label}
-                                    </span>
-                                </span>
+                                <StatusBadge status={booking.status} />
                             </div>
                         </div>
                     </div>
@@ -168,9 +117,9 @@ export default function View({ booking }: Props) {
                                                 Tanggal Mulai
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
-                                                {new Date(
+                                                {formatDateTime(
                                                     booking.start_at,
-                                                ).toLocaleString('id-ID')}
+                                                )}
                                             </dd>
                                         </div>
 
@@ -180,9 +129,9 @@ export default function View({ booking }: Props) {
                                             </dt>
                                             <dd className="mt-1 text-sm text-gray-900">
 
-                                                {new Date(
+                                                {formatDateTime(
                                                     booking.end_at,
-                                                ).toLocaleString('id-ID')}
+                                                )}
                                             </dd>
                                         </div>
                                     </div>

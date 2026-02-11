@@ -1,10 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Calendar, MapPin, Send, Home } from 'lucide-react';
 
-/* =======================
- * Interfaces (Tetap Sama)
- * ======================= */
 interface Room {
     id: number;
     name: string;
@@ -40,16 +37,11 @@ interface Props {
     rooms: Room[];
 }
 
-/* =======================
- * Helper Functions
- * ======================= */
-
 // Helper function to format datetime for datetime-local input
 const formatDateTimeLocal = (dateTimeString: string | null): string => {
     if (!dateTimeString) return '';
 
     const date = new Date(dateTimeString);
-    // Convert to local timezone and format as YYYY-MM-DDTHH:mm
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -58,10 +50,6 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
-
-/* =======================
- * Component
- * ======================= */
 
 export default function BookingRoomEdit({ booking, rooms }: Props) {
     const { data, setData, put, processing, errors } =
@@ -85,7 +73,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
 
             <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
                 <div className="mx-auto max-w-4xl">
-                    {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
                     <a
                         href="/booking-rooms"
                         className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
@@ -97,7 +84,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                     </a>
 
                     <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl">
-                        {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
                                 Edit Form Peminjaman Ruangan
@@ -112,7 +98,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                             className="p-5 sm:p-8 md:p-10"
                         >
                             <div className="space-y-8 md:space-y-12">
-                                {/* Section 1: Waktu */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Calendar className="mr-3 h-5 w-5 text-blue-600" />
@@ -168,7 +153,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 2: Ruangan */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <Home className="mr-3 h-5 w-5 text-blue-600" />
@@ -210,7 +194,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                     </div>
                                 </section>
 
-                                {/* Section 3: Detail Acara */}
                                 <section>
                                     <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
                                         <MapPin className="mr-3 h-5 w-5 text-blue-600" />
@@ -237,20 +220,14 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                                 <option value="">
                                                     Pilih Jenis Acara
                                                 </option>
-                                                <option value="meeting">
-                                                    📋 Meeting
+                                                <option value="offline">
+                                                    Offline
                                                 </option>
-                                                <option value="presentation">
-                                                    📊 Presentasi
+                                                <option value="online">
+                                                    Online
                                                 </option>
-                                                <option value="training">
-                                                    🎓 Training
-                                                </option>
-                                                <option value="interview">
-                                                    👥 Interview
-                                                </option>
-                                                <option value="other">
-                                                    📝 Lainnya
+                                                <option value="hybrid">
+                                                    Hybrid
                                                 </option>
                                             </select>
                                         </div>
@@ -275,7 +252,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                         </div>
                                     </div>
 
-                                    {/* Section 4: Catatan Admin */}
                                     <div className="mt-6 space-y-2">
                                         <label className="text-sm font-semibold text-gray-700">
                                             Catatan Admin (Opsional)
@@ -296,7 +272,6 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                 </section>
                             </div>
 
-                            {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
                                 <a
                                     href="/booking-rooms"
@@ -304,6 +279,17 @@ export default function BookingRoomEdit({ booking, rooms }: Props) {
                                 >
                                     Batalkan Pengajuan
                                 </a>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (confirm('Apakah Anda yakin ingin menghapus peminjaman ruangan ini?')) {
+                                            router.delete(`/booking-rooms/${booking.id}`);
+                                        }
+                                    }}
+                                    className="order-3 flex h-12 items-center justify-center rounded-xl bg-red-600 px-6 font-bold text-white shadow-lg shadow-red-200 transition-all hover:bg-red-700 hover:shadow-red-300 active:scale-[0.98] md:order-3"
+                                >
+                                    Hapus
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
