@@ -57,7 +57,7 @@ export const StatusBadge = ({
             className={`inline-flex items-center gap-2 rounded font-medium ${sizeClass} ${badge.className}`}
         >
             <span
-                className="h-2 w-2 rounded-full bg-current opacity-70"
+                className="h-1 w-1 rounded-full bg-current opacity-70"
                 aria-hidden
             />
             {badge.label}
