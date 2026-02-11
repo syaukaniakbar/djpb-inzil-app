@@ -1,5 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
+import Pagination from '@/components/custom/pagination';
+import { PaginatedResponse } from '@/types/pagination';
+import formatDateTime from '@/utils/date';
+import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 
 interface Vehicle {
     id: number;
@@ -25,58 +29,14 @@ interface VehicleBorrowing {
     returned_at: string | null;
     purpose: string;
     destination: string;
-    status: string;
+    status: LoanStatus;
     admin_note: string | null;
     user: User;
     vehicle: Vehicle;
 }
 
-const statusBadge: Record<
-    VehicleBorrowing['status'],
-    { label: string; className: string }
-> = {
-    pending: {
-        label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700',
-    },
-    approved: {
-        label: 'Disetujui',
-        className: 'bg-blue-100 text-blue-700',
-    },
-    ongoing: {
-        label: 'Sedang Dipinjam',
-        className: 'bg-yellow-100 text-yellow-700',
-    },
-    finished: {
-        label: 'Selesai',
-        className: 'bg-green-100 text-green-700',
-    },
-    rejected: {
-        label: 'Ditolak',
-        className: 'bg-red-100 text-red-700',
-    },
-    canceled: {
-        label: 'Dibatalkan',
-        className: 'bg-slate-100 text-slate-600',
-    },
-};
-
-interface Pagination<T> {
-    data: T[];
-    links?: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
-    meta?: {
-        current_page: number;
-        last_page: number;
-        total: number;
-    };
-}
-
 interface Props {
-    borrowings: Pagination<VehicleBorrowing>;
+    borrowings: PaginatedResponse<VehicleBorrowing>;
 }
 
 export default function Index({ borrowings }: Props) {
@@ -108,7 +68,7 @@ export default function Index({ borrowings }: Props) {
                         </Link>
                     </div>
 
-                    <div className="overflow-hidden rounded-xl bg-white shadow">
+                    <div className="overflow-hidden rounded-xl bg-white">
                         {/* Mobile Card View */}
                         <div className="md:hidden">
                             {data.length > 0 ? (
@@ -124,36 +84,13 @@ export default function Index({ borrowings }: Props) {
                                                     Peminjaman Kendaraan #{borrowing.id}
                                                 </p>
                                                 <p className="text-xs text-gray-500">
-                                                    {new Date(
-                                                        borrowing.start_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}{' '}
+                                                    {formatDateTime(borrowing.start_at)}
+                                                    {' '}
                                                     –{' '}
-                                                    {new Date(
-                                                        borrowing.end_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(borrowing.end_at)}
                                                 </p>
                                             </div>
-
-                                            <span
-                                                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${statusBadge[borrowing.status]?.className || 'bg-gray-100 text-gray-700'}`}
-                                            >
-                                                <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                {statusBadge[borrowing.status]
-                                                    ?.label ||
-                                                    'Status Tidak Dikenal'}
-                                            </span>
+                                            <StatusBadge status={borrowing.status} />
                                         </div>
 
                                         {/* Vehicle */}
@@ -177,13 +114,13 @@ export default function Index({ borrowings }: Props) {
                                             <div className="mt-1">
                                                 {borrowing.purpose ===
                                                     'dalam_kota' ? (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                                                        <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
+                                                    <span className="inline-flex items-center gap-1.5 rounded border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                                                        <span className="h-1.5 w-1.5 rounded bg-emerald-500"></span>
                                                         Dalam Kota
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
-                                                        <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
+                                                    <span className="inline-flex items-center gap-1.5 rounded border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                                                        <span className="h-1.5 w-1.5 rounded bg-indigo-500"></span>
                                                         Luar Kota
                                                     </span>
                                                 )}
@@ -207,15 +144,7 @@ export default function Index({ borrowings }: Props) {
                                             </p>
                                             <p className="text-sm text-gray-700">
                                                 {borrowing.returned_at
-                                                    ? new Date(
-                                                        borrowing.returned_at,
-                                                    ).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })
+                                                    ? formatDateTime(borrowing.returned_at)
                                                     : '-'}
                                             </p>
                                         </div>
@@ -233,42 +162,42 @@ export default function Index({ borrowings }: Props) {
                                         )}
 
                                         {/* Actions */}
-                                        <div className="mt-5 space-y-4 border-t border-gray-100 pt-5">
-                                            {/* Primary & Secondary Actions */}
-                                            <div className="flex gap-3">
-                                                <Link
-                                                    href={`/vehicle-borrowings/${borrowing.id}`}
-                                                    className="flex-[2] rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-                                                >
-                                                    Lihat Detail
-                                                </Link>
-
-                                                <Link
-                                                    href={`/vehicle-borrowings/${borrowing.id}/edit`}
-                                                    className="flex-1 rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
-                                                >
-                                                    Edit
-                                                </Link>
-                                            </div>
-
-                                            {/* WhatsApp Contact */}
-                                            <a
-                                                href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                    `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`,
-                                                )}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none"
+                                        <div className="mt-5 space-y-2 border-t border-gray-100 pt-5">
+                                            {/* Primary Action: selalu ada */}
+                                            <Link
+                                                href={`/vehicle-borrowings/${borrowing.id}`}
+                                                className="block rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
                                             >
-                                                <span>Hubungi Admin</span>
-                                                <span className="text-xs font-normal text-green-600">
-                                                    via WhatsApp
-                                                </span>
-                                            </a>
+                                                Detail
+                                            </Link>
 
-                                            {/* Destructive Action */}
+                                            {/* Action khusus status pending */}
                                             {borrowing.status === 'pending' && (
-                                                <div className="pt-1 text-center">
+                                                <>
+                                                    {/* Edit */}
+                                                    <Link
+                                                        href={`/vehicle-borrowings/${borrowing.id}/edit`}
+                                                        className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
+                                                    >
+                                                        Ubah
+                                                    </Link>
+
+                                                    {/* WhatsApp */}
+                                                    <a
+                                                        href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                            `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nKendaraan: ${borrowing.vehicle.name}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
+                                                        )}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none"
+                                                    >
+                                                        <span>Hubungi Admin</span>
+                                                        <span className="text-xs font-normal text-green-600">
+                                                            via WhatsApp
+                                                        </span>
+                                                    </a>
+
+                                                    {/* Cancel */}
                                                     <button
                                                         type="button"
                                                         onClick={() => {
@@ -282,11 +211,32 @@ export default function Index({ borrowings }: Props) {
                                                                 );
                                                             }
                                                         }}
-                                                        className="text-xs font-medium text-red-400 transition hover:text-red-600 hover:underline focus:outline-none"
+                                                        className="cursor-pointer w-full rounded-xl py-3 text-center text-sm font-medium text-red-600"
                                                     >
-                                                        Batalkan Peminjaman
+                                                        Batalkan
                                                     </button>
-                                                </div>
+                                                </>
+                                            )}
+
+                                            {/* Return Vehicle — hanya saat ongoing */}
+                                            {borrowing.status === 'ongoing' && !borrowing.returned_at && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (
+                                                            confirm(
+                                                                'Apakah Anda yakin kendaraan sudah dikembalikan?',
+                                                            )
+                                                        ) {
+                                                            router.patch(
+                                                                `/vehicle-borrowings/${borrowing.id}/return`,
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="cursor-pointer w-full rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                                                >
+                                                    Kembalikan
+                                                </button>
                                             )}
                                         </div>
                                     </div>
@@ -357,34 +307,16 @@ export default function Index({ borrowings }: Props) {
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-600">
-                                                    {new Date(borrowing.start_at).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(borrowing.start_at)}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-600">
-                                                    {new Date(borrowing.end_at).toLocaleString('id-ID', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {formatDateTime(borrowing.end_at)}
                                                 </td>
 
                                                 <td className="px-4 py-3 text-sm text-gray-600">
                                                     {borrowing.returned_at
-                                                        ? new Date(borrowing.returned_at).toLocaleString('id-ID', {
-                                                            day: 'numeric',
-                                                            month: 'short',
-                                                            year: 'numeric',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        })
+                                                        ? formatDateTime(borrowing.returned_at)
                                                         : '-'}
                                                 </td>
 
@@ -411,59 +343,74 @@ export default function Index({ borrowings }: Props) {
                                                 </td>
 
                                                 <td className="px-4 py-3">
-                                                    <span
-                                                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadge[borrowing.status].className}`}
-                                                    >
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                                        {statusBadge[borrowing.status].label}
-                                                    </span>
+                                                    <StatusBadge status={borrowing.status} />
                                                 </td>
                                                 <td className="px-4 py-3 w-44">
                                                     <div className="flex flex-col gap-1.5">
-                                                        {/* Tombol View - Mengikuti bg-green-600 */}
+                                                        {/* View — primary */}
                                                         <Link
                                                             href={`/vehicle-borrowings/${borrowing.id}`}
-                                                            className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
+                                                            className="cursor-pointer w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700 shadow-sm"
                                                         >
-                                                            View
+                                                            Detail
                                                         </Link>
 
-                                                        {/* Tombol Edit - Mengikuti bg-blue-600 */}
-                                                        <Link
-                                                            href={`/vehicle-borrowings/${borrowing.id}/edit`}
-                                                            className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
-                                                        >
-                                                            Edit
-                                                        </Link>
-
-                                                        {/* Tombol WhatsApp - Mengikuti bg-green-100 & text-green-700 */}
-                                                        <a
-                                                            href={`https://wa.me/62895704149841?text=${encodeURIComponent(
-                                                                `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`
-                                                            )}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-200 shadow-sm"
-                                                        >
-                                                            WhatsApp Admin
-                                                        </a>
-
-                                                        {/* Tombol Cancel - Mengikuti bg-red-600 */}
+                                                        {/* Action khusus status pending */}
                                                         {borrowing.status === 'pending' && (
+                                                            <>
+                                                                {/* Edit — secondary */}
+                                                                <Link
+                                                                    href={`/vehicle-borrowings/${borrowing.id}/edit`}
+                                                                    className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                                                                >
+                                                                    Ubah
+                                                                </Link>
+
+                                                                {/* WhatsApp — communication */}
+                                                                <a
+                                                                    href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                                        `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`
+                                                                    )}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="cursor-pointer w-full text-center rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100"
+                                                                >
+                                                                    WhatsApp Admin
+                                                                </a>
+
+                                                                {/* Cancel — destructive (subtle) */}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                                                            router.patch(`/vehicle-borrowings/${borrowing.id}/cancel`);
+                                                                        }
+                                                                    }}
+                                                                    className="cursor-pointer w-full text-center text-xs font-medium text-red-600 hover:underline"
+                                                                >
+                                                                    Batalkan
+                                                                </button>
+                                                            </>
+                                                        )}
+
+                                                        {/* Return Vehicle — primary contextual */}
+                                                        {borrowing.status === 'ongoing' && !borrowing.returned_at && (
                                                             <button
-                                                                onClick={(e) => {
-                                                                    e.preventDefault();
-                                                                    if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
-                                                                        router.patch(`/vehicle-borrowings/${borrowing.id}/cancel`);
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    if (confirm('Apakah Anda yakin kendaraan sudah dikembalikan?')) {
+                                                                        router.patch(`/vehicle-borrowings/${borrowing.id}/return`);
                                                                     }
                                                                 }}
-                                                                className="w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                                className="cursor-pointer w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 shadow-sm"
                                                             >
-                                                                Cancel
+                                                                Kembalikan
                                                             </button>
                                                         )}
                                                     </div>
+
                                                 </td>
+
                                             </tr>
                                         ))
                                     ) : (
@@ -480,72 +427,10 @@ export default function Index({ borrowings }: Props) {
                                 </tbody>
                             </table>
                         </div>
-
-                        {/* Pagination Controls */}
-                        {borrowings?.links && borrowings.links.length > 2 && (
-                            <div className="mt-4 flex flex-col items-center border-t border-gray-100 px-4 py-3">
-                                <div className="flex flex-wrap items-center justify-center gap-1">
-                                    {borrowings.links.map((link, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => {
-                                                if (link.url && !link.active) {
-                                                    // Parse the URL to extract query parameters
-                                                    const url = new URL(
-                                                        link.url,
-                                                    );
-                                                    const params: Record<string, string> = {};
-                                                    for (const [
-                                                        key,
-                                                        value,
-                                                    ] of url.searchParams.entries()) {
-                                                        params[key] = value;
-                                                    }
-
-                                                    // Use Inertia router to navigate to the page while preserving other query parameters
-                                                    router.get(
-                                                        window.location
-                                                            .pathname,
-                                                        params,
-                                                        {
-                                                            preserveState: true,
-                                                            preserveScroll: true,
-                                                            replace: true,
-                                                        },
-                                                    );
-                                                }
-                                            }}
-                                            disabled={!link.url || link.active}
-                                            className={`rounded px-3 py-2 text-sm ${link.active
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                } ${!link.url || link.active
-                                                    ? 'cursor-not-allowed opacity-50'
-                                                    : 'cursor-pointer'
-                                                }`}
-                                            dangerouslySetInnerHTML={{
-                                                __html: link.label,
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-
-                                {borrowings.meta && (
-                                    <div className="mt-3 text-sm text-gray-600">
-                                        Showing{' '}
-                                        {(borrowings.meta.current_page - 1) *
-                                            10 +
-                                            1}
-                                        -
-                                        {Math.min(
-                                            borrowings.meta.current_page * 10,
-                                            borrowings.meta.total,
-                                        )}{' '}
-                                        of {borrowings.meta.total} records
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <Pagination
+                            links={borrowings.links}
+                            meta={borrowings.meta}
+                        />
                     </div>
                 </div>
             </div>

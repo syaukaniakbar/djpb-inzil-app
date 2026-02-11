@@ -117,8 +117,8 @@ export default function Index({ bookings }: Props) {
                                                 {eventModeLabels[
                                                     booking.event_mode
                                                 ] ? (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                                                        <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
+                                                    <span className="inline-flex items-center gap-1.5 rounded border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                                                        <span className="h-1.5 w-1.5 rounded bg-emerald-500"></span>
                                                         {
                                                             eventModeLabels[
                                                             booking
@@ -127,8 +127,8 @@ export default function Index({ bookings }: Props) {
                                                         }
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
-                                                        <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
+                                                    <span className="inline-flex items-center gap-1.5 rounded border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                                                        <span className="h-1.5 w-1.5 rounded bg-indigo-500"></span>
                                                         {booking.event_mode}
                                                     </span>
                                                 )}
@@ -162,9 +162,9 @@ export default function Index({ bookings }: Props) {
                                             {/* Primary Action: selalu ada */}
                                             <Link
                                                 href={`/booking-rooms/${booking.id}`}
-                                                className="block rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                                                className="block cursor-pointer rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                                             >
-                                                Lihat Detail
+                                                Detail
                                             </Link>
 
                                             {/* Action khusus status pending */}
@@ -175,7 +175,7 @@ export default function Index({ bookings }: Props) {
                                                         href={`/booking-rooms/${booking.id}/edit`}
                                                         className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
                                                     >
-                                                        Edit
+                                                        Ubah
                                                     </Link>
 
                                                     {/* WhatsApp */}
@@ -187,7 +187,7 @@ export default function Index({ bookings }: Props) {
                                                         rel="noopener noreferrer"
                                                         className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none"
                                                     >
-                                                        <span>Konfirmasi Admin</span>
+                                                        <span>Hubungi Admin</span>
                                                         <span className="text-xs font-normal text-green-600">
                                                             via WhatsApp
                                                         </span>
@@ -209,7 +209,7 @@ export default function Index({ bookings }: Props) {
                                                         }}
                                                         className="cursor-pointer w-full rounded-xl py-3 text-center text-sm font-medium text-red-600"
                                                     >
-                                                        Batalkan Peminjaman
+                                                        Batalkan
                                                     </button>
                                                 </>
                                             )}
@@ -296,8 +296,8 @@ export default function Index({ bookings }: Props) {
                                                                 booking
                                                                     .event_mode
                                                             ] ? (
-                                                                <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                                                                    <span className="h-1.5 w-1.5 rounded-xl bg-emerald-500"></span>
+                                                                <span className="inline-flex items-center gap-1.5 rounded border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                                                                    <span className="h-1.5 w-1.5 rounded bg-emerald-500"></span>
                                                                     {
                                                                         eventModeLabels[
                                                                         booking
@@ -306,8 +306,8 @@ export default function Index({ bookings }: Props) {
                                                                     }
                                                                 </span>
                                                             ) : (
-                                                                <span className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
-                                                                    <span className="h-1.5 w-1.5 rounded-xl bg-indigo-500"></span>
+                                                                <span className="inline-flex items-center gap-1.5 rounded border border-indigo-100 bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                                                                    <span className="h-1.5 w-1.5 rounded bg-indigo-500"></span>
                                                                     {
                                                                         booking.event_mode
                                                                     }
@@ -340,7 +340,7 @@ export default function Index({ bookings }: Props) {
                                                             href={`/booking-rooms/${booking.id}`}
                                                             className="w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-green-700 shadow-sm"
                                                         >
-                                                            View
+                                                            Detail
                                                         </Link>
 
                                                         {/* Action khusus status pending */}
@@ -349,9 +349,9 @@ export default function Index({ bookings }: Props) {
                                                                 {/* Edit */}
                                                                 <Link
                                                                     href={`/booking-rooms/${booking.id}/edit`}
-                                                                    className="w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700 shadow-sm"
+                                                                    className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
                                                                 >
-                                                                    Edit
+                                                                    Ubah
                                                                 </Link>
 
                                                                 {/* Konfirmasi Admin via WhatsApp */}
@@ -361,9 +361,9 @@ export default function Index({ bookings }: Props) {
                                                                     )}`}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="w-full text-center rounded-md border border-green-200 bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700 transition hover:bg-green-200 shadow-sm"
+                                                                    className="cursor-pointer w-full text-center rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100"
                                                                 >
-                                                                    Konfirmasi Admin
+                                                                    WhatsApp Admin
                                                                 </a>
                                                                 {/* Cancel */}
                                                                 <button
@@ -380,7 +380,7 @@ export default function Index({ bookings }: Props) {
                                                                             );
                                                                         }
                                                                     }}
-                                                                    className="cursor-pointer w-full text-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700 shadow-sm"
+                                                                    className="cursor-pointer w-full text-center text-xs font-medium text-red-600 hover:underline"
                                                                 >
                                                                     Batalkan
                                                                 </button>
