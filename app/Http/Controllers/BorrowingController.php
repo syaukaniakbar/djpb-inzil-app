@@ -28,7 +28,7 @@ class BorrowingController extends Controller
     {
         return inertia('Borrowings/index', [
             'borrowings' => Borrowing::with([
-                'user:id',
+                'user:id,name',
                 'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
                 'borrowingDetails.inventory:id,name',
             ])

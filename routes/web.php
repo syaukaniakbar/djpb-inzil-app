@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/borrowings/{borrowing}/edit', [BorrowingController::class, 'edit'])->name('borrowings.edit');
     Route::put('/borrowings/{borrowing}', [BorrowingController::class, 'update'])->name('borrowings.update');
     Route::patch('/borrowings/{borrowing}/cancel', [BorrowingController::class, 'cancel'])->name('borrowings.cancel');
+    Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'return'])->name('borrowings.return');
 
     // Vehicle Borrowing routes
     Route::get('/vehicle-borrowings', [VehicleBorrowingController::class, 'index'])->name('vehicle-borrowings.index');
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/vehicle-borrowings/{vehicleBorrowing}/edit', [VehicleBorrowingController::class, 'edit'])->name('vehicle-borrowings.edit');
     Route::put('/vehicle-borrowings/{vehicleBorrowing}', [VehicleBorrowingController::class, 'update'])->name('vehicle-borrowings.update');
     Route::patch('/vehicle-borrowings/{vehicleBorrowing}/cancel', [VehicleBorrowingController::class, 'cancel'])->name('vehicle-borrowings.cancel');
+    Route::patch('/vehicle-borrowings/{vehicleBorrowing}/return', [VehicleBorrowingController::class, 'return'])->name('vehicle-borrowings.return');
 
     // Booking Room routes
     Route::get('/booking-rooms', [BookingRoomController::class, 'index'])->name('booking-rooms.index');

@@ -147,4 +147,25 @@ class VehicleBorrowingController extends Controller
             ]);
         }
     }
+
+    public function return(VehicleBorrowing $vehicleBorrowing)
+    {
+        // Ensure the user can only return their own borrowings
+        if ($vehicleBorrowing->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized to return this borrowing');
+        }
+
+        try {
+            $this->vehicleBorrowingService->returnVehicleBorrowing($vehicleBorrowing);
+
+            return redirect()
+                ->route('vehicle-borrowings.index')
+                ->with('success', 'Kendaraan berhasil dikembalikan');
+
+        } catch (\Throwable $e) {
+            return back()->withErrors([
+                'general' => $e->getMessage(),
+            ]);
+        }
+    }
 }
