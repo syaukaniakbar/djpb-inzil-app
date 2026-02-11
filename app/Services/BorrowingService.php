@@ -87,7 +87,7 @@ class BorrowingService
                     $inventory->borrowingDetails()
                         ->whereHas('borrowing', function ($query) use ($borrowing) {
                             $query->whereIn('status', ['pending', 'approved', 'ongoing'])
-                                  ->where('borrowings.id', '!=', $borrowing->id); // Exclude current borrowing
+                                ->where('borrowings.id', '!=', $borrowing->id); // Exclude current borrowing
                         })
                         ->sum('quantity')
                 );
@@ -151,21 +151,32 @@ class BorrowingService
         DB::beginTransaction();
 
         try {
-            // Check if borrowing can be canceled (not already returned or canceled)
-            if ($borrowing->status === 'returned' || $borrowing->status === 'canceled') {
-                throw new \Exception('Peminjaman tidak dapat dibatalkan karena sudah ' . ($borrowing->status === 'returned' ? 'dikembalikan' : 'dibatalkan'));
+            // Status yang tidak boleh dibatalkan
+            $notCancelableStatuses = [
+                'approved',
+                'ongoing',
+                'finished',
+                'canceled',
+                'rejected',
+            ];
+
+            if (in_array($borrowing->status, $notCancelableStatuses)) {
+                throw new \Exception(
+                    'Peminjaman tidak dapat dibatalkan karena status saat ini: ' .
+                    strtoupper($borrowing->status)
+                );
             }
 
-            // Update the borrowing status to canceled
+            // Hanya pending yang boleh dibatalkan
             $borrowing->update([
                 'status' => 'canceled',
             ]);
 
             DB::commit();
-
             return true;
-        } catch (\Exception $e) {
-            DB::rollback();
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
             throw $e;
         }
     }
@@ -181,26 +192,29 @@ class BorrowingService
         DB::beginTransaction();
 
         try {
-            // Check if borrowing can be returned (not already returned or canceled)
-            if ($borrowing->status === 'returned') {
-                throw new \Exception('Peminjaman sudah dikembalikan');
+            // Hanya boleh return jika sedang ongoing
+            if ($borrowing->status !== 'ongoing') {
+                throw new \Exception(
+                    'Peminjaman tidak dapat dikembalikan karena status saat ini: ' .
+                    strtoupper($borrowing->status)
+                );
             }
 
-            if ($borrowing->status === 'canceled') {
-                throw new \Exception('Peminjaman sudah dibatalkan dan tidak dapat dikembalikan');
+            // Cegah double return
+            if ($borrowing->returned_at) {
+                throw new \Exception('Peminjaman sudah dikembalikan sebelumnya.');
             }
 
-            // Update the borrowing status to returned and set returned_at timestamp
             $borrowing->update([
-                'status' => 'returned',
+                'status' => 'finished',
                 'returned_at' => now(),
             ]);
 
             DB::commit();
-
             return true;
-        } catch (\Exception $e) {
-            DB::rollback();
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
             throw $e;
         }
     }

@@ -82,25 +82,73 @@ class VehicleBorrowingService
         DB::beginTransaction();
 
         try {
-            // Check if vehicle borrowing can be canceled (not already finished, canceled, or ongoing)
-            if (in_array($vehicleBorrowing->status, ['finished', 'canceled', 'ongoing'])) {
-                throw new \Exception('Peminjaman kendaraan tidak dapat dibatalkan karena sudah ' . 
-                    ($vehicleBorrowing->status === 'finished' ? 'selesai' : 
-                     ($vehicleBorrowing->status === 'canceled' ? 'dibatalkan' : 
-                      'sedang berlangsung')));
+            // Status yang tidak boleh dibatalkan
+            $notCancelableStatuses = [
+                'approved',
+                'ongoing',
+                'finished',
+                'canceled',
+                'rejected',
+            ];
+
+            if (in_array($vehicleBorrowing->status, $notCancelableStatuses)) {
+                throw new \Exception(
+                    'Peminjaman kendaraan tidak dapat dibatalkan karena status saat ini: ' .
+                    strtoupper($vehicleBorrowing->status)
+                );
             }
 
-            // Update the vehicle borrowing status to canceled
+            // Hanya pending yang boleh dibatalkan
             $vehicleBorrowing->update([
                 'status' => 'canceled',
             ]);
 
             DB::commit();
-
             return true;
-        } catch (\Exception $e) {
-            DB::rollback();
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
             throw $e;
         }
     }
+
+
+    /**
+     * Return a vehicle by updating its status to finished and setting returned_at timestamp
+     *
+     * @param \App\Models\VehicleBorrowing $vehicleBorrowing
+     * @return bool
+     */
+    public function returnVehicleBorrowing(VehicleBorrowing $vehicleBorrowing): bool
+    {
+        DB::beginTransaction();
+
+        try {
+            // Hanya boleh return jika sedang ongoing
+            if ($vehicleBorrowing->status !== 'ongoing') {
+                throw new \Exception(
+                    'Peminjaman kendaraan tidak dapat dikembalikan karena status saat ini: ' .
+                    strtoupper($vehicleBorrowing->status)
+                );
+            }
+
+            // Cegah double return
+            if ($vehicleBorrowing->returned_at) {
+                throw new \Exception('Kendaraan sudah dikembalikan sebelumnya.');
+            }
+
+            $vehicleBorrowing->update([
+                'status' => 'finished',
+                'returned_at' => now(),
+            ]);
+
+            DB::commit();
+            return true;
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
 }
