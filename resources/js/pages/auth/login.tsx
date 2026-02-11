@@ -43,12 +43,12 @@ export default function Login({
                                 </Label>
                                 <Input
                                     id="nip"
-                                    type="number"
+                                    type="text"
                                     name="nip"
                                     required
                                     autoFocus
                                     tabIndex={1}
-                                    autoComplete="nip"
+                                    autoComplete="username"
                                     placeholder="Nomor Induk Pegawai"
                                 />
                                 <InputError message={errors.nip} />
