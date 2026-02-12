@@ -14,32 +14,62 @@ class BorrowingDetailSeeder extends Seeder
      */
     public function run(): void
     {
+        // Clear existing borrowing details to avoid conflicts
+        DB::table('borrowing_details')->delete();
+
         // Get available borrowing and inventory IDs to ensure we have valid foreign keys
         $borrowingIds = DB::table('borrowings')->pluck('id')->toArray();
         $inventoryIds = DB::table('inventories')->pluck('id')->toArray();
-        
+
         // If no borrowings or inventories exist, we can't create borrowing details
         if (empty($borrowingIds) || empty($inventoryIds)) {
             $this->command->error('Please run InventorySeeder and BorrowingSeeder first before running BorrowingDetailSeeder.');
             return;
         }
 
-        // Create borrowing details by pairing borrowings with inventories
+        // Ensure each borrowing has at least one inventory item associated with it
         $borrowingDetailData = [];
-        $detailCount = min(count($borrowingIds), count($inventoryIds), 10); // Create up to 10 records
-        
-        for ($i = 0; $i < $detailCount; $i++) {
-            $borrowingId = $borrowingIds[$i % count($borrowingIds)];
-            $inventoryId = $inventoryIds[$i % count($inventoryIds)];
+        $usedCombinations = []; // Track used borrowing_id and inventory_id combinations
+
+        // First, make sure each borrowing gets at least one inventory item
+        foreach ($borrowingIds as $index => $borrowingId) {
+            $inventoryId = $inventoryIds[$index % count($inventoryIds)]; // Cycle through inventory items
             
-            $borrowingDetailData[] = [
-                'borrowing_id' => $borrowingId,
-                'inventory_id' => $inventoryId,
-                'quantity' => rand(1, 3), // Random quantity between 1 and 3
-                'notes' => "Detail record for borrowing #{$borrowingId} and inventory #{$inventoryId}",
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
+            $combination = $borrowingId . '-' . $inventoryId;
+            if (!in_array($combination, $usedCombinations)) {
+                $borrowingDetailData[] = [
+                    'borrowing_id' => $borrowingId,
+                    'inventory_id' => $inventoryId,
+                    'quantity' => rand(1, 3), // Random quantity between 1 and 3
+                    'notes' => "Detail record for borrowing #{$borrowingId} and inventory #{$inventoryId}",
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ];
+                
+                $usedCombinations[] = $combination;
+            }
+        }
+
+        // Add additional borrowing details if we have more inventory items than borrowings
+        $additionalDetailsNeeded = max(0, count($inventoryIds) - count($borrowingIds));
+        
+        for ($i = 0; $i < $additionalDetailsNeeded; $i++) {
+            $borrowingId = $borrowingIds[array_rand($borrowingIds)];
+            $inventoryId = $inventoryIds[array_rand($inventoryIds)];
+            
+            $combination = $borrowingId . '-' . $inventoryId;
+            if (!in_array($combination, $usedCombinations)) {
+                $borrowingDetailData[] = [
+                    'borrowing_id' => $borrowingId,
+                    'inventory_id' => $inventoryId,
+                    'quantity' => rand(1, 3), // Random quantity between 1 and 3
+                    'notes' => "Additional detail record for borrowing #{$borrowingId} and inventory #{$inventoryId}",
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ];
+                
+                $usedCombinations[] = $combination;
+            }
         }
 
         DB::table('borrowing_details')->insert($borrowingDetailData);

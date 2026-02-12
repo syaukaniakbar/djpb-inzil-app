@@ -14,7 +14,7 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('departments')->insert([
+        $departments = [
             [
                 'id' => 1,
                 'name' => 'Bagian Umum',
@@ -37,7 +37,6 @@ class DepartmentSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                
                 'id' => 4,
                 'name' => 'Pembinaan Akuntansi dan Pelaporan Keuangan',
                 'code' => 'PSAPP',
@@ -58,6 +57,13 @@ class DepartmentSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
-        ]);
+        ];
+
+        foreach ($departments as $dept) {
+            DB::table('departments')->updateOrInsert(
+                ['id' => $dept['id']], // condition to check
+                $dept // data to insert/update
+            );
+        }
     }
 }

@@ -18,9 +18,9 @@ class BorrowingSeeder extends Seeder
         DB::table('borrowings')->insert([
             [
                 'user_id' => 24,
-                'start_at' => Carbon::now()->subDays(5),
-                'end_at' => Carbon::now()->addDays(5),
-                'returned_at' => null,
+                'start_at' => Carbon::now()->subDays(9),
+                'end_at' => Carbon::now()->subDays(1),
+                'returned_at' => Carbon::now()->subDays(1), // Actually returned
                 'notes' => 'Borrowed monitor for home office setup',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -30,7 +30,7 @@ class BorrowingSeeder extends Seeder
                 'user_id' => 24,
                 'start_at' => Carbon::now()->subDays(5),
                 'end_at' => Carbon::now()->addDays(5),
-                'returned_at' => null,
+                'returned_at' => null, // Not yet returned
                 'notes' => 'Borrowed laptop for home office setup',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -38,9 +38,9 @@ class BorrowingSeeder extends Seeder
 
             [
                 'user_id' => 24,
-                'start_at' => Carbon::now()->subDays(5),
-                'end_at' => Carbon::now()->addDays(5),
-                'returned_at' => null,
+                'start_at' => Carbon::now()->subDays(10),
+                'end_at' => Carbon::now()->subDays(2),
+                'returned_at' => Carbon::now()->subDays(2), // Actually returned
                 'notes' => 'Borrowed projector for home office setup',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -50,7 +50,7 @@ class BorrowingSeeder extends Seeder
                 'user_id' => 2,
                 'start_at' => Carbon::now()->subDays(7),
                 'end_at' => Carbon::now()->addDays(3),
-                'returned_at' => null,
+                'returned_at' => Carbon::now()->subDays(3), // Actually returned
                 'notes' => 'Borrowed mouse for ergonomic assessment',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -59,16 +59,16 @@ class BorrowingSeeder extends Seeder
                 'user_id' => 2,
                 'start_at' => Carbon::now()->subDays(3),
                 'end_at' => Carbon::now()->addDays(7),
-                'returned_at' => null,
+                'returned_at' => null, // Not yet returned
                 'notes' => 'Borrowed headphones for remote work',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'user_id' => 2,
-                'start_at' => Carbon::now()->subDays(8),
-                'end_at' => Carbon::now()->addDays(2),
-                'returned_at' => null,
+                'start_at' => Carbon::now()->subDays(12),
+                'end_at' => Carbon::now()->subDays(2),
+                'returned_at' => Carbon::now()->subDays(2), // Actually returned
                 'notes' => 'Borrowed wireless charging pad',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
