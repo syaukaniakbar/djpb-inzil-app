@@ -20,7 +20,8 @@ interface Borrowing {
     id: number;
     user: { name: string };
     borrowing_details?: { inventory: { name: string } }[];
-    created_at: string;
+    start_at: string;
+    end_at: string;
     status: LoanStatus;
 }
 
@@ -28,7 +29,8 @@ interface VehicleBorrowing {
     id: number;
     user: { name: string };
     vehicle: { name: string };
-    created_at: string;
+    start_at: string;
+    end_at: string;
     status: LoanStatus;
 }
 
@@ -36,7 +38,8 @@ interface BookingRoom {
     id: number;
     user: { name: string };
     room: { name: string };
-    created_at: string;
+    start_at: string;
+    end_at: string;
     status: LoanStatus;
 }
 
@@ -140,7 +143,8 @@ export default function Dashboard() {
                                         <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
                                             {b.borrowing_details?.map(d => d.inventory.name).join(', ') || '-'}
                                         </p>
-                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">{formatDateTime(b.created_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">Start : {formatDateTime(b.start_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">End : {formatDateTime(b.end_at)}</p>
                                     </div>
                                 </div>
                             )) : <EmptyState label="Belum ada aktivitas" />}
@@ -158,7 +162,8 @@ export default function Dashboard() {
                                             <StatusBadge status={v.status} />
                                         </div>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">{v.vehicle.name}</p>
-                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">{formatDateTime(v.created_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">Start : {formatDateTime(v.start_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">End : {formatDateTime(v.end_at)}</p>
                                     </div>
                                 </div>
                             )) : <EmptyState label="Belum ada aktivitas" />}
@@ -176,7 +181,8 @@ export default function Dashboard() {
                                             <StatusBadge status={r.status} />
                                         </div>
                                         <p className="text-xs text-gray-600 dark:text-gray-400">{r.room.name}</p>
-                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">{formatDateTime(r.created_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">Start : {formatDateTime(r.start_at)}</p>
+                                        <p className="mt-1 text-[10px] text-gray-400 uppercase font-medium">End : {formatDateTime(r.end_at)}</p>
                                     </div>
                                 </div>
                             )) : <EmptyState label="Belum ada aktivitas" />}
@@ -193,7 +199,7 @@ export default function Dashboard() {
 
                     <div className="grid gap-6 md:grid-cols-3">
                         <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
-                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Barang Saya</p>
+                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Peminjaman Barang</p>
                             <ul className="space-y-4">
                                 {userBorrowings.length ? userBorrowings.map(b => (
                                     <li key={b.id} className="group border-l-2 border-blue-500 pl-4 transition-colors hover:border-blue-700">
@@ -203,14 +209,15 @@ export default function Dashboard() {
                                             </p>
                                             <StatusBadge status={b.status} />
                                         </div>
-                                        <p className="text-[11px] text-gray-400">{formatDateTime(b.created_at)}</p>
+                                        <p className="text-[11px] text-gray-400">Start : {formatDateTime(b.start_at)}</p>
+                                        <p className="text-[11px] text-gray-400">End : {formatDateTime(b.end_at)}</p>
                                     </li>
                                 )) : <p className="text-xs text-gray-400 italic">Tidak ada peminjaman</p>}
                             </ul>
                         </div>
 
                         <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
-                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Kendaraan Saya</p>
+                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Peminjaman Kendaraan</p>
                             <ul className="space-y-4">
                                 {userVehicleBorrowings.length ? userVehicleBorrowings.map(v => (
                                     <li key={v.id} className="group border-l-2 border-emerald-500 pl-4 transition-colors hover:border-emerald-700">
@@ -220,14 +227,15 @@ export default function Dashboard() {
                                             </p>
                                             <StatusBadge status={v.status} />
                                         </div>
-                                        <p className="text-[11px] text-gray-400">{formatDateTime(v.created_at)}</p>
+                                        <p className="text-[11px] text-gray-400">Start : {formatDateTime(v.start_at)}</p>
+                                        <p className="text-[11px] text-gray-400">End : {formatDateTime(v.end_at)}</p>
                                     </li>
                                 )) : <p className="text-xs text-gray-400 italic">Tidak ada peminjaman kendaraan</p>}
                             </ul>
                         </div>
 
                         <div className="rounded-xl bg-white p-5 shadow-sm dark:bg-gray-800">
-                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Ruangan Saya</p>
+                            <p className="mb-4 text-sm font-bold text-gray-400 uppercase tracking-widest">Peminjaman Ruangan</p>
                             <ul className="space-y-4">
                                 {userBookingRooms.length ? userBookingRooms.map(r => (
                                     <li key={r.id} className="group border-l-2 border-purple-500 pl-4 transition-colors hover:border-purple-700">
@@ -237,7 +245,8 @@ export default function Dashboard() {
                                             </p>
                                             <StatusBadge status={r.status} />
                                         </div>
-                                        <p className="text-[11px] text-gray-400">{formatDateTime(r.created_at)}</p>
+                                        <p className="text-[11px] text-gray-400">Start : {formatDateTime(r.start_at)}</p>
+                                        <p className="text-[11px] text-gray-400">End : {formatDateTime(r.end_at)}</p>
                                     </li>
                                 )) : <p className="text-xs text-gray-400 italic">Tidak ada pemesanan ruangan</p>}
                             </ul>
