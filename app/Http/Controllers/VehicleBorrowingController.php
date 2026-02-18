@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\VehicleBorrowing;
 use App\Models\Vehicle;
+use App\Models\User;
 use App\Services\VehicleBorrowingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +25,17 @@ class VehicleBorrowingController extends Controller
             'user',
             'vehicle',
         ])
-            ->where('user_id', Auth::id())  // Hanya ambil borrowing milik user yang login
+            ->where('user_id', Auth::id())
             ->latest()
             ->paginate(10);
 
+        $admin = User::where('role', 'admin')
+            ->select('id', 'name', 'phone')
+            ->first();
+
         return inertia('VehicleBorrowings/index', [
             'borrowings' => $borrowings,
+            'admin' => $admin,
         ]);
     }
 

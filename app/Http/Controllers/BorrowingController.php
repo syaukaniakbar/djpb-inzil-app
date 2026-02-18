@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Borrowing;
 use App\Models\Inventory;
 use App\Services\BorrowingService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use App\Http\Requests\BorrowingRequest;
+use App\Models\User;
 
 
 
@@ -26,6 +25,10 @@ class BorrowingController extends Controller
      */
     public function index()
     {
+        $admin = User::where('role', 'admin')
+            ->select('id', 'name', 'phone')
+            ->first();
+
         return inertia('Borrowings/index', [
             'borrowings' => Borrowing::with([
                 'user:id,name',
@@ -46,6 +49,7 @@ class BorrowingController extends Controller
                 ->latest()
                 ->paginate(10)
                 ->withQueryString(),
+            'admin' => $admin,
         ]);
     }
 

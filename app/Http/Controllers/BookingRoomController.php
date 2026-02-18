@@ -8,6 +8,7 @@ use App\Services\BookingRoomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BookingRoomRequest;
+use App\Models\User;
 
 class BookingRoomController extends Controller
 {
@@ -28,8 +29,13 @@ class BookingRoomController extends Controller
             ->latest()
             ->paginate(10);
 
+        $admin = User::where('role', 'admin')
+            ->select('id', 'name', 'phone')
+            ->first();
+
         return inertia('BookingRooms/index', [
             'bookings' => $bookings,
+            'admin' => $admin,
         ]);
     }
 
