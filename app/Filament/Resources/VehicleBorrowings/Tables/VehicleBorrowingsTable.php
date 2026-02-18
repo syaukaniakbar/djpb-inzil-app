@@ -11,6 +11,13 @@ use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\DatePicker;
+use Carbon\Carbon;
+use App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\RejectAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\ReturnVehicleAction;
+use App\Filament\Resources\VehicleBorrowings\Actions\WhatsAppNotificationAction;
 
 class VehicleBorrowingsTable
 {
@@ -106,22 +113,62 @@ class VehicleBorrowingsTable
                         'luar_kota' => 'Luar Kota',
                     ]),
 
-                Filter::make('end_at')
-                    ->toggle()
-                    ->query(fn(Builder $query) => $query->whereNotNull('end_at')),
-
                 Filter::make('active_borrowings')
                     ->label('Active Borrowings')
                     ->toggle()
                     ->query(fn(Builder $query) => $query->whereNull('end_at')->whereIn('status', ['pending', 'ongoing'])),
+
+                Filter::make('start_at')
+                    ->form([
+                        DatePicker::make('start_date')
+                            ->label('Tanggal Mulai')
+                            ->placeholder('Tanggal mulai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn($query, $date) => $query->whereDate('start_at', '>=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['start_date'] ?? null) {
+                            $indicators[] = 'Tanggal mulai: ' . Carbon::parse($data['start_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
+
+                Filter::make('end_at')
+                    ->form([
+                        DatePicker::make('end_date')
+                            ->label('Tanggal Selesai')
+                            ->placeholder('Tanggal selesai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['end_date'],
+                                fn($query, $date) => $query->whereDate('end_at', '<=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['end_date'] ?? null) {
+                            $indicators[] = 'Tanggal selesai: ' . Carbon::parse($data['end_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 // Custom admin actions
-                \App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction::make(),
-                \App\Filament\Resources\VehicleBorrowings\Actions\RejectAction::make(),
-                \App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction::make(),
+                ApproveAction::make(),
+                RejectAction::make(),
+                MarkAsReturnedAction::make(),
+                ReturnVehicleAction::make(),
+                WhatsAppNotificationAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
