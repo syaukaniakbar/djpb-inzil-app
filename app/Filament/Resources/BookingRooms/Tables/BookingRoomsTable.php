@@ -8,8 +8,12 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Carbon\Carbon;
+use App\Filament\Resources\BookingRooms\Actions\ApproveAction;
+use App\Filament\Resources\BookingRooms\Actions\RejectAction;
 
 class BookingRoomsTable
 {
@@ -104,13 +108,55 @@ class BookingRoomsTable
                         'interview' => 'Interview',
                         'other' => 'Lainnya',
                     ]),
+
+                Filter::make('start_at')
+                    ->form([
+                        DatePicker::make('start_date')
+                            ->label('Tanggal Mulai')
+                            ->placeholder('Tanggal mulai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn($query, $date) => $query->whereDate('start_at', '>=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['start_date'] ?? null) {
+                            $indicators[] = 'Tanggal mulai: ' . Carbon::parse($data['start_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
+
+                Filter::make('end_at')
+                    ->form([
+                        DatePicker::make('end_date')
+                            ->label('Tanggal Selesai')
+                            ->placeholder('Tanggal selesai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['end_date'],
+                                fn($query, $date) => $query->whereDate('end_at', '<=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['end_date'] ?? null) {
+                            $indicators[] = 'Tanggal selesai: ' . Carbon::parse($data['end_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 // Custom admin actions
-                \App\Filament\Resources\BookingRooms\Actions\ApproveAction::make(),
-                \App\Filament\Resources\BookingRooms\Actions\RejectAction::make(),
+                ApproveAction::make(),
+                RejectAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
