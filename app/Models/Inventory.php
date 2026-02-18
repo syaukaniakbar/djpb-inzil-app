@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Inventory extends Model
 {
@@ -25,6 +26,16 @@ class Inventory extends Model
     }
 
     /**
+     * Accessor to get name with serial number
+     */
+    public function nameWithSerial(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->name . ' (' . $this->serial_number . ')',
+        );
+    }
+
+    /**
      * Get the available quantity of the inventory item
      * Available = Total quantity - Quantity currently borrowed
      */
@@ -37,6 +48,16 @@ class Inventory extends Model
             ->sum('quantity');
 
         return max(0, $this->quantity - $borrowedQuantity);
+    }
+
+    /**
+     * Accessor for available quantity
+     */
+    public function availableQuantity(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getAvailableQuantityAttribute(),
+        );
     }
 
     /**
