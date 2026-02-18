@@ -14,31 +14,39 @@ class BorrowingDetailsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
+                TextColumn::make('borrowing.user.name')
+                    ->label('Pengguna')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('borrowing.id')
-                    ->label('Borrowing ID')
-                    ->numeric()
+                    ->label('ID Peminjaman')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('inventory.name')
-                    ->label('Inventory Item')
+                    ->label('Aset')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('inventory.serial_number')
-                    ->label('Serial Number')
+                    ->label('Nomor Seri')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('quantity')
+                    ->label('Jumlah')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('notes')
+                    ->label('Catatan')
                     ->limit(50)
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

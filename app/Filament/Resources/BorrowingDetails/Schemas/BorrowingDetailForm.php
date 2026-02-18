@@ -14,27 +14,64 @@ class BorrowingDetailForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
                 Select::make('borrowing_id')
-                    ->label('Borrowing')
+                    ->label('ID Peminjaman')
                     ->relationship('borrowing', 'id')
-                    ->options(Borrowing::all()->pluck('id', 'id'))
+                    ->getOptionLabelFromRecordUsing(
+                        fn($record) =>
+                        '#ID : ' . $record->id . ' - ' . $record->user->name
+                    )
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->required()
+                    ->reactive(),
+
                 Select::make('inventory_id')
-                    ->label('Inventory')
+                    ->label('Aset')
                     ->relationship('inventory', 'name')
-                    ->options(Inventory::all()->pluck('name', 'id'))
+                    ->options(Inventory::all()->mapWithKeys(fn($item) => [$item->id => $item->name . ' (' . $item->serial_number . ')']))
                     ->searchable()
                     ->preload()
-                    ->required(),
+                    ->required()
+                    ->reactive(),
                 TextInput::make('quantity')
+                    ->label('Jumlah')
                     ->required()
                     ->numeric()
                     ->default(1)
-                    ->minValue(1),
+                    ->minValue(1)
+                    ->maxValue(function (callable $get) {
+                        $inventoryId = $get('inventory_id');
+                        if (!$inventoryId) {
+                            return 999999; // High number if no inventory selected
+                        }
+                        
+                        $inventory = Inventory::find($inventoryId);
+                        if (!$inventory) {
+                            return 999999; // High number if inventory not found
+                        }
+                        
+                        // For the standalone form, we'll rely on model validation
+                        return $inventory->getAvailableQuantityAttribute();
+                    })
+                    ->helperText(function (callable $get) {
+                        $inventoryId = $get('inventory_id');
+                        if (!$inventoryId) {
+                            return 'Silakan pilih aset terlebih dahulu';
+                        }
+                        
+                        $inventory = Inventory::find($inventoryId);
+                        if (!$inventory) {
+                            return 'Aset tidak ditemukan';
+                        }
+                        
+                        $available = $inventory->getAvailableQuantityAttribute();
+                        return "Tersedia: {$available}";
+                    }),
                 Textarea::make('notes')
+                    ->label('Catatan')
                     ->columnSpanFull(),
             ]);
     }

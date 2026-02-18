@@ -11,21 +11,29 @@ class BorrowingDetailInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('borrowing_id')
-                    ->numeric(),
-                TextEntry::make('inventory_id')
-                    ->numeric(),
+                TextEntry::make('borrowing.user.name')
+                    ->label('Pengguna'),
+                TextEntry::make('borrowing.id')
+                    ->label('ID Peminjaman'),
+                TextEntry::make('inventory.name')
+                    ->label('Aset'),
+                TextEntry::make('inventory.serial_number')
+                    ->label('Nomor Seri'),
                 TextEntry::make('quantity')
-                    ->numeric(),
+                    ->numeric()
+                    ->label('Jumlah'),
                 TextEntry::make('notes')
                     ->placeholder('-')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Catatan'),
                 TextEntry::make('created_at')
                     ->dateTime()
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->label('Dibuat Pada'),
                 TextEntry::make('updated_at')
                     ->dateTime()
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->label('Diperbarui Pada'),
             ]);
     }
 }
