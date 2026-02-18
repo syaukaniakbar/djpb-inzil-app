@@ -33,11 +33,16 @@ interface Borrowing {
     borrowing_details?: BorrowingDetail[];
 }
 
-interface Props {
-    borrowings?: PaginatedResponse<Borrowing>;
+interface Admin {
+    phone: string;
 }
 
-export default function BorrowingsIndex({ borrowings }: Props) {
+interface Props {
+    borrowings?: PaginatedResponse<Borrowing>;
+    admin: Admin;
+}
+
+export default function BorrowingsIndex({ borrowings, admin }: Props) {
     const data = borrowings?.data ?? [];
 
     return (
@@ -151,7 +156,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                         Ubah
                                                     </Link>
                                                     <a
-                                                        href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                             `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
                                                         )}`}
                                                         target="_blank"
@@ -307,7 +312,7 @@ export default function BorrowingsIndex({ borrowings }: Props) {
                                                                 Ubah
                                                             </Link>
                                                             <a
-                                                                href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                                href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                                     `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
                                                                 )}`}
                                                                 target="_blank"

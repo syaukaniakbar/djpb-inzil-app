@@ -5,6 +5,12 @@ import { PaginatedResponse } from '@/types/pagination';
 import formatDateTime from '@/utils/date';
 import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 
+interface Admin {
+    id: number;
+    name: string;
+    phone: string;
+}
+
 interface Vehicle {
     id: number;
     name: string;
@@ -37,9 +43,10 @@ interface VehicleBorrowing {
 
 interface Props {
     borrowings: PaginatedResponse<VehicleBorrowing>;
+    admin: Admin;
 }
 
-export default function Index({ borrowings }: Props) {
+export default function Index({ borrowings, admin }: Props) {
     const data = borrowings.data;
 
     return (
@@ -178,7 +185,7 @@ export default function Index({ borrowings }: Props) {
 
                                                     {/* WhatsApp */}
                                                     <a
-                                                        href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                             `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nKendaraan: ${borrowing.vehicle.name}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`,
                                                         )}`}
                                                         target="_blank"
@@ -362,7 +369,7 @@ export default function Index({ borrowings }: Props) {
 
                                                                 {/* WhatsApp — communication */}
                                                                 <a
-                                                                    href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                                    href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                                         `Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`
                                                                     )}`}
                                                                     target="_blank"

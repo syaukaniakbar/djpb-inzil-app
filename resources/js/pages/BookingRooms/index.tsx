@@ -28,6 +28,12 @@ interface BookingRoom {
     room: Room;
 }
 
+interface Admin {
+    id: number;
+    name: string;
+    phone: string;
+}
+
 const eventModeLabels: Record<string, string> = {
     online: 'Online',
     offline: 'Offline',
@@ -36,9 +42,10 @@ const eventModeLabels: Record<string, string> = {
 
 interface Props {
     bookings: PaginatedResponse<BookingRoom>;
+    admin: Admin;
 }
 
-export default function Index({ bookings }: Props) {
+export default function Index({ bookings, admin }: Props) {
     const data = bookings.data;
 
     return (
@@ -167,7 +174,7 @@ export default function Index({ bookings }: Props) {
                                                         Ubah
                                                     </Link>
                                                     <a
-                                                        href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                             `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
                                                         )}`}
                                                         target="_blank"
@@ -339,7 +346,7 @@ export default function Index({ bookings }: Props) {
                                                                     Ubah
                                                                 </Link>
                                                                 <a
-                                                                    href={`https://wa.me/62895704149841?text=${encodeURIComponent(
+                                                                    href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
                                                                         `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`
                                                                     )}`}
                                                                     target="_blank"
