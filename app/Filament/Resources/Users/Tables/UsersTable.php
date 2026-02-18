@@ -23,6 +23,9 @@ class UsersTable
                     ->size(120)
                     ->defaultImageUrl(url('/images/default-avatar.png'))
                     ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('nip')
+                    ->label('Nomor Induk Pegawai')
+                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),
@@ -30,17 +33,17 @@ class UsersTable
                     ->label('Email')
                     ->searchable(),
                 TextColumn::make('email_verified_at')
-                    ->label('Email Verified At')
+                    ->label('Email Terverifikasi')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('role')
                     ->label('Role')
                     ->searchable(),
                 TextColumn::make('position.name')
-                    ->label('Position')
+                    ->label('Jabatan')
                     ->searchable(),
                 TextColumn::make('department.name')
-                    ->label('Department')
+                    ->label('Departemen')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

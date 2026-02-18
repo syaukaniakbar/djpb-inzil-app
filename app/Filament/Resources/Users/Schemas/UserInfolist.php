@@ -17,19 +17,22 @@ class UserInfolist
                     ->circular()
                     ->size(100)
                     ->placeholder('Belum ada foto profil'),
+                TextEntry::make('nip')
+                    ->label('Nomor Induk Pegawai')
+                    ->placeholder('-'),
                 TextEntry::make('name')
                     ->label('Nama'),
                 TextEntry::make('email')
                     ->label('Email'),
                 TextEntry::make('email_verified_at')
                     ->dateTime()
-                    ->label('Email Verified At')
-                    ->placeholder('-'),
-                TextEntry::make('nip')
-                    ->label('NIP')
+                    ->label('Email Terverifikasi')
                     ->placeholder('-'),
                 TextEntry::make('role')
                     ->label('Role'),
+                TextEntry::make('phone')
+                    ->label('Nomor Telepon')
+                    ->placeholder('-'),
                 TextEntry::make('position.name')
                     ->label('Jabatan')
                     ->placeholder('-'),

@@ -9,7 +9,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use App\Models\Department;
 use App\Models\Position;
-use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Hash;
 
 
 class UserForm
@@ -35,15 +35,14 @@ class UserForm
                     ->email()
                     ->required(),
                 TextInput::make('nip')
-                    ->label('NIP')
-                    ->required(),
+                    ->label('Nomor Induk Pegawai'),
                 TextInput::make('password')
                     ->password()
                     ->revealable()
                     ->label('Password')
-                    ->required(fn (string $context) => $context === 'create')
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null),
+                    ->required(fn(string $context) => $context === 'create')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => filled($state) ? Hash::make($state) : null),
                 Select::make('role')
                     ->label('Role')
                     ->required()
@@ -52,17 +51,17 @@ class UserForm
                         'admin' => 'Admin',
                     ]),
                 DateTimePicker::make('birth_date')
-                    ->label('Tanggal Lahir')
-                    ->required(),
+                    ->label('Tanggal Lahir'),
                 Select::make('position_id')
                     ->label('Jabatan')
-                    ->required()
                     ->options(
                         Position::pluck('name', 'id')->toArray()
                     ),
+                TextInput::make('phone')
+                    ->label('Nomor Telepon (format: 628xxxxxxxxxx)')
+                    ->tel(),
                 Select::make('department_id')
                     ->label('Departemen')
-                    ->required()
                     ->options(
                         Department::pluck('name', 'id')->toArray()
                     ),
