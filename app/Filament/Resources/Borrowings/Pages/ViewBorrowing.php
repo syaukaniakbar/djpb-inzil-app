@@ -3,27 +3,25 @@
 namespace App\Filament\Resources\Borrowings\Pages;
 
 use App\Filament\Resources\Borrowings\BorrowingResource;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\Borrowings\Actions\ApproveAction;
 use App\Filament\Resources\Borrowings\Actions\RejectAction;
 use App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction;
 use App\Filament\Resources\Borrowings\Actions\ReturnAssetAction;
 
-class EditBorrowing extends EditRecord
+class ViewBorrowing extends ViewRecord
 {
     protected static string $resource = BorrowingResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
+            EditAction::make(),
             ApproveAction::make(),
             RejectAction::make(),
             MarkAsReturnedAction::make(),
             ReturnAssetAction::make(),
-            DeleteAction::make(),
         ];
     }
 }

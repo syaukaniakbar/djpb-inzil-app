@@ -7,7 +7,16 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
+use Carbon\Carbon;
+use App\Filament\Resources\Borrowings\Actions\ApproveAction;
+use App\Filament\Resources\Borrowings\Actions\RejectAction;
+use App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction;
+use App\Filament\Resources\Borrowings\Actions\ReturnAssetAction;
+use App\Filament\Resources\Borrowings\Actions\WhatsAppNotificationAction;
+
 
 class BorrowingsTable
 {
@@ -16,6 +25,11 @@ class BorrowingsTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID Peminjaman')
+                    ->numeric()
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('user.name')
                     ->label('Pengguna')
                     ->numeric()
@@ -68,15 +82,57 @@ class BorrowingsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('start_at')
+                    ->form([
+                        DatePicker::make('start_date')
+                            ->label('Tanggal Mulai')
+                            ->placeholder('Tanggal mulai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn($query, $date) => $query->whereDate('start_at', '>=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['start_date'] ?? null) {
+                            $indicators[] = 'Tanggal mulai: ' . Carbon::parse($data['start_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
+
+                Filter::make('end_at')
+                    ->form([
+                        DatePicker::make('end_date')
+                            ->label('Tanggal Selesai')
+                            ->placeholder('Tanggal selesai'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['end_date'],
+                                fn($query, $date) => $query->whereDate('end_at', '<=', $date)
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['end_date'] ?? null) {
+                            $indicators[] = 'Tanggal selesai: ' . Carbon::parse($data['end_date'])->format('d/m/Y');
+                        }
+                        return $indicators;
+                    }),
             ])
             ->recordActions([
                 EditAction::make(),
                 ViewAction::make(),
                 // Custom admin actions
-                \App\Filament\Resources\Borrowings\Actions\ApproveAction::make(),
-                \App\Filament\Resources\Borrowings\Actions\RejectAction::make(),
-                \App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction::make(),
+                ApproveAction::make(),
+                RejectAction::make(),
+                MarkAsReturnedAction::make(),
+                ReturnAssetAction::make(),
+                WhatsAppNotificationAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

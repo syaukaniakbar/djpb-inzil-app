@@ -16,24 +16,24 @@ class BorrowingForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('User')
+                    ->label('Pengguna')
                     ->relationship('user', 'name')
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable()
                     ->preload()
                     ->required(),
                 DateTimePicker::make('start_at')
-                    ->label('Start Date & Time')
+                    ->label('Tanggal Peminjaman')
                     ->required(),
                 DateTimePicker::make('end_at')
-                    ->label('End Date & Time'),
+                    ->label('Tanggal Pengembalian'),
                 DateTimePicker::make('returned_at')
-                    ->label('Returned Date & Time'),
+                    ->label('Tanggal Pengembalian Aktual'),
                 Textarea::make('notes')
-                    ->label('Notes')
+                    ->label('Catatan')
                     ->columnSpanFull(),
                 Textarea::make('admin_note')
-                    ->label('Admin Note')
+                    ->label('Catatan Admin')
                     ->columnSpanFull(),
                 Hidden::make('status')
                     ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
