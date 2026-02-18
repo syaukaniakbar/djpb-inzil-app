@@ -23,6 +23,13 @@ class InventoryInfolist
                 TextEntry::make('category')
                     ->label('Kategori')
                     ->placeholder('-'),
+                TextEntry::make('quantity')
+                    ->label('Jumlah Stok Total')
+                    ->numeric(),
+                TextEntry::make('available_quantity')
+                    ->label('Stok Tersedia')
+                    ->numeric()
+                    ->getStateUsing(fn ($record) => $record->getAvailableQuantityAttribute()),
                 TextEntry::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()

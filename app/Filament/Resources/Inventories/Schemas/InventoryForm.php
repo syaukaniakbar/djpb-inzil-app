@@ -26,6 +26,12 @@ class InventoryForm
                 TextInput::make('category')
                     ->label('Kategori')
                     ->maxLength(255),
+                TextInput::make('quantity')
+                    ->label('Jumlah Stok')
+                    ->numeric()
+                    ->minValue(0)
+                    ->required()
+                    ->default(1),
             ]);
     }
 }

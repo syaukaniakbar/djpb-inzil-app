@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inventories\Tables;
 
+use App\Filament\Actions\EditStockAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -27,6 +28,15 @@ class InventoriesTable
                     ->label('Kategori')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('quantity')
+                    ->label('Jumlah Stok')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('available_quantity')
+                    ->label('Stok Tersedia')
+                    ->numeric()
+                    ->getStateUsing(fn ($record) => $record->getAvailableQuantityAttribute())
+                    ->sortable(),
                 TextColumn::make('description')
                     ->label('Deskripsi')
                     ->limit(50)
@@ -48,6 +58,7 @@ class InventoriesTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                EditStockAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inventories\Pages;
 
+use App\Filament\Actions\EditStockAction;
 use App\Filament\Resources\Inventories\InventoryResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -14,6 +15,7 @@ class EditInventory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditStockAction::make(),
             ViewAction::make(),
             DeleteAction::make(),
         ];
