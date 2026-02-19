@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             BorrowingDetailSeeder::class,
             VehicleBorrowingSeeder::class,
             BookingRoomSeeder::class,
+            ConsumableItemSeeder::class,
         ]);
     }
 }
