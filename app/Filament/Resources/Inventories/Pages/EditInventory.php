@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Inventories\Pages;
 
-use App\Filament\Actions\EditStockAction;
+use App\Filament\Resources\Inventories\Actions\EditStockAction;
 use App\Filament\Resources\Inventories\InventoryResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;

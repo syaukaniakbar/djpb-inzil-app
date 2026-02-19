@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Borrowings\Actions;
+namespace App\Filament\Resources\Inventories\Actions;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;

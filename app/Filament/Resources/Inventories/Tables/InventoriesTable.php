@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Inventories\Tables;
 
-use App\Filament\Actions\EditStockAction;
+use App\Filament\Resources\Inventories\Actions\EditStockAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -35,7 +35,7 @@ class InventoriesTable
                 TextColumn::make('available_quantity')
                     ->label('Stok Tersedia')
                     ->numeric()
-                    ->getStateUsing(fn ($record) => $record->getAvailableQuantityAttribute())
+                    ->getStateUsing(fn($record) => $record->getAvailableQuantityAttribute())
                     ->sortable(),
                 TextColumn::make('description')
                     ->label('Deskripsi')
@@ -64,13 +64,13 @@ class InventoriesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->label('Hapus')
-                        ->modalHeading('Hapus Data Inventaris Persediaan')
-                        ->modalDescription('Apakah Anda yakin ingin menghapus data inventaris persediaan ini?')
+                        ->modalHeading('Hapus Data Inventaris')
+                        ->modalDescription('Apakah Anda yakin ingin menghapus data inventaris ini?')
                         ->modalSubmitActionLabel('Ya, Hapus')
                         ->modalCancelActionLabel('Batal'),
                 ]),
             ])
-            ->emptyStateHeading('Tidak Ada Data Inventaris Persediaan')
-            ->emptyStateDescription('Klik tombol "Tambah Inventaris Persediaan" untuk membuat data baru.');
+            ->emptyStateHeading('Tidak Ada Data Inventaris')
+            ->emptyStateDescription('Klik tombol "Tambah Inventaris" untuk membuat data baru.');
     }
 }

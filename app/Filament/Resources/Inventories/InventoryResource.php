@@ -31,9 +31,9 @@ class InventoryResource extends Resource
     protected static BackedEnum|string|null $navigationIcon =
         Heroicon::OutlinedCube;
 
-    protected static ?string $navigationLabel = 'Inventaris Persediaan';
-    protected static ?string $pluralLabel = 'Riwayat Inventaris Persediaan';
-    protected static ?string $modelLabel = 'Inventaris Persediaan';
+    protected static ?string $navigationLabel = 'Inventaris';
+    protected static ?string $pluralLabel = 'Riwayat Inventaris';
+    protected static ?string $modelLabel = 'Inventaris';
     protected static string|UnitEnum|null $navigationGroup = 'Kelola Aset';
 
 
