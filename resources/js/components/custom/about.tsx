@@ -52,7 +52,7 @@ export default function About(): JSX.Element {
                         <ChevronRight size={18} />
                     </a>
 
-                    <a className="cursor-pointer w-full rounded-md border border-slate-600 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white sm:w-auto">
+                    <a className="cursor-pointer text-center items-center w-full rounded-md border border-slate-600 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:text-white sm:w-auto">
                         Lihat Panduan Sistem
                     </a>
                 </div>
