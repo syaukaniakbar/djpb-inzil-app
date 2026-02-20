@@ -137,12 +137,12 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
         <AppLayout>
             <Head title="Edit Peminjaman Barang" />
 
-            <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12">
+            <div className="min-h-screen bg-[#f8fafc] px-3 py-6 md:px-6 md:py-12 dark:bg-gray-950">
                 <div className="mx-auto max-w-4xl">
                     {/* Back Button - Dibuat lebih lebar target kliknya untuk mobile */}
                     <a
                         href="/borrowings"
-                        className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600"
+                        className="mb-6 inline-flex items-center p-1 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -161,7 +161,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                         Kembali ke Daftar
                     </a>
 
-                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl">
+                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl shadow-blue-900/5 md:rounded-2xl dark:border-gray-800 dark:bg-gray-900">
                         {/* Header Section - Ukuran teks responsif */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8 text-white md:px-10 md:py-12">
                             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -180,15 +180,15 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                             <div className="space-y-8 md:space-y-12">
                                 {/* Section 1: Waktu */}
                                 <section>
-                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
+                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3 dark:border-gray-800">
                                         <Calendar className="mr-3 h-5 w-5 text-blue-600" />
-                                        <h2 className="text-lg font-bold text-balance text-gray-800">
+                                        <h2 className="text-lg font-bold text-balance text-gray-800 dark:text-white">
                                             Periode Peminjaman
                                         </h2>
                                     </div>
                                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700">
+                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 Tanggal & Waktu Mulai
                                             </label>
                                             <input
@@ -200,18 +200,18 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                         e.target.value,
                                                     )
                                                 }
-                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.start_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900 ${errors.start_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                                                 required
                                             />
                                             {errors.start_at && (
-                                                <p className="mt-1 text-xs font-medium text-red-500">
+                                                <p className="mt-1 text-xs font-medium text-red-500 dark:text-red-400">
                                                     {errors.start_at}
                                                 </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700">
+                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 Tanggal & Waktu Selesai
                                             </label>
                                             <input
@@ -223,17 +223,17 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                         e.target.value,
                                                     )
                                                 }
-                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${errors.end_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                                                className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900 ${errors.end_at ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                                             />
                                             {errors.end_at && (
-                                                <p className="mt-1 text-xs font-medium text-red-500">
+                                                <p className="mt-1 text-xs font-medium text-red-500 dark:text-red-400">
                                                     {errors.end_at}
                                                 </p>
                                             )}
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-semibold text-gray-700">
+                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 Tujuan / Catatan Umum
                                             </label>
                                             <textarea
@@ -246,7 +246,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                     )
                                                 }
                                                 placeholder="Contoh: Untuk keperluan dokumentasi event gathering..."
-                                                className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900"
                                             />
                                         </div>
                                     </div>
@@ -254,9 +254,9 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
 
                                 {/* Section 2: Daftar Barang */}
                                 <section>
-                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3">
+                                    <div className="mb-6 flex items-center border-b border-gray-100 pb-3 dark:border-gray-800">
                                         <ClipboardList className="mr-3 h-5 w-5 text-blue-600" />
-                                        <h2 className="text-lg font-bold text-gray-800">
+                                        <h2 className="text-lg font-bold text-gray-800 dark:text-white">
                                             Barang yang Dipinjam
                                         </h2>
                                     </div>
@@ -264,10 +264,10 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                         {data.items.map((item, index) => (
                                             <div
                                                 key={index}
-                                                className="group relative grid grid-cols-1 gap-4 rounded-xl border border-gray-100 bg-gray-50/30 p-5 transition-all hover:border-blue-200 hover:bg-white md:grid-cols-12"
+                                                className="group relative grid grid-cols-1 gap-4 rounded-xl border border-gray-100 bg-gray-50/30 p-5 transition-all hover:border-blue-200 hover:bg-white md:grid-cols-12 dark:border-gray-800 dark:bg-gray-800/50 dark:hover:border-blue-700 dark:hover:bg-gray-800"
                                             >
                                                 <div className="md:col-span-6">
-                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
                                                         Pilih Barang
                                                     </label>
                                                     <select
@@ -288,7 +288,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                             updateItem(index, 'inventory_id', newInventoryId);
                                                             updateItem(index, 'quantity', newQuantity);
                                                         }}
-                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900"
                                                         required
                                                     >
                                                         <option value="">
@@ -310,7 +310,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                 </div>
 
                                                 <div className="md:col-span-2">
-                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
                                                         Jumlah
                                                     </label>
                                                     <div className="relative">
@@ -330,14 +330,14 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                                     clampedValue,
                                                                 );
                                                             }}
-                                                            className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 ${item.inventory_id && !validateQuantity(item.inventory_id, item.quantity)
+                                                            className={`w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-center text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900 ${item.inventory_id && !validateQuantity(item.inventory_id, item.quantity)
                                                                 ? 'border-red-500 ring-1 ring-red-500'
                                                                 : ''
                                                                 }`}
                                                             required
                                                         />
                                                         {item.inventory_id && (
-                                                            <div className="mt-1 text-xs text-gray-500">
+                                                            <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                                 Tersedia: {getAvailableQuantity(item.inventory_id)}
                                                             </div>
                                                         )}
@@ -345,7 +345,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                 </div>
 
                                                 <div className="md:col-span-4">
-                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                                    <label className="mb-1.5 block text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
                                                         Keterangan Barang
                                                     </label>
                                                     <input
@@ -359,7 +359,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                             )
                                                         }
                                                         placeholder="Kondisi, spesifikasi, dll"
-                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                                        className="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-900"
                                                     />
                                                 </div>
 
@@ -370,7 +370,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                                         onClick={() =>
                                                             removeItem(index)
                                                         }
-                                                        className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border border-red-100 bg-white text-red-500 shadow-sm transition-all hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100"
+                                                        className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border border-red-100 bg-white text-red-500 shadow-sm transition-all hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100 dark:border-red-900 dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-600"
                                                     >
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +394,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                         <button
                                             type="button"
                                             onClick={addItem}
-                                            className="mt-4 inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 transition-colors hover:bg-emerald-100"
+                                            className="mt-4 inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 transition-colors hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -414,7 +414,7 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                                         </button>
 
                                         {errors.items && (
-                                            <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                                            <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     className="h-4 w-4"
@@ -441,10 +441,10 @@ export default function BorrowingEdit({ borrowing, inventories }: Props) {
                             </div>
 
                             {/* Action Buttons - Dioptimalkan untuk Mobile (Stack vertical di HP) */}
-                            <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4">
+                            <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
                                 <a
                                     href="/borrowings"
-                                    className="order-2 flex h-12 items-center justify-center px-6 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-700 md:order-1"
+                                    className="order-2 flex h-12 items-center justify-center px-6 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 md:order-1"
                                 >
                                     Batalkan Pengajuan
                                 </a>
