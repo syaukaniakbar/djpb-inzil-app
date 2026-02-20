@@ -20,6 +20,7 @@ import {
     Folder,
     LayoutGrid,
     Package,
+    PackageCheck,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -30,9 +31,14 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Persediaan',
+        title: 'Inventaris',
         href: '/borrowings',
         icon: Package,
+    },
+    {
+        title: 'Peminjaman Persediaan',
+        href: '/consumable-borrowings',
+        icon: PackageCheck,
     },
     {
         title: 'Peminjaman Ruangan',
