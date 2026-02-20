@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\VehicleBorrowingController;
+use App\Http\Controllers\ConsumableBorrowingController;
 use App\Http\Controllers\BookingRoomController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/vehicle-borrowings/{vehicleBorrowing}', [VehicleBorrowingController::class, 'update'])->name('vehicle-borrowings.update');
     Route::patch('/vehicle-borrowings/{vehicleBorrowing}/cancel', [VehicleBorrowingController::class, 'cancel'])->name('vehicle-borrowings.cancel');
     Route::patch('/vehicle-borrowings/{vehicleBorrowing}/return', [VehicleBorrowingController::class, 'return'])->name('vehicle-borrowings.return');
+
+    // Consumable Borrowing routes
+    Route::get('/consumable-borrowings', [ConsumableBorrowingController::class, 'index'])->name('consumable-borrowings.index');
+    Route::get('/consumable-borrowings/create', [ConsumableBorrowingController::class, 'create'])->name('consumable-borrowings.create');
+    Route::post('/consumable-borrowings/store', [ConsumableBorrowingController::class, 'store'])->name('consumable-borrowings.store');
+    Route::get('/consumable-borrowings/{consumableBorrowing}', [ConsumableBorrowingController::class, 'show'])->name('consumable-borrowings.show');
+    Route::get('/consumable-borrowings/{consumableBorrowing}/edit', [ConsumableBorrowingController::class, 'edit'])->name('consumable-borrowings.edit');
+    Route::put('/consumable-borrowings/{consumableBorrowing}', [ConsumableBorrowingController::class, 'update'])->name('consumable-borrowings.update');
+    Route::patch('/consumable-borrowings/{consumableBorrowing}/cancel', [ConsumableBorrowingController::class, 'cancel'])->name('consumable-borrowings.cancel');
+    Route::patch('/consumable-borrowings/{consumableBorrowing}/return', [ConsumableBorrowingController::class, 'return'])->name('consumable-borrowings.return');
 
     // Booking Room routes
     Route::get('/booking-rooms', [BookingRoomController::class, 'index'])->name('booking-rooms.index');
