@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Inventories\Tables;
 
-use App\Filament\Resources\Inventories\Actions\EditStockAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class InventoriesTable
@@ -28,15 +28,6 @@ class InventoriesTable
                     ->label('Kategori')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('quantity')
-                    ->label('Jumlah Stok')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('available_quantity')
-                    ->label('Stok Tersedia')
-                    ->numeric()
-                    ->getStateUsing(fn($record) => $record->getAvailableQuantityAttribute())
-                    ->sortable(),
                 TextColumn::make('description')
                     ->label('Deskripsi')
                     ->limit(50)
@@ -53,12 +44,35 @@ class InventoriesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Status Peminjaman')
+                    ->options([
+                        'available' => 'Tersedia',
+                        'borrowed' => 'Sedang Dipinjam',
+                    ])
+                    ->query(function ($query, array $data) {
+                        if ($data['value'] === 'available') {
+                            return $query->whereDoesntHave('borrowingDetails', function ($q) {
+                                $q->whereHas('borrowing', function ($borrowingQuery) {
+                                    $borrowingQuery->whereIn('status', ['pending', 'approved', 'ongoing']);
+                                });
+                            });
+                        }
+
+                        if ($data['value'] === 'borrowed') {
+                            return $query->whereHas('borrowingDetails', function ($q) {
+                                $q->whereHas('borrowing', function ($borrowingQuery) {
+                                    $borrowingQuery->whereIn('status', ['pending', 'approved', 'ongoing']);
+                                });
+                            });
+                        }
+
+                        return $query;
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                EditStockAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

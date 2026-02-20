@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Borrowing extends Model
 {
@@ -33,13 +32,6 @@ class Borrowing extends Model
     public function borrowingDetails(): HasMany
     {
         return $this->hasMany(BorrowingDetail::class);
-    }
-
-    public function inventories()
-    {
-        return $this->belongsToMany(Inventory::class, 'borrowing_details')
-            ->withPivot('quantity', 'notes')
-            ->withTimestamps();
     }
 
     public function scopeActive($query)

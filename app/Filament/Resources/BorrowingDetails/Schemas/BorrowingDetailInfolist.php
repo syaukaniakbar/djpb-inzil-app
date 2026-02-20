@@ -19,9 +19,6 @@ class BorrowingDetailInfolist
                     ->label('Aset'),
                 TextEntry::make('inventory.serial_number')
                     ->label('Nomor Seri'),
-                TextEntry::make('quantity')
-                    ->numeric()
-                    ->label('Jumlah'),
                 TextEntry::make('notes')
                     ->placeholder('-')
                     ->columnSpanFull()

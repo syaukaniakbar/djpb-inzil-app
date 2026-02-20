@@ -27,8 +27,6 @@ class BorrowingForm
                     ->required(),
                 DateTimePicker::make('end_at')
                     ->label('Tanggal Pengembalian'),
-                DateTimePicker::make('returned_at')
-                    ->label('Tanggal Pengembalian Aktual'),
                 Textarea::make('notes')
                     ->label('Catatan')
                     ->columnSpanFull(),

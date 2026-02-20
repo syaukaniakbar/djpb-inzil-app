@@ -32,10 +32,6 @@ class BorrowingDetailsTable
                     ->label('Nomor Seri')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('quantity')
-                    ->label('Jumlah')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('notes')
                     ->label('Catatan')
                     ->limit(50)

@@ -23,13 +23,53 @@ class InventoryInfolist
                 TextEntry::make('category')
                     ->label('Kategori')
                     ->placeholder('-'),
-                TextEntry::make('quantity')
-                    ->label('Jumlah Stok Total')
-                    ->numeric(),
-                TextEntry::make('available_quantity')
-                    ->label('Stok Tersedia')
-                    ->numeric()
-                    ->getStateUsing(fn ($record) => $record->getAvailableQuantityAttribute()),
+                TextEntry::make('current_borrower')
+                    ->label('Peminjam')
+                    ->placeholder('-')
+                    ->getStateUsing(fn($record) => $record->borrowingDetails()
+                        ->whereHas('borrowing', function ($q) {
+                            $q->whereIn('status', ['pending', 'approved', 'ongoing']);
+                        })
+                        ->first()?->borrowing?->user?->name ?? '-'),
+                TextEntry::make('borrowing_date')
+                    ->label('Tanggal Peminjaman')
+                    ->placeholder('-')
+                    ->dateTime()
+                    ->getStateUsing(fn($record) => $record->borrowingDetails()
+                        ->whereHas('borrowing', function ($q) {
+                            $q->whereIn('status', ['pending', 'approved', 'ongoing']);
+                        })
+                        ->first()?->borrowing?->start_at ?? null),
+                TextEntry::make('return_date')
+                    ->label('Tanggal Pengembalian (Rencana)')
+                    ->placeholder('-')
+                    ->dateTime()
+                    ->getStateUsing(fn($record) => $record->borrowingDetails()
+                        ->whereHas('borrowing', function ($q) {
+                            $q->whereIn('status', ['pending', 'approved', 'ongoing']);
+                        })
+                        ->first()?->borrowing?->end_at ?? null),
+                TextEntry::make('borrowing_status')
+                    ->label('Status Peminjaman')
+                    ->placeholder('-')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => match ($state) {
+                        'pending' => 'Menunggu',
+                        'approved' => 'Disetujui',
+                        'ongoing' => 'Berlangsung',
+                        default => $state
+                    })
+                    ->color(fn($state) => match ($state) {
+                        'pending' => 'warning',
+                        'approved' => 'info',
+                        'ongoing' => 'primary',
+                        default => 'gray'
+                    })
+                    ->getStateUsing(fn($record) => $record->borrowingDetails()
+                        ->whereHas('borrowing', function ($q) {
+                            $q->whereIn('status', ['pending', 'approved', 'ongoing']);
+                        })
+                        ->first()?->borrowing?->status ?? null),
                 TextEntry::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime()
@@ -38,6 +78,7 @@ class InventoryInfolist
                     ->label('Diperbarui Pada')
                     ->dateTime()
                     ->placeholder('-'),
-            ]);
+            ])
+            ->columns(2);
     }
 }

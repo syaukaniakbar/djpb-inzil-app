@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -34,40 +33,38 @@ class BorrowingDetailSeeder extends Seeder
         // First, make sure each borrowing gets at least one inventory item
         foreach ($borrowingIds as $index => $borrowingId) {
             $inventoryId = $inventoryIds[$index % count($inventoryIds)]; // Cycle through inventory items
-            
+
             $combination = $borrowingId . '-' . $inventoryId;
             if (!in_array($combination, $usedCombinations)) {
                 $borrowingDetailData[] = [
                     'borrowing_id' => $borrowingId,
                     'inventory_id' => $inventoryId,
-                    'quantity' => rand(1, 3), // Random quantity between 1 and 3
                     'notes' => "Detail record for borrowing #{$borrowingId} and inventory #{$inventoryId}",
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ];
-                
+
                 $usedCombinations[] = $combination;
             }
         }
 
         // Add additional borrowing details if we have more inventory items than borrowings
         $additionalDetailsNeeded = max(0, count($inventoryIds) - count($borrowingIds));
-        
+
         for ($i = 0; $i < $additionalDetailsNeeded; $i++) {
             $borrowingId = $borrowingIds[array_rand($borrowingIds)];
             $inventoryId = $inventoryIds[array_rand($inventoryIds)];
-            
+
             $combination = $borrowingId . '-' . $inventoryId;
             if (!in_array($combination, $usedCombinations)) {
                 $borrowingDetailData[] = [
                     'borrowing_id' => $borrowingId,
                     'inventory_id' => $inventoryId,
-                    'quantity' => rand(1, 3), // Random quantity between 1 and 3
                     'notes' => "Additional detail record for borrowing #{$borrowingId} and inventory #{$inventoryId}",
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ];
-                
+
                 $usedCombinations[] = $combination;
             }
         }
