@@ -28,11 +28,23 @@ class BorrowingDetailRelationManager extends RelationManager
                 Select::make('inventory_id')
                     ->label('Aset')
                     ->options(function () {
-                        return Inventory::whereDoesntHave('borrowingDetails', function ($q) {
-                            $q->whereHas('borrowing', function ($borrowingQuery) {
-                                $borrowingQuery->whereIn('status', ['pending', 'approved', 'ongoing']);
-                            });
-                        })->get()
+                        /** @var \App\Models\Borrowing $borrowing */
+                        $borrowing = $this->getOwnerRecord();
+
+                        // IDs already attached to this borrowing (to avoid duplicates in the same borrowing)
+                        $alreadyUsedIds = $borrowing->borrowingDetails()->pluck('inventory_id')->toArray();
+
+                        return Inventory::whereNotIn('id', $alreadyUsedIds)
+                            ->whereDoesntHave('borrowingDetails', function ($q) use ($borrowing) {
+                                $q->whereHas('borrowing', function ($borrowingQuery) use ($borrowing) {
+                                    $borrowingQuery
+                                        ->whereIn('status', ['pending', 'approved', 'ongoing'])
+                                        ->where('id', '!=', $borrowing->id)
+                                        ->where('start_at', '<', $borrowing->end_at)
+                                        ->where('end_at', '>', $borrowing->start_at);
+                                });
+                            })
+                            ->get()
                             ->mapWithKeys(fn($item) => [$item->id => $item->name . ' (' . $item->serial_number . ')']);
                     })
                     ->searchable()

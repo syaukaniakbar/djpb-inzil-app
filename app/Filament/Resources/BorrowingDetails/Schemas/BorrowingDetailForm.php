@@ -30,12 +30,35 @@ class BorrowingDetailForm
 
                 Select::make('inventory_id')
                     ->label('Aset')
-                    ->options(function () {
-                        return Inventory::whereDoesntHave('borrowingDetails', function ($q) {
-                            $q->whereHas('borrowing', function ($borrowingQuery) {
-                                $borrowingQuery->whereIn('status', ['pending', 'approved', 'ongoing']);
-                            });
-                        })->get()
+                    ->options(function ($get) {
+                        $borrowingId = $get('borrowing_id');
+
+                        if (!$borrowingId) {
+                            // No borrowing selected yet — show all inventories
+                            return Inventory::all()
+                                ->mapWithKeys(fn($item) => [$item->id => $item->name . ' (' . $item->serial_number . ')']);
+                        }
+
+                        $borrowing = Borrowing::find($borrowingId);
+
+                        if (!$borrowing) {
+                            return [];
+                        }
+
+                        // IDs already added to this specific borrowing (to avoid duplicates)
+                        $alreadyUsedIds = $borrowing->borrowingDetails()->pluck('inventory_id')->toArray();
+
+                        return Inventory::whereNotIn('id', $alreadyUsedIds)
+                            ->whereDoesntHave('borrowingDetails', function ($q) use ($borrowing) {
+                                $q->whereHas('borrowing', function ($borrowingQuery) use ($borrowing) {
+                                    $borrowingQuery
+                                        ->whereIn('status', ['pending', 'approved', 'ongoing'])
+                                        ->where('id', '!=', $borrowing->id)
+                                        ->where('start_at', '<', $borrowing->end_at)
+                                        ->where('end_at', '>', $borrowing->start_at);
+                                });
+                            })
+                            ->get()
                             ->mapWithKeys(fn($item) => [$item->id => $item->name . ' (' . $item->serial_number . ')']);
                     })
                     ->searchable()
@@ -49,3 +72,4 @@ class BorrowingDetailForm
             ]);
     }
 }
+

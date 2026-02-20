@@ -25,10 +25,25 @@ class BorrowingDetail extends Model
                 throw ValidationException::withMessages(['inventory_id' => 'Aset yang dipilih tidak ditemukan.']);
             }
 
-            // Check if this inventory is already being borrowed
-            if ($inventory->isBeingBorrowed()) {
+            // Load the parent borrowing to get the date range
+            $borrowing = Borrowing::find($borrowingDetail->borrowing_id);
+
+            if (!$borrowing) {
+                throw ValidationException::withMessages(['borrowing_id' => 'Data peminjaman tidak ditemukan.']);
+            }
+
+            // Check if this inventory overlaps with another active borrowing period.
+            // Exclude the current borrowing_id so that editing the same record doesn't
+            // falsely flag itself as a conflict.
+            if (
+                $inventory->isBeingBorrowedDuring(
+                    $borrowing->start_at,
+                    $borrowing->end_at,
+                    $borrowingDetail->borrowing_id
+                )
+            ) {
                 throw ValidationException::withMessages([
-                    'inventory_id' => 'Aset ini sedang dipinjam.'
+                    'inventory_id' => 'Aset ini sedang dipinjam pada periode yang sama.',
                 ]);
             }
         });
@@ -44,3 +59,4 @@ class BorrowingDetail extends Model
         return $this->belongsTo(Inventory::class);
     }
 }
+
