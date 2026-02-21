@@ -41,6 +41,15 @@ class User extends Authenticatable implements FilamentUser
         'phone'
     ];
 
+    /**
+     * The attributes that should be appended to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'avatar',
+    ];
+
     public function department()
     {
         return $this->belongsTo(Department::class);
@@ -49,6 +58,18 @@ class User extends Authenticatable implements FilamentUser
     public function position()
     {
         return $this->belongsTo(Position::class);
+    }
+
+    /**
+     * Get the user's avatar URL.
+     *
+     * @return string
+     */
+    public function getAvatarAttribute()
+    {
+        return $this->profile_photo
+            ? asset('storage/' . $this->profile_photo)
+            : asset('images/default-avatar.png');
     }
 
     /**
@@ -74,6 +95,8 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'department_id' => 'integer',
+            'position_id' => 'integer',
         ];
     }
 

@@ -27,6 +27,21 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+
+            'nip' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique(User::class)->ignore($this->user()->id),
+            ],
+
+            'phone' => ['nullable', 'string', 'max:20'],
+
+            'department_id' => ['required', 'exists:departments,id'],
+
+            'position_id' => ['required', 'exists:positions,id'],
+
+            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 }
