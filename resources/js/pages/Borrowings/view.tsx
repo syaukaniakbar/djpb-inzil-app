@@ -20,7 +20,6 @@ interface Inventory {
 
 interface BorrowingDetail {
     id: number;
-    quantity: number;
     notes: string | null;
     inventory: Inventory | null;
 }
@@ -186,9 +185,6 @@ export default function View({ borrowing }: Props) {
                                                     Barang
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
-                                                    Jumlah
-                                                </th>
-                                                <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400">
                                                     Catatan
                                                 </th>
                                             </tr>
@@ -210,11 +206,6 @@ export default function View({ borrowing }: Props) {
                                                                     'Nama Barang Tidak Tersedia'}
                                                             </td>
                                                             <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    detail.quantity
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">
                                                                 {detail.notes ||
                                                                     '-'}
                                                             </td>
@@ -224,7 +215,7 @@ export default function View({ borrowing }: Props) {
                                             ) : (
                                                 <tr>
                                                     <td
-                                                        colSpan={3}
+                                                        colSpan={2}
                                                         className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
                                                     >
                                                         Tidak ada barang yang

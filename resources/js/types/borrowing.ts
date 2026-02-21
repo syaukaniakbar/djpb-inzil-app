@@ -1,6 +1,5 @@
 export type BorrowingItem = {
     inventory_id: number | null;
-    quantity: number;
     notes?: string;
 };
 
@@ -19,3 +18,11 @@ export type BorrowingsResponse = {
     items: BorrowingItem[];
 };
 
+/** Shape returned by /api/inventories/available-inventories */
+export type AvailableInventory = {
+    id: number;
+    name: string;
+    serial_number: string;
+    category: string | null;
+    label: string; // "name (serial_number)"
+};

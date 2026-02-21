@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrowing;
-use App\Models\Inventory;
 use App\Services\BorrowingService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BorrowingRequest;
 use App\Models\User;
-
-
 
 class BorrowingController extends Controller
 {
@@ -21,7 +18,7 @@ class BorrowingController extends Controller
     }
 
     /**
-     * Show borrowing form
+     * List the current user's borrowings.
      */
     public function index()
     {
@@ -32,7 +29,7 @@ class BorrowingController extends Controller
         return inertia('Borrowings/index', [
             'borrowings' => Borrowing::with([
                 'user:id,name',
-                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails:id,borrowing_id,inventory_id,notes',
                 'borrowingDetails.inventory:id,name',
             ])
                 ->select([
@@ -53,30 +50,22 @@ class BorrowingController extends Controller
         ]);
     }
 
+    /**
+     * Show the create form.
+     * Inventories are loaded via the live-search API (/api/inventories/available-inventories).
+     */
     public function create()
     {
-        return inertia('Borrowings/create', [
-            'inventories' => Inventory::all()->map(function ($inventory) {
-                return [
-                    'id' => $inventory->id,
-                    'name' => $inventory->name,
-                    'quantity' => $inventory->quantity,
-                    'available_quantity' => $inventory->available_quantity,
-                ];
-            }),
-        ]);
+        return inertia('Borrowings/create');
     }
 
-
     /**
-     * Store borrowing (INERTIA RESPONSE)
+     * Store a new borrowing.
      */
     public function store(BorrowingRequest $request)
     {
         try {
-            $this->borrowingService->createBorrowing(
-                $request->validated()
-            );
+            $this->borrowingService->createBorrowing($request->validated());
 
             return redirect()
                 ->route('borrowings.index')
@@ -85,15 +74,12 @@ class BorrowingController extends Controller
         } catch (\Throwable $e) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'general' => $e->getMessage(),
-                ]);
+                ->withErrors(['general' => $e->getMessage()]);
         }
     }
 
-
     /**
-     * Show borrowing details
+     * Show a single borrowing.
      */
     public function show(Borrowing $borrowing)
     {
@@ -114,7 +100,7 @@ class BorrowingController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails:id,borrowing_id,inventory_id,notes',
                 'borrowingDetails.inventory:id,name',
             ])
             ->findOrFail($borrowing->id);
@@ -125,11 +111,11 @@ class BorrowingController extends Controller
     }
 
     /**
-     * Show borrowing edit form
+     * Show the edit form.
+     * Inventories are loaded via the live-search API with ?exclude_borrowing={id}.
      */
     public function edit(Borrowing $borrowing)
     {
-        // Ensure the user can only edit their own borrowings
         if ($borrowing->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to edit this borrowing');
         }
@@ -147,54 +133,38 @@ class BorrowingController extends Controller
         ])
             ->with([
                 'user:id,name',
-                'borrowingDetails:id,borrowing_id,inventory_id,quantity,notes',
+                'borrowingDetails:id,borrowing_id,inventory_id,notes',
                 'borrowingDetails.inventory:id,name',
             ])
             ->findOrFail($borrowing->id);
 
-        // Get inventories with available quantity calculated excluding the current borrowing
-        $inventories = Inventory::all()->map(function ($inventory) use ($borrowing) {
-            return [
-                'id' => $inventory->id,
-                'name' => $inventory->name,
-                'quantity' => $inventory->quantity,
-                'available_quantity' => $inventory->getAvailableQuantityExcludingBorrowing($borrowing),
-            ];
-        });
-
         return inertia('Borrowings/edit', [
             'borrowing' => $borrowingData,
-            'inventories' => $inventories,
         ]);
     }
 
     /**
-     * Update borrowing (INERTIA RESPONSE)
+     * Update an existing borrowing.
      */
     public function update(BorrowingRequest $request, Borrowing $borrowing)
     {
         try {
-            $updatedBorrowing = $this->borrowingService->updateBorrowing(
-                $borrowing,
-                $request->validated()
-            );
+            $this->borrowingService->updateBorrowing($borrowing, $request->validated());
+
             return redirect()
                 ->route('borrowings.index')
                 ->with('success', 'Peminjaman berhasil diperbarui');
 
         } catch (\Throwable $e) {
-            return back()->withErrors([
-                'general' => $e->getMessage(),
-            ]);
+            return back()->withErrors(['general' => $e->getMessage()]);
         }
     }
 
     /**
-     * Cancel a borrowing by updating its status to canceled
+     * Cancel a borrowing (pending → canceled).
      */
     public function cancel(Borrowing $borrowing)
     {
-        // Ensure the user can only cancel their own borrowings
         if ($borrowing->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to cancel this borrowing');
         }
@@ -207,18 +177,15 @@ class BorrowingController extends Controller
                 ->with('success', 'Peminjaman berhasil dibatalkan');
 
         } catch (\Throwable $e) {
-            return back()->withErrors([
-                'general' => $e->getMessage(),
-            ]);
+            return back()->withErrors(['general' => $e->getMessage()]);
         }
     }
 
     /**
-     * Return a borrowing by updating its status to returned
+     * Mark a borrowing as returned.
      */
     public function return(Borrowing $borrowing)
     {
-        // Ensure the user can only return their own borrowings
         if ($borrowing->user_id !== Auth::id()) {
             abort(403, 'Unauthorized to return this borrowing');
         }
@@ -231,11 +198,7 @@ class BorrowingController extends Controller
                 ->with('success', 'Peminjaman berhasil dikembalikan');
 
         } catch (\Throwable $e) {
-            return back()->withErrors([
-                'general' => $e->getMessage(),
-            ]);
+            return back()->withErrors(['general' => $e->getMessage()]);
         }
     }
-
 }
-

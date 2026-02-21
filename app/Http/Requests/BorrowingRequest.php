@@ -27,8 +27,18 @@ class BorrowingRequest extends FormRequest
             'notes' => 'nullable|string|max:255',
             'items' => 'required|array|min:1',
             'items.*.inventory_id' => 'required|exists:inventories,id',
-            'items.*.quantity' => 'required|integer|min:1',
             'items.*.notes' => 'nullable|string|max:255',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'start_at.required' => 'Tanggal mulai harus diisi.',
+            'end_at.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
+            'items.required' => 'Minimal satu barang harus dipilih.',
+            'items.*.inventory_id.required' => 'Barang harus dipilih.',
+            'items.*.inventory_id.exists' => 'Barang yang dipilih tidak ditemukan.',
         ];
     }
 }

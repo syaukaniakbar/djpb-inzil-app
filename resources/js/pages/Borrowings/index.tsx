@@ -12,7 +12,6 @@ interface Inventory {
 
 interface BorrowingDetail {
     id: number;
-    quantity: number;
     notes: string | null;
     inventory: Inventory;
 }
@@ -99,7 +98,6 @@ export default function BorrowingsIndex({ borrowings, admin }: Props) {
                                                 {(borrowing.borrowing_details || []).map((detail) => (
                                                     <li key={detail.id}>
                                                         {detail.inventory?.name ?? 'Inventory tidak ditemukan'}
-                                                        <span className="text-gray-500 dark:text-gray-400">({detail.quantity})</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -218,7 +216,6 @@ export default function BorrowingsIndex({ borrowings, admin }: Props) {
                                                     {(borrowing.borrowing_details || []).map(detail => (
                                                         <li key={detail.id}>
                                                             {detail.inventory?.name ?? 'Inventory tidak ditemukan'}
-                                                            <span className="text-gray-500 dark:text-gray-400">({detail.quantity})</span>
                                                         </li>
                                                     ))}
                                                 </ul>

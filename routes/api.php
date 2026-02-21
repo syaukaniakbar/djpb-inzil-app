@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomController as ApiRoomController;
 use App\Http\Controllers\Api\VehicleController as ApiVehicleController;
+use App\Http\Controllers\Api\InventoryController as ApiInventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +24,9 @@ Route::prefix('rooms')->group(function () {
 // Vehicle API routes
 Route::prefix('vehicles')->group(function () {
     Route::get('/available-vehicles', [ApiVehicleController::class, 'getAvailableVehicles']);
+});
+
+// Inventory API routes
+Route::prefix('inventories')->group(function () {
+    Route::get('/available-inventories', [ApiInventoryController::class, 'getAvailableInventories']);
 });
