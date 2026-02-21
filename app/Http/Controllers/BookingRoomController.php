@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRoom;
-use App\Models\Room;
 use App\Services\BookingRoomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +40,7 @@ class BookingRoomController extends Controller
 
     public function create()
     {
-        $rooms = Room::all();
-
-        return inertia('BookingRooms/create', [
-            'rooms' => $rooms,
-        ]);
+        return inertia('BookingRooms/create');
     }
 
     public function store(BookingRoomRequest $request)
@@ -87,11 +82,8 @@ class BookingRoomController extends Controller
             abort(403, 'Unauthorized to edit this booking');
         }
 
-        $rooms = Room::all();
-
         return inertia('BookingRooms/edit', [
             'booking' => $bookingRoom->load(['user', 'room']),
-            'rooms' => $rooms,
         ]);
     }
 
