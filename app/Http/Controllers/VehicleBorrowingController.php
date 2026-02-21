@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\VehicleBorrowing;
-use App\Models\Vehicle;
 use App\Models\User;
 use App\Services\VehicleBorrowingService;
 use Illuminate\Http\Request;
@@ -41,11 +40,7 @@ class VehicleBorrowingController extends Controller
 
     public function create()
     {
-        $vehicles = Vehicle::all();
-
-        return inertia('VehicleBorrowings/create', [
-            'vehicles' => $vehicles,
-        ]);
+        return inertia('VehicleBorrowings/create');
     }
 
     public function store(VehicleBorrowingRequest $request)
@@ -87,11 +82,8 @@ class VehicleBorrowingController extends Controller
             abort(403, 'Unauthorized to edit this borrowing');
         }
 
-        $vehicles = Vehicle::all();
-
         return inertia('VehicleBorrowings/edit', [
             'borrowing' => $vehicleBorrowing->load(['user', 'vehicle']),
-            'vehicles' => $vehicles,
         ]);
     }
 
