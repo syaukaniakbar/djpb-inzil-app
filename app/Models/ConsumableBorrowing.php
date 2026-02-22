@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $consumable_item_id
+ * @property int $quantity
+ * @property string $status
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $borrowed_at
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\ConsumableItem $consumableItem
+ */
 class ConsumableBorrowing extends Model
 {
     use HasFactory;

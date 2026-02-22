@@ -12,6 +12,17 @@ use Filament\Panel;
 use App\Models\Department;
 use App\Models\Position;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $nip
+ * @property string $role
+ * @property string|null $phone
+ * @property int|null $department_id
+ * @property int|null $position_id
+ * @property string|null $profile_photo
+ */
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

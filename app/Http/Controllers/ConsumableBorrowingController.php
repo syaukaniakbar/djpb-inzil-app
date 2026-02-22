@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConsumableBorrowingRequest;
 use App\Models\ConsumableBorrowing;
 use App\Models\ConsumableItem;
 use App\Models\User;
+use App\Services\ConsumableBorrowingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ConsumableBorrowingController extends Controller
 {
+    protected $service;
+
+    public function __construct(ConsumableBorrowingService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of consumable borrowings.
      */
@@ -55,35 +64,16 @@ class ConsumableBorrowingController extends Controller
     /**
      * Store a newly created consumable borrowing in storage.
      */
-    public function store(Request $request)
+    public function store(ConsumableBorrowingRequest $request)
     {
-        $validated = $request->validate([
-            'borrowed_at' => 'required|date',
-            'consumable_item_id' => 'required|exists:consumable_items,id',
-            'quantity' => 'required|integer|min:1',
-            'notes' => 'nullable|string|max:500',
-        ]);
+        try {
+            $this->service->createBorrowing($request->validated());
 
-        $consumableItem = ConsumableItem::findOrFail($validated['consumable_item_id']);
-
-        // Check if quantity is available
-        if ($validated['quantity'] > $consumableItem->quantity) {
-            return back()->withErrors([
-                'quantity' => "Jumlah yang diminta melebihi stok yang tersedia. Tersedia: {$consumableItem->quantity}",
-            ]);
+            return redirect()->route('consumable-borrowings.index')
+                ->with('success', 'Peminjaman persediaan berhasil diajukan.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        ConsumableBorrowing::create([
-            'user_id' => Auth::id(),
-            'consumable_item_id' => $validated['consumable_item_id'],
-            'quantity' => $validated['quantity'],
-            'borrowed_at' => $validated['borrowed_at'],
-            'notes' => $validated['notes'],
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('consumable-borrowings.index')
-            ->with('success', 'Peminjaman persediaan berhasil diajukan.');
     }
 
     /**
@@ -104,7 +94,7 @@ class ConsumableBorrowingController extends Controller
     public function edit(ConsumableBorrowing $consumableBorrowing)
     {
         // Only allow editing if status is pending
-        if ($consumableBorrowing->status !== 'pending') {
+        if (!$consumableBorrowing->isPending()) {
             return redirect()->route('consumable-borrowings.show', $consumableBorrowing)
                 ->with('error', 'Hanya peminjaman dengan status pending yang dapat diubah.');
         }
@@ -122,36 +112,16 @@ class ConsumableBorrowingController extends Controller
     /**
      * Update the specified consumable borrowing in storage.
      */
-    public function update(Request $request, ConsumableBorrowing $consumableBorrowing)
+    public function update(ConsumableBorrowingRequest $request, ConsumableBorrowing $consumableBorrowing)
     {
-        // Only allow updating if status is pending
-        if ($consumableBorrowing->status !== 'pending') {
-            return back()->withErrors([
-                'status' => 'Hanya peminjaman dengan status pending yang dapat diubah.',
-            ]);
+        try {
+            $this->service->updateBorrowing($consumableBorrowing, $request->validated());
+
+            return redirect()->route('consumable-borrowings.show', $consumableBorrowing)
+                ->with('success', 'Peminjaman persediaan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        $validated = $request->validate([
-            'borrowed_at' => 'required|date',
-            'consumable_item_id' => 'required|exists:consumable_items,id',
-            'quantity' => 'required|integer|min:1',
-            'notes' => 'nullable|string|max:500',
-        ]);
-
-        $consumableItem = ConsumableItem::findOrFail($validated['consumable_item_id']);
-
-        // Check if quantity is available (add back old quantity for comparison)
-        $availableQuantity = $consumableItem->quantity + $consumableBorrowing->quantity;
-        if ($validated['quantity'] > $availableQuantity) {
-            return back()->withErrors([
-                'quantity' => "Jumlah yang diminta melebihi stok yang tersedia. Tersedia: {$availableQuantity}",
-            ]);
-        }
-
-        $consumableBorrowing->update($validated);
-
-        return redirect()->route('consumable-borrowings.show', $consumableBorrowing)
-            ->with('success', 'Peminjaman persediaan berhasil diperbarui.');
     }
 
     /**
@@ -159,17 +129,14 @@ class ConsumableBorrowingController extends Controller
      */
     public function cancel(ConsumableBorrowing $consumableBorrowing)
     {
-        // Only allow canceling if status is pending
-        if ($consumableBorrowing->status !== 'pending') {
-            return back()->withErrors([
-                'status' => 'Hanya peminjaman dengan status pending yang dapat dibatalkan.',
-            ]);
+        try {
+            $this->service->cancelBorrowing($consumableBorrowing);
+
+            return redirect()->route('consumable-borrowings.index')
+                ->with('success', 'Peminjaman persediaan berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        $consumableBorrowing->markAsCanceled();
-
-        return redirect()->route('consumable-borrowings.index')
-            ->with('success', 'Peminjaman persediaan berhasil dibatalkan.');
     }
 
     /**
@@ -177,16 +144,13 @@ class ConsumableBorrowingController extends Controller
      */
     public function return(ConsumableBorrowing $consumableBorrowing)
     {
-        // Only allow returning if status is ongoing
-        if (!in_array($consumableBorrowing->status, ['ongoing', 'pending'])) {
-            return back()->withErrors([
-                'status' => 'Peminjaman harus dalam status ongoing untuk dikembalikan.',
-            ]);
+        try {
+            $this->service->finishBorrowing($consumableBorrowing);
+
+            return redirect()->route('consumable-borrowings.show', $consumableBorrowing)
+                ->with('success', 'Persediaan berhasil dikembalikan.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        $consumableBorrowing->markAsFinished();
-
-        return redirect()->route('consumable-borrowings.show', $consumableBorrowing)
-            ->with('success', 'Persediaan berhasil dikembalikan.');
     }
 }
