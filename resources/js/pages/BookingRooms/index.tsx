@@ -1,38 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
-import { PaginatedResponse } from '@/types/pagination';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
-
-interface Room {
-    id: number;
-    name: string;
-    capacity: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface BookingRoom {
-    id: number;
-    start_at: string;
-    end_at: string;
-    event_mode: string;
-    event_name: string;
-    status: LoanStatus;
-    admin_note: string | null;
-    user: User;
-    room: Room;
-}
-
-interface Admin {
-    id: number;
-    name: string;
-    phone: string;
-}
+import { StatusBadge } from '@/components/custom/status-badge';
+import type { BookingRoomsIndexProps, BookingRoom, EventMode } from '@/types/booking-room';
 
 const eventModeLabels: Record<string, string> = {
     online: 'Online',
@@ -40,12 +11,7 @@ const eventModeLabels: Record<string, string> = {
     hybrid: 'Hybrid',
 };
 
-interface Props {
-    bookings: PaginatedResponse<BookingRoom>;
-    admin: Admin;
-}
-
-export default function Index({ bookings, admin }: Props) {
+export default function Index({ bookings, admin }: BookingRoomsIndexProps) {
     const data = bookings.data;
 
     return (
@@ -139,7 +105,7 @@ export default function Index({ bookings, admin }: Props) {
                                                         Ubah
                                                     </Link>
                                                     <a
-                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`)}`}
+                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user?.name || 'Tidak Diketahui'}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`)}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700"
@@ -217,7 +183,7 @@ export default function Index({ bookings, admin }: Props) {
                                                         {booking.status === 'pending' && (
                                                             <>
                                                                 <Link href={`/booking-rooms/${booking.id}/edit`} className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Ubah</Link>
-                                                                <a href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user.name}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`)}`} target="_blank" rel="noopener noreferrer" className="cursor-pointer w-full text-center rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100 dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700">WhatsApp Admin</a>
+                                                                <a href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Ruangan] \n \nSaya ingin mengajukan peminjaman ruangan dengan detail berikut: \n\n#ID Peminjaman: ${booking.id}\nNama: ${booking.user?.name || 'Tidak Diketahui'}\nRuangan: ${booking.room.name}\nTanggal Peminjaman: ${formatDateTime(booking.start_at)} \nTanggal Pengembalian: ${formatDateTime(booking.end_at)}\n\n Menunggu persetujuan.`)}`} target="_blank" rel="noopener noreferrer" className="cursor-pointer w-full text-center rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100 dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700">WhatsApp Admin</a>
                                                                 <button type="button" onClick={(e) => { e.preventDefault(); if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) { router.patch(`/booking-rooms/${booking.id}/cancel`); } }} className="cursor-pointer w-full text-center text-xs font-medium text-red-600 hover:underline dark:text-red-400">Batalkan</button>
                                                             </>
                                                         )}

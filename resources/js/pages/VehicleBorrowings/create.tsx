@@ -2,20 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { Calendar, Car, ChevronLeft, MapPin, Send, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-interface Vehicle {
-    id: number;
-    name: string;
-    license_plate: string;
-}
-
-interface VehicleBorrowingFormData {
-    start_at: string;
-    end_at: string;
-    purpose: string;
-    destination: string;
-    vehicle_id: number | null;
-}
+import type { VehicleBorrowingFormData } from '@/types/vehicle-borrowing';
+import type { AvailableVehicle } from '@/types/vehicle';
 
 export default function VehicleBorrowingCreate() {
     const { data, setData, post, processing, errors } = useForm<VehicleBorrowingFormData>({
@@ -26,7 +14,7 @@ export default function VehicleBorrowingCreate() {
         vehicle_id: null,
     });
 
-    const [availableVehicles, setAvailableVehicles] = useState<Vehicle[]>([]);
+    const [availableVehicles, setAvailableVehicles] = useState<AvailableVehicle[]>([]);
     const [loadingVehicles, setLoadingVehicles] = useState(false);
 
     const datesReady = !!(data.start_at && data.end_at);
@@ -50,7 +38,7 @@ export default function VehicleBorrowingCreate() {
             .then(result => {
                 if (result.success) {
                     setAvailableVehicles(result.vehicles);
-                    if (data.vehicle_id && !result.vehicles.some((vehicle: Vehicle) => vehicle.id === data.vehicle_id)) {
+                    if (data.vehicle_id && !result.vehicles.some((vehicle: AvailableVehicle) => vehicle.id === data.vehicle_id)) {
                         setData('vehicle_id', null);
                     }
                 } else {

@@ -1,41 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
-import { PaginatedResponse } from '@/types/pagination';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import { StatusBadge } from '@/components/custom/status-badge';
+import type { ConsumableBorrowingsIndexProps, ConsumableBorrowing } from '@/types/consumable-borrowing';
 
-interface ConsumableItem {
-    id: number;
-    name: string;
-    sku: string | null;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface ConsumableBorrowing {
-    id: number;
-    borrowed_at: string;
-    quantity: number;
-    status: LoanStatus;
-    notes: string | null;
-    user: User;
-    consumable_item: ConsumableItem;
-}
-
-interface Admin {
-    phone: string;
-}
-
-interface Props {
-    borrowings: PaginatedResponse<ConsumableBorrowing>;
-    admin: Admin;
-}
-
-export default function ConsumableBorrowingsIndex({ borrowings, admin }: Props) {
+export default function ConsumableBorrowingsIndex({ borrowings, admin }: ConsumableBorrowingsIndexProps) {
     const data = borrowings.data;
 
     return (
@@ -89,9 +59,9 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin }: Props) 
                                                 Barang
                                             </p>
                                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                {borrowing.consumable_item.name}
+                                                {borrowing.consumable_item?.name || 'Nama Barang Tidak Tersedia'}
                                             </p>
-                                            {borrowing.consumable_item.sku && (
+                                            {borrowing.consumable_item?.sku && (
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">
                                                     SKU: {borrowing.consumable_item.sku}
                                                 </p>
@@ -138,7 +108,7 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin }: Props) 
 
                                                     <a
                                                         href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
-                                                            `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Persediaan]\n \nSaya ingin mengajukan peminjaman persediaan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${borrowing.consumable_item.name}\nJumlah: ${borrowing.quantity}\nTanggal Peminjaman: ${formatDateTime(borrowing.borrowed_at)}\n\n Menunggu persetujuan.`,
+                                                            `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Persediaan]\n \nSaya ingin mengajukan peminjaman persediaan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nBarang: ${borrowing.consumable_item?.name || 'Tidak Diketahui'}\nJumlah: ${borrowing.quantity}\nTanggal Peminjaman: ${formatDateTime(borrowing.borrowed_at)}\n\n Menunggu persetujuan.`,
                                                         )}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
@@ -245,9 +215,9 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin }: Props) 
 
                                                 <td className="px-4 py-3 text-sm text-gray-700 dark:text-white">
                                                     <div className="font-semibold text-gray-900 dark:text-white">
-                                                        {borrowing.consumable_item.name}
+                                                        {borrowing.consumable_item?.name || 'Nama Barang Tidak Tersedia'}
                                                     </div>
-                                                    {borrowing.consumable_item.sku && (
+                                                    {borrowing.consumable_item?.sku && (
                                                         <div className="text-gray-500 text-xs dark:text-gray-400">
                                                             SKU: {borrowing.consumable_item.sku}
                                                         </div>

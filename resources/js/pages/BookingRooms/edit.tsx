@@ -2,40 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Calendar, MapPin, Send, Home, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-interface Room {
-    id: number;
-    name: string;
-    capacity: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface BookingRoomFormData {
-    start_at: string;
-    end_at: string;
-    event_mode: string;
-    event_name: string;
-    room_id: number | null;
-    admin_note: string;
-}
-
-interface Props {
-    booking: {
-        id: number;
-        start_at: string;
-        end_at: string | null;
-        event_mode: string;
-        event_name: string;
-        status: string;
-        admin_note: string | null;
-        user: User;
-        room: Room;
-    };
-}
+import type { BookingRoomFormData, BookingRoomEditProps } from '@/types/booking-room';
+import type { AvailableRoom } from '@/types/room';
 
 const formatDateTimeLocal = (dt: string | null): string => {
     if (!dt) return '';
@@ -44,7 +12,7 @@ const formatDateTimeLocal = (dt: string | null): string => {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-export default function BookingRoomEdit({ booking }: Props) {
+export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
     const { data, setData, put, processing, errors } = useForm<BookingRoomFormData>({
         start_at: formatDateTimeLocal(booking.start_at),
         end_at: formatDateTimeLocal(booking.end_at ?? null),
@@ -54,7 +22,7 @@ export default function BookingRoomEdit({ booking }: Props) {
         admin_note: booking.admin_note || '',
     });
 
-    const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+    const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([]);
     const [loadingRooms, setLoadingRooms] = useState(false);
 
     const datesReady = !!data.start_at && !!data.end_at;

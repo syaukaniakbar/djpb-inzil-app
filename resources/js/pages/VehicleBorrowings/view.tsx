@@ -1,44 +1,15 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import { StatusBadge } from '@/components/custom/status-badge';
 import { Car, Info, MapPin, User } from 'lucide-react';
+import type { VehicleBorrowingViewProps, Purpose } from '@/types/vehicle-borrowing';
 
-interface Vehicle {
-    id: number;
-    name: string;
-    license_plate: string;
-    brand: string;
-    model: string;
-    color: string;
-    fuel_type: string;
-    registration_expiry: string;
-    year: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface VehicleBorrowing {
-    id: number;
-    start_at: string;
-    end_at: string;
-    returned_at: string | null;
-    purpose: string;
-    destination: string;
-    status: LoanStatus;
-    admin_note: string | null;
-    user: User;
-    vehicle: Vehicle;
-}
-
-interface Props {
-    borrowing: VehicleBorrowing;
-}
-
-export default function View({ borrowing }: Props) {
+export default function View({ borrowing }: VehicleBorrowingViewProps) {
+    const purposeLabels: Record<string, string> = {
+        dalam_kota: 'Dalam Kota',
+        luar_kota: 'Luar Kota',
+    };
     return (
         <AppLayout>
             <Head title={`Lihat Peminjaman Kendaraan #${borrowing.id}`} />
@@ -93,7 +64,7 @@ export default function View({ borrowing }: Props) {
                                             <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Peminjam</dt>
                                             <dd className="mt-1 flex items-center text-sm text-gray-900 dark:text-gray-300">
                                                 <User className="mr-2 h-4 w-4 text-gray-400" />
-                                                {borrowing.user.name}
+                                                {borrowing.user?.name || 'Nama Tidak Tersedia'}
                                             </dd>
                                         </div>
                                         <div>

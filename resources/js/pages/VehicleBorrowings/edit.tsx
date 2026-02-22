@@ -2,40 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { Calendar, Car, ChevronLeft, MapPin, Send, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-interface Vehicle {
-    id: number;
-    name: string;
-    license_plate: string;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface VehicleBorrowingFormData {
-    start_at: string;
-    end_at: string;
-    purpose: string;
-    destination: string;
-    vehicle_id: number | null;
-}
-
-interface Props {
-    borrowing: {
-        id: number;
-        start_at: string;
-        end_at: string | null;
-        returned_at: string | null;
-        purpose: string;
-        destination: string;
-        status: string;
-        admin_note: string | null;
-        user: User;
-        vehicle: Vehicle;
-    };
-}
+import type { VehicleBorrowingFormData, VehicleBorrowingEditProps } from '@/types/vehicle-borrowing';
+import type { AvailableVehicle } from '@/types/vehicle';
 
 const formatDateTimeLocal = (dateTimeString: string | null): string => {
     if (!dateTimeString) return '';
@@ -48,7 +16,7 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-export default function VehicleBorrowingEdit({ borrowing }: Props) {
+export default function VehicleBorrowingEdit({ borrowing }: VehicleBorrowingEditProps) {
     const { data, setData, put, processing, errors } = useForm<VehicleBorrowingFormData>({
         start_at: formatDateTimeLocal(borrowing.start_at),
         end_at: formatDateTimeLocal(borrowing.end_at),
@@ -57,7 +25,7 @@ export default function VehicleBorrowingEdit({ borrowing }: Props) {
         vehicle_id: borrowing.vehicle.id,
     });
 
-    const [availableVehicles, setAvailableVehicles] = useState<Vehicle[]>([]);
+    const [availableVehicles, setAvailableVehicles] = useState<AvailableVehicle[]>([]);
     const [loadingVehicles, setLoadingVehicles] = useState(false);
 
     const datesReady = !!(data.start_at && data.end_at);

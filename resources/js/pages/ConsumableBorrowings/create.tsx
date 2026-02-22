@@ -1,26 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Calendar, Package, Send } from 'lucide-react';
+import type { ConsumableBorrowingFormData, ConsumableBorrowingCreateProps } from '@/types/consumable-borrowing';
+import type { AvailableConsumableItem } from '@/types/consumable-item';
 
-interface ConsumableItem {
-    id: number;
-    name: string;
-    sku: string | null;
-    quantity: number;
-}
-
-interface ConsumableBorrowingFormData {
-    borrowed_at: string;
-    consumable_item_id: number | null;
-    quantity: number;
-    notes: string;
-}
-
-interface Props {
-    consumableItems: ConsumableItem[];
-}
-
-export default function ConsumableBorrowingCreate({ consumableItems }: Props) {
+export default function ConsumableBorrowingCreate({ consumableItems }: ConsumableBorrowingCreateProps) {
     const { data, setData, post, processing, errors } =
         useForm<ConsumableBorrowingFormData>({
             borrowed_at: '',

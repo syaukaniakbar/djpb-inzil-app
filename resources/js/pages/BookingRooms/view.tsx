@@ -2,44 +2,16 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Home, Info, MapPin, User } from 'lucide-react';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import { StatusBadge } from '@/components/custom/status-badge';
+import type { BookingRoomViewProps, EventMode } from '@/types/booking-room';
 
-interface Room {
-    id: number;
-    name: string;
-    capacity: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface BookingRoom {
-    id: number;
-    start_at: string;
-    end_at: string;
-    event_mode: string;
-    event_name: string;
-    status: LoanStatus;
-    admin_note: string | null;
-    user: User;
-    room: Room;
-}
-
-const eventModeLabels: Record<string, string> = {
-    meeting: 'Meeting',
-    presentation: 'Presentasi',
-    training: 'Training',
-    interview: 'Interview',
-    other: 'Lainnya',
+const eventModeLabels: Record<EventMode, string> = {
+    online: 'Online',
+    offline: 'Offline',
+    hybrid: 'Hybrid',
 };
 
-interface Props {
-    booking: BookingRoom;
-}
-
-export default function View({ booking }: Props) {
+export default function View({ booking }: BookingRoomViewProps) {
     return (
         <AppLayout>
             <Head title={`Lihat Peminjaman Ruangan #${booking.id}`} />
@@ -94,7 +66,7 @@ export default function View({ booking }: Props) {
                                             <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Peminjam</dt>
                                             <dd className="mt-1 flex items-center text-sm text-gray-900 dark:text-gray-300">
                                                 <User className="mr-2 h-4 w-4 text-gray-400" />
-                                                {booking.user.name}
+                                                {booking.user?.name || 'Nama Tidak Tersedia'}
                                             </dd>
                                         </div>
                                         <div>
@@ -149,7 +121,11 @@ export default function View({ booking }: Props) {
                                     <div className="space-y-4">
                                         <div>
                                             <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Jenis Acara</dt>
-                                            <dd className="mt-1 text-sm text-gray-900 dark:text-gray-300">{eventModeLabels[booking.event_mode] || booking.event_mode}</dd>
+                                            <dd className="mt-1 text-sm text-gray-900 dark:text-gray-300">
+                                                {booking.event_mode === 'online' ? 'Online' : 
+                                                 booking.event_mode === 'offline' ? 'Offline' : 
+                                                 booking.event_mode === 'hybrid' ? 'Hybrid' : booking.event_mode}
+                                            </dd>
                                         </div>
                                     </div>
                                 </div>

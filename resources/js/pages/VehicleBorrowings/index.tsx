@@ -1,53 +1,17 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
-import { PaginatedResponse } from '@/types/pagination';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import { StatusBadge } from '@/components/custom/status-badge';
+import type { VehicleBorrowingsIndexProps, VehicleBorrowing, Purpose } from '@/types/vehicle-borrowing';
 
-interface Admin {
-    id: number;
-    name: string;
-    phone: string;
-}
-
-interface Vehicle {
-    id: number;
-    name: string;
-    license_plate: string;
-    brand: string;
-    model: string;
-    color: string;
-    fuel_type: string;
-    registration_expiry: string;
-    year: number;
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface VehicleBorrowing {
-    id: number;
-    start_at: string;
-    end_at: string;
-    returned_at: string | null;
-    purpose: string;
-    destination: string;
-    status: LoanStatus;
-    admin_note: string | null;
-    user: User;
-    vehicle: Vehicle;
-}
-
-interface Props {
-    borrowings: PaginatedResponse<VehicleBorrowing>;
-    admin: Admin;
-}
-
-export default function Index({ borrowings, admin }: Props) {
+export default function Index({ borrowings, admin }: VehicleBorrowingsIndexProps) {
     const data = borrowings.data;
+
+    const purposeLabels: Record<string, string> = {
+        dalam_kota: 'Dalam Kota',
+        luar_kota: 'Luar Kota',
+    };
 
     return (
         <AppLayout>
@@ -142,7 +106,7 @@ export default function Index({ borrowings, admin }: Props) {
                                                         Ubah
                                                     </Link>
                                                     <a
-                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nKendaraan: ${borrowing.vehicle.name}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`)}`}
+                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nKendaraan: ${borrowing.vehicle.name}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`)}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700"

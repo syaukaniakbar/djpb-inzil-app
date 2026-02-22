@@ -1,32 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Calendar, Package, Send } from 'lucide-react';
-
-interface ConsumableItem {
-    id: number;
-    name: string;
-    sku: string | null;
-    quantity: number;
-}
-
-interface ConsumableBorrowingFormData {
-    borrowed_at: string;
-    consumable_item_id: number | null;
-    quantity: number;
-    notes: string;
-}
-
-interface Props {
-    consumableItems: ConsumableItem[];
-    borrowing: {
-        id: number;
-        borrowed_at: string;
-        consumable_item_id: number;
-        quantity: number;
-        notes: string | null;
-        status: string;
-    };
-}
+import type { ConsumableBorrowingFormData, ConsumableBorrowingEditProps } from '@/types/consumable-borrowing';
+import type { AvailableConsumableItem } from '@/types/consumable-item';
 
 // Helper function to format datetime for datetime-local input
 const formatDateTimeLocal = (dateTimeString: string | null): string => {
@@ -42,7 +18,7 @@ const formatDateTimeLocal = (dateTimeString: string | null): string => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-export default function ConsumableBorrowingEdit({ consumableItems, borrowing }: Props) {
+export default function ConsumableBorrowingEdit({ consumableItems, borrowing }: ConsumableBorrowingEditProps) {
     const { data, setData, put, processing, errors } =
         useForm<ConsumableBorrowingFormData>({
             borrowed_at: formatDateTimeLocal(borrowing.borrowed_at),

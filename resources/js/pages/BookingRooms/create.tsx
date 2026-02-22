@@ -2,21 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { Calendar, Home, MapPin, Send, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-interface Room {
-    id: number;
-    name: string;
-    capacity: number;
-}
-
-interface BookingRoomFormData {
-    start_at: string;
-    end_at: string;
-    event_mode: string;
-    event_name: string;
-    room_id: number | null;
-    admin_note: string;
-}
+import type { BookingRoomFormData } from '@/types/booking-room';
+import type { AvailableRoom } from '@/types/room';
 
 export default function BookingRoomCreate() {
     const { data, setData, post, processing, errors } = useForm<BookingRoomFormData>({
@@ -28,7 +15,7 @@ export default function BookingRoomCreate() {
         admin_note: '',
     });
 
-    const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+    const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([]);
     const [loadingRooms, setLoadingRooms] = useState(false);
 
     const datesReady = !!data.start_at && !!data.end_at;
@@ -53,7 +40,7 @@ export default function BookingRoomCreate() {
                 if (result.success) {
                     setAvailableRooms(result.rooms);
                     // Clear selected room if it's no longer available
-                    if (data.room_id && !result.rooms.some((r: Room) => r.id === data.room_id)) {
+                    if (data.room_id && !result.rooms.some((r: AvailableRoom) => r.id === data.room_id)) {
                         setData('room_id', null);
                     }
                 }

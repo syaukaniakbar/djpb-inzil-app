@@ -1,28 +1,32 @@
 import { LoanStatus } from '@/components/custom/status-badge';
 import { PaginatedResponse } from '@/types/pagination';
-import type { Inventory } from '@/types/inventory';
+import type { VehicleReference } from '@/types/vehicle';
 import type { UserReference } from '@/types/user';
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+export const PURPOSES = {
+    dalam_kota: 'Dalam Kota',
+    luar_kota: 'Luar Kota',
+} as const;
+
+export type Purpose = keyof typeof PURPOSES;
 
 // ============================================================================
 // Form Data Types
 // ============================================================================
 
 /**
- * Represents a single item in a borrowing form (create/edit)
+ * Form data structure for creating or updating a vehicle borrowing
  */
-export type BorrowingItem = {
-    inventory_id: number | null;
-    notes?: string;
-};
-
-/**
- * Form data structure for creating or updating a borrowing
- */
-export type BorrowingFormData = {
+export type VehicleBorrowingFormData = {
     start_at: string;
     end_at: string;
-    notes: string;
-    items: BorrowingItem[];
+    purpose: string;
+    destination: string;
+    vehicle_id: number | null;
 };
 
 // ============================================================================
@@ -30,28 +34,19 @@ export type BorrowingFormData = {
 // ============================================================================
 
 /**
- * Represents a detailed item within a borrowing record
+ * Represents a complete vehicle borrowing record
  */
-export interface BorrowingDetail {
-    id: number;
-    notes: string | null;
-    inventory_id: number;
-    inventory: Inventory | null;
-}
-
-/**
- * Represents a complete borrowing record
- */
-export interface Borrowing {
+export interface VehicleBorrowing {
     id: number;
     start_at: string;
     end_at: string;
     returned_at: string | null;
+    purpose: string;
+    destination: string;
     status: LoanStatus;
-    notes: string | null;
     admin_note: string | null;
     user: UserReference | null;
-    borrowing_details: BorrowingDetail[];
+    vehicle: VehicleReference;
 }
 
 // ============================================================================
@@ -59,31 +54,23 @@ export interface Borrowing {
 // ============================================================================
 
 /**
- * Response type for borrowing store/update operations
+ * Response type for vehicle borrowing store/update operations
  */
-export type BorrowingsResponse = {
+export type VehicleBorrowingResponse = {
     id: number;
     start_at: string;
     end_at: string | null;
-    notes: string | null;
-    items: BorrowingItem[];
-};
-
-/**
- * Shape returned by /api/inventories/available-inventories
- */
-export type AvailableInventory = {
-    id: number;
-    name: string;
-    serial_number: string;
-    category: string | null;
-    label: string; // "name (serial_number)"
+    purpose: string;
+    destination: string;
+    vehicle_id: number;
 };
 
 /**
  * Admin contact information
  */
 export interface AdminContact {
+    id: number;
+    name: string;
     phone: string;
 }
 
@@ -92,32 +79,34 @@ export interface AdminContact {
 // ============================================================================
 
 /**
- * Props for Borrowings Index page
+ * Props for VehicleBorrowings Index page
  */
-export interface BorrowingsIndexProps {
-    borrowings: PaginatedResponse<Borrowing>;
+export interface VehicleBorrowingsIndexProps {
+    borrowings: PaginatedResponse<VehicleBorrowing>;
     admin: AdminContact;
 }
 
 /**
- * Props for Borrowing View/Show page
+ * Props for VehicleBorrowing View/Show page
  */
-export interface BorrowingViewProps {
-    borrowing: Borrowing;
+export interface VehicleBorrowingViewProps {
+    borrowing: VehicleBorrowing;
 }
 
 /**
- * Props for Borrowing Edit page
+ * Props for VehicleBorrowing Edit page
  */
-export interface BorrowingEditProps {
+export interface VehicleBorrowingEditProps {
     borrowing: {
         id: number;
         start_at: string;
         end_at: string | null;
         returned_at: string | null;
+        purpose: string;
+        destination: string;
         status: string;
-        notes: string;
+        admin_note: string | null;
         user: UserReference;
-        borrowing_details: BorrowingDetail[] | null;
+        vehicle: VehicleReference;
     };
 }

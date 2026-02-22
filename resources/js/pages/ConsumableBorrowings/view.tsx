@@ -1,43 +1,16 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import formatDateTime from '@/utils/date';
-import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import { StatusBadge } from '@/components/custom/status-badge';
 import {
     AlertCircle,
-    CheckCircle,
-    Clock,
     Info,
     Package,
     User,
-    XCircle,
 } from 'lucide-react';
+import type { ConsumableBorrowingViewProps } from '@/types/consumable-borrowing';
 
-interface ConsumableItem {
-    id: number;
-    name: string;
-    sku: string | null;
-}
-
-interface User {
-    id: number;
-    name: string | null;
-}
-
-interface ConsumableBorrowing {
-    id: number;
-    borrowed_at: string;
-    quantity: number;
-    status: LoanStatus;
-    notes: string | null;
-    user: User | null;
-    consumable_item: ConsumableItem | null;
-}
-
-interface Props {
-    borrowing: ConsumableBorrowing;
-}
-
-export default function ConsumableBorrowingsView({ borrowing }: Props) {
+export default function ConsumableBorrowingsView({ borrowing }: ConsumableBorrowingViewProps) {
     return (
         <AppLayout>
             <Head title={`Lihat Peminjaman #${borrowing.id}`} />
@@ -167,11 +140,11 @@ export default function ConsumableBorrowingsView({ borrowing }: Props) {
                                                 Nama Barang
                                             </dt>
                                             <dd className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
-                                                {borrowing.consumable_item.name}
+                                                {borrowing.consumable_item?.name || 'Nama Barang Tidak Tersedia'}
                                             </dd>
                                         </div>
 
-                                        {borrowing.consumable_item.sku && (
+                                        {borrowing.consumable_item?.sku && (
                                             <div>
                                                 <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                                                     SKU
