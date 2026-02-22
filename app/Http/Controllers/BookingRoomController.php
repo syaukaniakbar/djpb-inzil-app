@@ -25,8 +25,10 @@ class BookingRoomController extends Controller
             'room',
         ])
             ->where('user_id', Auth::id())  // Hanya ambil booking milik user yang login
+            ->search(request(['search', 'status', 'event_mode', 'start_at_from', 'start_at_to']))
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         $admin = User::where('role', 'admin')
             ->select('id', 'name', 'phone')
@@ -35,6 +37,7 @@ class BookingRoomController extends Controller
         return inertia('BookingRooms/index', [
             'bookings' => $bookings,
             'admin' => $admin,
+            'filters' => request(['search', 'status', 'event_mode', 'start_at_from', 'start_at_to']),
         ]);
     }
 

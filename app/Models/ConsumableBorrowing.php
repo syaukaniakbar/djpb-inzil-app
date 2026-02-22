@@ -18,9 +18,26 @@ use Illuminate\Validation\ValidationException;
  * @property-read \App\Models\User $user
  * @property-read \App\Models\ConsumableItem $consumableItem
  */
+use App\Traits\Searchable;
+
 class ConsumableBorrowing extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
+
+    protected $searchableColumns = [
+        'id',
+        'notes',
+        'consumableItem.name',
+        'consumableItem.sku',
+    ];
+
+    protected $filterableColumns = [
+        'status',
+    ];
+
+    protected $dateFilterableColumns = [
+        'borrowed_at',
+    ];
 
     protected $table = 'consumable_borrowings';
 

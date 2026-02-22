@@ -3,7 +3,8 @@ import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
 import formatDateTime from '@/utils/date';
 import { StatusBadge } from '@/components/custom/status-badge';
-import type { BookingRoomsIndexProps, BookingRoom, EventMode } from '@/types/booking-room';
+import SearchFilter from '@/components/custom/search-filter';
+import type { BookingRoomsIndexProps } from '@/types/booking-room';
 
 const eventModeLabels: Record<string, string> = {
     online: 'Online',
@@ -11,7 +12,7 @@ const eventModeLabels: Record<string, string> = {
     hybrid: 'Hybrid',
 };
 
-export default function Index({ bookings, admin }: BookingRoomsIndexProps) {
+export default function Index({ bookings, admin, filters }: BookingRoomsIndexProps) {
     const data = bookings.data;
 
     return (
@@ -37,6 +38,20 @@ export default function Index({ bookings, admin }: BookingRoomsIndexProps) {
                             + Ajukan Peminjaman Ruangan
                         </Link>
                     </div>
+
+                    <SearchFilter
+                        baseUrl="/booking-rooms"
+                        filters={filters}
+                        placeholder="Cari ID Peminjaman, Ruangan, atau Nama Acara..."
+                        statusOptions={[
+                            { label: 'Menunggu', value: 'pending' },
+                            { label: 'Disetujui', value: 'approved' },
+                            { label: 'Digunakan', value: 'ongoing' },
+                            { label: 'Selesai', value: 'finished' },
+                            { label: 'Ditolak', value: 'rejected' },
+                            { label: 'Dibatalkan', value: 'canceled' },
+                        ]}
+                    />
 
                     <div className="overflow-hidden rounded-xl bg-white dark:bg-gray-900">
                         {/* Mobile Card View */}

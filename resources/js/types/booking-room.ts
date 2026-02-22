@@ -86,6 +86,13 @@ export interface AdminContact {
 export interface BookingRoomsIndexProps {
     bookings: PaginatedResponse<BookingRoom>;
     admin: AdminContact;
+    filters?: {
+        search?: string;
+        status?: string;
+        event_mode?: string;
+        start_at_from?: string;
+        start_at_to?: string;
+    };
 }
 
 /**

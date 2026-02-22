@@ -4,6 +4,7 @@ import Pagination from '@/components/custom/pagination';
 import { PaginatedResponse } from '@/types/pagination';
 import formatDateTime from '@/utils/date';
 import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
+import SearchFilter from '@/components/custom/search-filter';
 
 interface Inventory {
     id: number;
@@ -39,9 +40,15 @@ interface Admin {
 interface Props {
     borrowings?: PaginatedResponse<Borrowing>;
     admin: Admin;
+    filters?: {
+        search?: string;
+        status?: string;
+        start_at_from?: string;
+        start_at_to?: string;
+    };
 }
 
-export default function BorrowingsIndex({ borrowings, admin }: Props) {
+export default function BorrowingsIndex({ borrowings, admin, filters }: Props) {
     const data = borrowings?.data ?? [];
 
     return (
@@ -67,6 +74,20 @@ export default function BorrowingsIndex({ borrowings, admin }: Props) {
                             + Tambah Peminjaman
                         </Link>
                     </div>
+
+                    <SearchFilter
+                        baseUrl="/borrowings"
+                        filters={filters}
+                        placeholder="Cari ID Peminjaman atau Nama Barang..."
+                        statusOptions={[
+                            { label: 'Menunggu', value: 'pending' },
+                            { label: 'Disetujui', value: 'approved' },
+                            { label: 'Digunakan', value: 'ongoing' },
+                            { label: 'Selesai', value: 'finished' },
+                            { label: 'Ditolak', value: 'rejected' },
+                            { label: 'Dibatalkan', value: 'canceled' },
+                        ]}
+                    />
 
                     <div className="overflow-hidden rounded-xl bg-white dark:bg-gray-900">
                         {/* Mobile Card View */}

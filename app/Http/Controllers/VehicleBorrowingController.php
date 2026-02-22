@@ -25,8 +25,10 @@ class VehicleBorrowingController extends Controller
             'vehicle',
         ])
             ->where('user_id', Auth::id())
+            ->search(request(['search', 'status', 'start_at_from', 'start_at_to']))
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         $admin = User::where('role', 'admin')
             ->select('id', 'name', 'phone')
@@ -35,6 +37,7 @@ class VehicleBorrowingController extends Controller
         return inertia('VehicleBorrowings/index', [
             'borrowings' => $borrowings,
             'admin' => $admin,
+            'filters' => request(['search', 'status', 'start_at_from', 'start_at_to']),
         ]);
     }
 

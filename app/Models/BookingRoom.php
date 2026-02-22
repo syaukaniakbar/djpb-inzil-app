@@ -4,8 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\Searchable;
+
 class BookingRoom extends Model
 {
+    use Searchable;
+
+    protected $searchableColumns = [
+        'id',
+        'event_name',
+        'room.name',
+    ];
+
+    protected $filterableColumns = [
+        'status',
+        'event_mode',
+    ];
+
+    protected $dateFilterableColumns = [
+        'start_at',
+    ];
+
     protected $table = 'room_bookings';
 
     protected $fillable = [

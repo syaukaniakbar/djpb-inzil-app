@@ -1,6 +1,6 @@
 import { LoanStatus } from '@/components/custom/status-badge';
 import { PaginatedResponse } from '@/types/pagination';
-import type { ConsumableItemReference } from '@/types/consumable-item';
+import type { ConsumableItemReference, AvailableConsumableItem } from '@/types/consumable-item';
 import type { UserReference } from '@/types/user';
 
 // ============================================================================
@@ -66,6 +66,12 @@ export interface AdminContact {
 export interface ConsumableBorrowingsIndexProps {
     borrowings: PaginatedResponse<ConsumableBorrowing>;
     admin: AdminContact;
+    filters?: {
+        search?: string;
+        status?: string;
+        borrowed_at_from?: string;
+        borrowed_at_to?: string;
+    };
 }
 
 /**

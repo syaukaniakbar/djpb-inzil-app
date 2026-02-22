@@ -84,6 +84,12 @@ export interface AdminContact {
 export interface VehicleBorrowingsIndexProps {
     borrowings: PaginatedResponse<VehicleBorrowing>;
     admin: AdminContact;
+    filters?: {
+        search?: string;
+        status?: string;
+        start_at_from?: string;
+        start_at_to?: string;
+    };
 }
 
 /**

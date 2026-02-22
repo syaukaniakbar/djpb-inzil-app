@@ -5,8 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+use App\Traits\Searchable;
+
 class VehicleBorrowing extends Model
 {
+    use Searchable;
+
+    protected $searchableColumns = [
+        'id',
+        'purpose',
+        'destination',
+        'vehicle.name',
+        'vehicle.license_plate',
+    ];
+
+    protected $filterableColumns = [
+        'status',
+    ];
+
+    protected $dateFilterableColumns = [
+        'start_at',
+    ];
+
     protected $table = 'vehicle_borrowings';
 
     protected $fillable = [

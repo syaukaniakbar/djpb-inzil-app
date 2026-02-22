@@ -28,6 +28,7 @@ class ConsumableBorrowingController extends Controller
 
         // Admin can see all, regular users only see their own
         $query = ConsumableBorrowing::with(['user', 'consumableItem'])
+            ->search(request(['search', 'status', 'borrowed_at_from', 'borrowed_at_to']))
             ->latest('created_at');
 
         if ($user->role !== 'admin') {
@@ -44,6 +45,7 @@ class ConsumableBorrowingController extends Controller
             'admin' => [
                 'phone' => $admin?->phone ?? '6281234567890',
             ],
+            'filters' => request(['search', 'status', 'borrowed_at_from', 'borrowed_at_to']),
         ]);
     }
 

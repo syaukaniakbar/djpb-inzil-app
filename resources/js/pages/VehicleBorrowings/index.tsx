@@ -3,9 +3,10 @@ import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
 import formatDateTime from '@/utils/date';
 import { StatusBadge } from '@/components/custom/status-badge';
-import type { VehicleBorrowingsIndexProps, VehicleBorrowing, Purpose } from '@/types/vehicle-borrowing';
+import SearchFilter from '@/components/custom/search-filter';
+import type { VehicleBorrowingsIndexProps } from '@/types/vehicle-borrowing';
 
-export default function Index({ borrowings, admin }: VehicleBorrowingsIndexProps) {
+export default function Index({ borrowings, admin, filters }: VehicleBorrowingsIndexProps) {
     const data = borrowings.data;
 
     const purposeLabels: Record<string, string> = {
@@ -36,6 +37,19 @@ export default function Index({ borrowings, admin }: VehicleBorrowingsIndexProps
                             + Tambah Peminjaman Kendaraan
                         </Link>
                     </div>
+
+                    <SearchFilter
+                        baseUrl="/vehicle-borrowings"
+                        filters={filters}
+                        placeholder="Cari ID, Kendaraan, Tujuan, atau Peruntukan..."
+                        statusOptions={[
+                            { label: 'Menunggu', value: 'pending' },
+                            { label: 'Disetujui', value: 'approved' },
+                            { label: 'Digunakan', value: 'ongoing' },
+                            { label: 'Selesai', value: 'finished' },
+                            { label: 'Dibatalkan', value: 'canceled' },
+                        ]}
+                    />
 
                     <div className="overflow-hidden rounded-xl bg-white dark:bg-gray-900">
                         {/* Mobile Card View */}

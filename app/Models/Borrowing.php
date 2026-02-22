@@ -6,8 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use App\Traits\Searchable;
+
 class Borrowing extends Model
 {
+    use Searchable;
+
+    protected $searchableColumns = [
+        'id',
+        'notes',
+        'borrowingDetails.inventory.name',
+    ];
+
+    protected $filterableColumns = [
+        'status',
+    ];
+
+    protected $dateFilterableColumns = [
+        'start_at',
+    ];
     protected $fillable = [
         'user_id',
         'start_at',

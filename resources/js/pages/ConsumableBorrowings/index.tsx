@@ -3,9 +3,10 @@ import { Head, Link, router } from '@inertiajs/react';
 import Pagination from '@/components/custom/pagination';
 import formatDateTime from '@/utils/date';
 import { StatusBadge } from '@/components/custom/status-badge';
-import type { ConsumableBorrowingsIndexProps, ConsumableBorrowing } from '@/types/consumable-borrowing';
+import SearchFilter from '@/components/custom/search-filter';
+import type { ConsumableBorrowingsIndexProps } from '@/types/consumable-borrowing';
 
-export default function ConsumableBorrowingsIndex({ borrowings, admin }: ConsumableBorrowingsIndexProps) {
+export default function ConsumableBorrowingsIndex({ borrowings, admin, filters }: ConsumableBorrowingsIndexProps) {
     const data = borrowings.data;
 
     return (
@@ -31,6 +32,19 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin }: Consuma
                             + Tambah Peminjaman Persediaan
                         </Link>
                     </div>
+
+                    <SearchFilter
+                        baseUrl="/consumable-borrowings"
+                        filters={filters}
+                        placeholder="Cari ID, Nama Barang, Sku, atau Catatan..."
+                        dateFieldPrefix="borrowed_at"
+                        statusOptions={[
+                            { label: 'Menunggu', value: 'pending' },
+                            { label: 'Selesai', value: 'finished' },
+                            { label: 'Dibatalkan', value: 'canceled' },
+                            { label: 'Ditolak', value: 'rejected' },
+                        ]}
+                    />
 
                     <div className="overflow-hidden rounded-xl bg-white dark:bg-gray-900">
                         {/* Mobile Card View */}
