@@ -5,6 +5,7 @@ import formatDateTime from '@/utils/date';
 import { StatusBadge } from '@/components/custom/status-badge';
 import SearchFilter from '@/components/custom/search-filter';
 import type { ConsumableBorrowingsIndexProps } from '@/types/consumable-borrowing';
+import { ActionCell } from '@/components/action-cell';
 
 export default function ConsumableBorrowingsIndex({ borrowings, admin, filters }: ConsumableBorrowingsIndexProps) {
     const data = borrowings.data;
@@ -104,75 +105,18 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin, filters }
 
                                         {/* Actions */}
                                         <div className="mt-5 space-y-2 border-t border-gray-100 pt-5 dark:border-gray-700">
-                                            <Link
-                                                href={`/consumable-borrowings/${borrowing.id}`}
-                                                className="block rounded-xl bg-green-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none"
-                                            >
-                                                Detail
-                                            </Link>
-
-                                            {borrowing.status === 'pending' && (
-                                                <>
-                                                    <Link
-                                                        href={`/consumable-borrowings/${borrowing.id}/edit`}
-                                                        className="block rounded-xl border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
-                                                    >
-                                                        Ubah
-                                                    </Link>
-
-                                                    <a
-                                                        href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
-                                                            `DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Persediaan]\n \nSaya ingin mengajukan peminjaman persediaan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nBarang: ${borrowing.consumable_item?.name || 'Tidak Diketahui'}\nJumlah: ${borrowing.quantity}\nTanggal Peminjaman: ${formatDateTime(borrowing.borrowed_at)}\n\n Menunggu persetujuan.`,
-                                                        )}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 py-3 text-sm font-semibold text-green-700 transition hover:border-green-300 hover:bg-green-100 focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:outline-none dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700"
-                                                    >
-                                                        <span>Hubungi Admin</span>
-                                                        <span className="text-xs font-normal text-green-600 dark:text-green-300">
-                                                            via WhatsApp
-                                                        </span>
-                                                    </a>
-
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            if (
-                                                                confirm(
-                                                                    'Apakah Anda yakin ingin membatalkan peminjaman ini?',
-                                                                )
-                                                            ) {
-                                                                router.patch(
-                                                                    `/consumable-borrowings/${borrowing.id}/cancel`,
-                                                                );
-                                                            }
-                                                        }}
-                                                        className="cursor-pointer w-full rounded-xl py-3 text-center text-sm font-medium text-red-600 hover:underline dark:text-red-400"
-                                                    >
-                                                        Batalkan
-                                                    </button>
-                                                </>
-                                            )}
-
-                                            {borrowing.status === 'ongoing' && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                'Apakah Anda yakin persediaan sudah dikembalikan?',
-                                                            )
-                                                        ) {
-                                                            router.patch(
-                                                                `/consumable-borrowings/${borrowing.id}/return`,
-                                                            );
-                                                        }
-                                                    }}
-                                                    className="cursor-pointer w-full rounded-xl bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-                                                >
-                                                    Kembalikan
-                                                </button>
-                                            )}
+                                            <ActionCell
+                                                id={borrowing.id}
+                                                status={borrowing.status}
+                                                baseRoute="/consumable-borrowings"
+                                                adminPhone={admin.phone}
+                                                userName={borrowing.user?.name}
+                                                itemName={borrowing.consumable_item?.name}
+                                                borrowedAt={borrowing.borrowed_at}
+                                                hasReturnAction
+                                                returnLabel="Kembalikan"
+                                                whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Persediaan]\n \nSaya ingin mengajukan peminjaman persediaan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nBarang: ${borrowing.consumable_item?.name || 'Tidak Diketahui'}\nJumlah: ${borrowing.quantity}\nTanggal Peminjaman: ${formatDateTime(borrowing.borrowed_at)}\n\n Menunggu persetujuan.`}
+                                            />
                                         </div>
                                     </div>
                                 ))
@@ -251,74 +195,18 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin, filters }
                                                 </td>
 
                                                 <td className="px-4 py-3 w-44">
-                                                    <div className="flex flex-col gap-1.5">
-                                                        <Link
-                                                            href={`/consumable-borrowings/${borrowing.id}`}
-                                                            className="cursor-pointer w-full text-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700 shadow-sm"
-                                                        >
-                                                            Detail
-                                                        </Link>
-
-                                                        {borrowing.status === 'pending' && (
-                                                            <>
-                                                                <Link
-                                                                    href={`/consumable-borrowings/${borrowing.id}/edit`}
-                                                                    className="cursor-pointer w-full text-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                                                                >
-                                                                    Ubah
-                                                                </Link>
-
-                                                                <a
-                                                                    href={`https://wa.me/${admin.phone}?text=${encodeURIComponent(
-                                                                        `Halo Admin, saya ingin konfirmasi peminjaman persediaan dengan ID: ${borrowing.id}.`,
-                                                                    )}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="cursor-pointer w-full text-center rounded-md border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition hover:bg-green-100 dark:border-green-700 dark:bg-green-800 dark:text-green-200 dark:hover:bg-green-700"
-                                                                >
-                                                                    WhatsApp Admin
-                                                                </a>
-
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        if (
-                                                                            confirm(
-                                                                                'Apakah Anda yakin ingin membatalkan peminjaman ini?',
-                                                                            )
-                                                                        ) {
-                                                                            router.patch(
-                                                                                `/consumable-borrowings/${borrowing.id}/cancel`,
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                    className="cursor-pointer w-full text-center text-xs font-medium text-red-600 hover:underline dark:text-red-400"
-                                                                >
-                                                                    Batalkan
-                                                                </button>
-                                                            </>
-                                                        )}
-
-                                                        {borrowing.status === 'ongoing' && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    if (
-                                                                        confirm(
-                                                                            'Apakah Anda yakin persediaan sudah dikembalikan?',
-                                                                        )
-                                                                    ) {
-                                                                        router.patch(
-                                                                            `/consumable-borrowings/${borrowing.id}/return`,
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                className="cursor-pointer w-full text-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 shadow-sm"
-                                                            >
-                                                                Kembalikan
-                                                            </button>
-                                                        )}
-                                                    </div>
+                                                    <ActionCell
+                                                        id={borrowing.id}
+                                                        status={borrowing.status}
+                                                        baseRoute="/consumable-borrowings"
+                                                        adminPhone={admin.phone}
+                                                        userName={borrowing.user?.name}
+                                                        itemName={borrowing.consumable_item?.name}
+                                                        borrowedAt={borrowing.borrowed_at}
+                                                        hasReturnAction
+                                                        returnLabel="Kembalikan"
+                                                        whatsappMessage={`Halo Admin, saya ingin konfirmasi peminjaman persediaan dengan ID: ${borrowing.id}.`}
+                                                    />
                                                 </td>
                                             </tr>
                                         ))
