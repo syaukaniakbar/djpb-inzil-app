@@ -10,15 +10,15 @@ export default function AppLogo() {
             </div>
 
             <div className="ml-1 flex flex-col leading-tight">
-                <span className="text-[11px] font-semibold text-gray-900 dark:text-white">
+                <span className="text-[11px] font-semibold text-white">
                     INZIL APP
                 </span>
 
-                <span className="text-[10px] font-medium text-gray-700 dark:text-white/80">
+                <span className="text-[10px] font-medium text-[#d4af37]">
                     DITJEN PERBENDAHARAAN
                 </span>
 
-                <span className="text-[9.5px] font-normal text-gray-500 dark:text-white/60">
+                <span className="text-[9.5px] font-normal text-white/70">
                     KANWIL DJPb PROV. KALTIM
                 </span>
             </div>
