@@ -23,14 +23,18 @@ class Vehicle extends Model
         return $this->hasMany(VehicleBorrowing::class);
     }
 
-    public function isAvailableForRange($startAt, $endAt): bool
+    public function isAvailableForRange($startAt, $endAt, $excludeBorrowingId = null): bool
     {
         $overlappingBorrowing = $this->vehicleBorrowings()
             ->where(function ($query) use ($startAt, $endAt) {
                 $query->where('start_at', '<', $endAt)
                     ->where('end_at', '>', $startAt);
             })
+            ->whereNull('returned_at')
             ->whereIn('status', ['pending', 'ongoing', 'approved'])
+            ->when($excludeBorrowingId, function ($query) use ($excludeBorrowingId) {
+                return $query->where('id', '!=', $excludeBorrowingId);
+            })
             ->first();
 
         return !$overlappingBorrowing;
