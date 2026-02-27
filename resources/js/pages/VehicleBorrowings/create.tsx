@@ -30,12 +30,12 @@ export default function VehicleBorrowingCreate() {
 
         const params = new URLSearchParams({
             start_at: data.start_at,
-            end_at: data.end_at
+            end_at: data.end_at,
         });
 
         fetch(`/api/vehicles/available-vehicles?${params}`)
-            .then(response => response.json())
-            .then(result => {
+            .then((response) => response.json())
+            .then((result) => {
                 if (result.success) {
                     setAvailableVehicles(result.vehicles);
                     if (data.vehicle_id && !result.vehicles.some((vehicle: AvailableVehicle) => vehicle.id === data.vehicle_id)) {
@@ -45,12 +45,19 @@ export default function VehicleBorrowingCreate() {
                     setAvailableVehicles([]);
                 }
             })
-            .catch(() => setAvailableVehicles([]))
+            .catch((err) => {
+                console.error('Failed to fetch available vehicles:', err);
+                setAvailableVehicles([]);
+            })
             .finally(() => setLoadingVehicles(false));
     }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!data.vehicle_id) {
+            alert('Silakan pilih kendaraan terlebih dahulu');
+            return;
+        }
         post('/vehicle-borrowings/store');
     };
 
@@ -101,6 +108,12 @@ export default function VehicleBorrowingCreate() {
                                     {!datesReady && (
                                         <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
                                             Isi tanggal peminjaman & pengembalian terlebih dahulu untuk memuat daftar kendaraan tersedia.
+                                        </div>
+                                    )}
+
+                                    {datesReady && !loadingVehicles && availableVehicles.length === 0 && (
+                                        <div className="mb-4 rounded-lg border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                                            ⚠️ Tidak ada kendaraan yang tersedia untuk periode yang dipilih. Silakan coba tanggal atau waktu lain.
                                         </div>
                                     )}
 
@@ -162,8 +175,11 @@ export default function VehicleBorrowingCreate() {
                                 </section>
                             </div>
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
-                                <a href="/vehicle-borrowings" className="order-2 flex h-12 items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 md:order-1">Batalkan Pengajuan</a>
-                                <button type="submit" disabled={processing} className="order-1 flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:order-2 md:h-14">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:h-14"
+                                >
                                     {processing ? (
                                         <span className="flex items-center">
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

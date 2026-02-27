@@ -41,31 +41,44 @@ export default function VehicleBorrowingEdit({ borrowing }: VehicleBorrowingEdit
         const params = new URLSearchParams({
             start_at: data.start_at,
             end_at: data.end_at,
-            exclude_vehicle_borrowing_id: borrowing.id.toString()
+            borrowing_id: String(borrowing.id),
         });
 
         fetch(`/api/vehicles/available-vehicles?${params}`)
-            .then(response => response.json())
-            .then(result => {
+            .then((response) => response.json())
+            .then((result) => {
                 if (result.success) {
                     setAvailableVehicles(result.vehicles);
+                    // Clear selected vehicle if it's no longer available and not the current vehicle
+                    if (data.vehicle_id && !result.vehicles.some((v: AvailableVehicle) => v.id === data.vehicle_id)) {
+                        setData('vehicle_id', null);
+                    }
                 } else {
                     setAvailableVehicles([]);
                 }
             })
-            .catch(() => setAvailableVehicles([]))
+            .catch((err) => {
+                console.error('Failed to fetch available vehicles:', err);
+                setAvailableVehicles([]);
+            })
             .finally(() => setLoadingVehicles(false));
     }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/vehicle-borrowings/${borrowing.id}`);
+        if (!data.vehicle_id) {
+            alert('Silakan pilih kendaraan terlebih dahulu');
+            return;
+        }
+        put(`/vehicle-borrowings/${borrowing.id}`, {
+            onSuccess: () => {
+                router.visit(`/vehicle-borrowings/${borrowing.id}`);
+            },
+        });
     };
 
-    // Combine current vehicle if not in results (should be available due to exclude_id, but safety first)
-    const vehiclesToShow = availableVehicles.some(v => v.id === borrowing.vehicle.id)
-        ? availableVehicles
-        : datesReady ? [borrowing.vehicle, ...availableVehicles] : [];
+    // The API already excludes the current borrowing, so the current vehicle will be in the list
+    const vehiclesToShow = datesReady ? availableVehicles : [];
 
     return (
         <AppLayout>
@@ -114,6 +127,12 @@ export default function VehicleBorrowingEdit({ borrowing }: VehicleBorrowingEdit
                                     {!datesReady && (
                                         <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
                                             Isi tanggal peminjaman & pengembalian terlebih dahulu untuk memuat daftar kendaraan tersedia.
+                                        </div>
+                                    )}
+
+                                    {datesReady && !loadingVehicles && vehiclesToShow.length === 0 && (
+                                        <div className="mb-4 rounded-lg border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                                            ⚠️ Tidak ada kendaraan yang tersedia untuk periode yang dipilih. Silakan coba tanggal atau waktu lain.
                                         </div>
                                     )}
 
@@ -175,9 +194,22 @@ export default function VehicleBorrowingEdit({ borrowing }: VehicleBorrowingEdit
                                 </section>
                             </div>
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
-                                <a href="/vehicle-borrowings" className="order-2 flex h-12 items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 md:order-1">Batalkan Pengajuan</a>
-                                <button type="button" onClick={() => { if (confirm('Apakah Anda yakin ingin menghapus peminjaman kendaraan ini?')) { router.delete(`/vehicle-borrowings/${borrowing.id}`); } }} className="order-3 flex h-12 items-center justify-center rounded-xl bg-red-600 px-6 font-bold text-white shadow-lg shadow-red-200 transition-all hover:bg-red-700 hover:shadow-red-300 active:scale-[0.98] md:order-3">Hapus</button>
-                                <button type="submit" disabled={processing} className="order-1 flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:order-2 md:h-14">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                            router.patch(`/vehicle-borrowings/${borrowing.id}/cancel`);
+                                        }
+                                    }}
+                                    className="order-2 flex h-12 items-center justify-center rounded-lg bg-red-600 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none md:order-1"
+                                >
+                                    Batalkan Pengajuan
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="order-1 flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:order-2 md:h-14"
+                                >
                                     {processing ? (
                                         <span className="flex items-center">
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -240,12 +240,6 @@ export default function ConsumableBorrowingCreate({ consumableItems }: Consumabl
 
                             {/* Submit Button */}
                             <div className="mt-10 flex items-center justify-end gap-3">
-                                <Link
-                                    href="/consumable-borrowings"
-                                    className="inline-flex items-center justify-center rounded-lg border bg-card px-6 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-muted focus:ring-2 focus:ring-ring focus:outline-none"
-                                >
-                                    Batal
-                                </Link>
                                 <button
                                     type="submit"
                                     disabled={processing}

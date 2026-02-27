@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import formatDateTime from '@/utils/date';
 import { StatusBadge } from '@/components/custom/status-badge';
 import { Car, Info, MapPin, User } from 'lucide-react';
@@ -10,6 +10,15 @@ export default function View({ borrowing }: VehicleBorrowingViewProps) {
         dalam_kota: 'Dalam Kota',
         luar_kota: 'Luar Kota',
     };
+
+    const handleCancel = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+            return;
+        }
+        router.patch(`/vehicle-borrowings/${borrowing.id}/cancel`);
+    };
+
     return (
         <AppLayout>
             <Head title={`Lihat Peminjaman Kendaraan #${borrowing.id}`} />
@@ -147,9 +156,25 @@ export default function View({ borrowing }: VehicleBorrowingViewProps) {
                         </div>
                     </div>
 
-                    <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <Link href="/vehicle-borrowings" className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">Kembali ke Daftar</Link>
-                        <Link href={`/vehicle-borrowings/${borrowing.id}/edit`} className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">Edit Peminjaman</Link>
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                        {borrowing.status === 'pending' && (
+                            <button
+                                type="button"
+                                onClick={handleCancel}
+                                className="inline-flex items-center justify-center rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                            >
+                                Batalkan Peminjaman
+                            </button>
+                        )}
+
+                        {borrowing.status === 'pending' && (
+                            <Link
+                                href={`/vehicle-borrowings/${borrowing.id}/edit`}
+                                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                Edit Peminjaman
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

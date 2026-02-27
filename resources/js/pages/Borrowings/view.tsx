@@ -1,17 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import formatDateTime from '@/utils/date';
 import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
-import {
-    AlertCircle,
-    CheckCircle,
-    Clock,
-    Info,
-    Package,
-    User,
-    XCircle,
-} from 'lucide-react';
-import { JSX } from 'react';
+import { Info, Package, User } from 'lucide-react';
 
 interface Inventory {
     id: number;
@@ -45,6 +36,14 @@ interface Props {
 }
 
 export default function View({ borrowing }: Props) {
+    const handleCancel = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+            return;
+        }
+        router.patch(`/borrowings/${borrowing.id}/cancel`);
+    };
+
     return (
         <AppLayout>
             <Head title={`Lihat Peminjaman #${borrowing.id}`} />
@@ -231,33 +230,15 @@ export default function View({ borrowing }: Props) {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <Link
-                            href="/borrowings"
-                            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                        >
-                            Kembali ke Daftar
-                        </Link>
-
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
                         {borrowing.status === 'pending' && (
-                            <form
-                                onSubmit={(e) => {
-                                    if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
-                                        e.preventDefault();
-                                    }
-                                }}
-                                method="post"
-                                action={`/borrowings/${borrowing.id}/cancel`}
+                            <button
+                                type="button"
+                                onClick={handleCancel}
+                                className="inline-flex items-center justify-center rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
                             >
-                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
-                                <input type="hidden" name="_method" value="PATCH" />
-                                <button
-                                    type="submit"
-                                    className="inline-flex items-center justify-center rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-red-200 transition-all hover:bg-red-700 hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-                                >
-                                    Batalkan Peminjaman
-                                </button>
-                            </form>
+                                Batalkan Peminjaman
+                            </button>
                         )}
 
                         {borrowing.status === 'pending' && (

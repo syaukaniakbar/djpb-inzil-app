@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Calendar, ClipboardList, Send, Search, X, Loader2 } from 'lucide-react';
 import { AvailableInventory, BorrowingItem, BorrowingFormData } from '@/types/borrowing';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -129,7 +129,11 @@ export default function BorrowingEdit({ borrowing }: Props) {
             alert('Harap pilih minimal satu barang.');
             return;
         }
-        put(`/borrowings/${borrowing.id}`);
+        put(`/borrowings/${borrowing.id}`, {
+            onSuccess: () => {
+                router.visit(`/borrowings/${borrowing.id}`);
+            },
+        });
     };
 
     // ── Render ───────────────────────────────────────────────────────────────
@@ -321,9 +325,17 @@ export default function BorrowingEdit({ borrowing }: Props) {
 
                             {/* Actions */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
-                                <a href="/borrowings" className="order-2 flex h-12 items-center justify-center px-6 text-sm font-semibold text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 md:order-1">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                            router.patch(`/borrowings/${borrowing.id}/cancel`);
+                                        }
+                                    }}
+                                    className="order-2 flex h-12 items-center justify-center rounded-lg bg-red-600 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none md:order-1"
+                                >
                                     Batalkan Pengajuan
-                                </a>
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={processing}

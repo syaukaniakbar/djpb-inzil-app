@@ -38,6 +38,7 @@ export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
         const params = new URLSearchParams({
             start_at: data.start_at,
             end_at: data.end_at,
+            booking_id: String(booking.id),
         });
 
         fetch(`/api/rooms/available-rooms?${params}`)
@@ -45,24 +46,36 @@ export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
             .then((result) => {
                 if (result.success) {
                     setAvailableRooms(result.rooms);
+                    // Clear selected room if it's no longer available and not the current room
+                    if (data.room_id && !result.rooms.some((r: AvailableRoom) => r.id === data.room_id)) {
+                        setData('room_id', null);
+                    }
+                } else {
+                    setAvailableRooms([]);
                 }
             })
-            .catch(() => setAvailableRooms([]))
+            .catch((err) => {
+                console.error('Failed to fetch available rooms:', err);
+                setAvailableRooms([]);
+            })
             .finally(() => setLoadingRooms(false));
     }, [data.start_at, data.end_at]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/booking-rooms/${booking.id}`);
+        if (!data.room_id) {
+            alert('Silakan pilih ruangan terlebih dahulu');
+            return;
+        }
+        put(`/booking-rooms/${booking.id}`, {
+            onSuccess: () => {
+                router.visit(`/booking-rooms/${booking.id}`);
+            },
+        });
     };
 
-    // The currently booked room may be absent from the results if it's the same booking
-    // We add it manually so it's always selectable.
-    const roomsToShow = availableRooms.some((r) => r.id === booking.room.id)
-        ? availableRooms
-        : datesReady
-            ? [booking.room, ...availableRooms]
-            : [];
+    // The API already excludes the current booking, so the current room will be in the list
+    const roomsToShow = datesReady ? availableRooms : [];
 
     return (
         <AppLayout>
@@ -132,6 +145,12 @@ export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
                                     {!datesReady && (
                                         <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
                                             Isi tanggal peminjaman &amp; pengembalian terlebih dahulu untuk memuat daftar ruangan tersedia.
+                                        </div>
+                                    )}
+
+                                    {datesReady && !loadingRooms && roomsToShow.length === 0 && (
+                                        <div className="mb-4 rounded-lg border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                                            ⚠️ Tidak ada ruangan yang tersedia untuk periode yang dipilih. Silakan coba tanggal atau waktu lain.
                                         </div>
                                     )}
 
@@ -219,22 +238,16 @@ export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
 
                             {/* Actions */}
                             <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
-                                <a
-                                    href="/booking-rooms"
-                                    className="order-2 flex h-12 items-center justify-center rounded-lg border border-gray-300 bg-white px-6 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 md:order-1"
-                                >
-                                    Batalkan Pengajuan
-                                </a>
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        if (confirm('Apakah Anda yakin ingin menghapus peminjaman ruangan ini?')) {
-                                            router.delete(`/booking-rooms/${booking.id}`);
+                                        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+                                            router.patch(`/booking-rooms/${booking.id}/cancel`);
                                         }
                                     }}
-                                    className="order-3 flex h-12 items-center justify-center rounded-xl bg-red-600 px-6 font-bold text-white shadow-lg shadow-red-200 transition-all hover:bg-red-700 hover:shadow-red-300 active:scale-[0.98] md:order-3"
+                                    className="order-2 flex h-12 items-center justify-center rounded-lg bg-red-600 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none md:order-1"
                                 >
-                                    Hapus
+                                    Batalkan Pengajuan
                                 </button>
                                 <button
                                     type="submit"

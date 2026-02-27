@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { Calendar, Package, Send } from 'lucide-react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Calendar, Package, Send, Loader2 } from 'lucide-react';
 import type { ConsumableBorrowingFormData, ConsumableBorrowingEditProps } from '@/types/consumable-borrowing';
 import type { AvailableConsumableItem } from '@/types/consumable-item';
 
@@ -54,7 +54,17 @@ export default function ConsumableBorrowingEdit({ consumableItems, borrowing }: 
             return;
         }
 
-        put(`/consumable-borrowings/${borrowing.id}`);
+        put(`/consumable-borrowings/${borrowing.id}`, {
+            onSuccess: () => {
+                router.visit(`/consumable-borrowings/${borrowing.id}`);
+            },
+        });
+    };
+
+    const handleCancel = () => {
+        if (confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) {
+            router.patch(`/consumable-borrowings/${borrowing.id}/cancel`);
+        }
     };
 
     return (
@@ -252,21 +262,31 @@ export default function ConsumableBorrowingEdit({ consumableItems, borrowing }: 
                                 </section>
                             </div>
 
-                            {/* Submit Button */}
-                            <div className="mt-10 flex items-center justify-end gap-3">
-                                <Link
-                                    href="/consumable-borrowings"
-                                    className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                            {/* Actions */}
+                            <div className="mt-10 flex flex-col gap-3 border-t border-gray-100 pt-8 md:mt-14 md:flex-row md:items-center md:justify-end md:gap-4 dark:border-gray-800">
+                                <button
+                                    type="button"
+                                    onClick={handleCancel}
+                                    className="order-2 flex h-12 items-center justify-center rounded-lg bg-red-600 px-6 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 focus:ring-2 focus:ring-red-200 focus:outline-none md:order-1"
                                 >
-                                    Batal
-                                </Link>
+                                    Batalkan Pengajuan
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="order-1 flex h-12 items-center justify-center rounded-xl bg-blue-600 px-10 font-bold text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 hover:shadow-blue-300 active:scale-[0.98] disabled:opacity-70 md:order-2 md:h-14"
                                 >
-                                    <Send className="h-4 w-4" />
-                                    {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                    {processing ? (
+                                        <span className="flex items-center">
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Memproses...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center">
+                                            <Send className="mr-2 h-4 w-4" />
+                                            Perbarui Peminjaman
+                                        </span>
+                                    )}
                                 </button>
                             </div>
                         </form>
