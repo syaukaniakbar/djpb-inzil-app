@@ -6,7 +6,8 @@ use App\Models\Borrowing;
 use App\Models\VehicleBorrowing;
 use App\Models\BookingRoom;
 use App\Models\ConsumableBorrowing;
-use App\Models\Department;
+use App\Models\Vehicle;
+use App\Models\Room;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -29,6 +30,8 @@ class DashboardService
             'statusBreakdown' => $this->getStatusBreakdown(),
             'topBorrowedItems' => $this->getTopBorrowedItems(),
             'userActivities' => $this->getUserActivities(),
+            'vehicleAvailability' => $this->getVehicleAvailability(),
+            'roomAvailability' => $this->getRoomAvailability(),
         ];
     }
 
@@ -163,5 +166,87 @@ class DashboardService
                 ->limit(5)
                 ->get(),
         ];
+    }
+
+    /**
+     * Get vehicle availability status
+     */
+    public function getVehicleAvailability()
+    {
+        $now = now();
+
+        $vehicles = Vehicle::all()->map(function ($vehicle) use ($now) {
+            // Find current borrowing: ongoing/approved that hasn't been returned yet
+            // Vehicle is unavailable if:
+            // 1. Status is ongoing and within time range, OR
+            // 2. Status is approved/ongoing but not yet returned (returned_at is null)
+            $currentBorrowing = VehicleBorrowing::where('vehicle_id', $vehicle->id)
+                ->whereIn('status', ['approved', 'ongoing'])
+                ->whereNull('returned_at')
+                ->where('start_at', '<=', $now)
+                ->with(['user:id,name'])
+                ->orderBy('start_at')
+                ->first();
+
+            // Vehicle is unavailable if there's an active borrowing that hasn't been returned
+            $isCurrentlyOccupied = $currentBorrowing !== null;
+
+            return [
+                'id' => $vehicle->id,
+                'name' => $vehicle->name,
+                'license_plate' => $vehicle->license_plate,
+                'isAvailable' => !$isCurrentlyOccupied,
+                'borrowing' => $currentBorrowing ? [
+                    'borrower' => $currentBorrowing->user->name,
+                    'start_at' => $currentBorrowing->start_at,
+                    'end_at' => $currentBorrowing->end_at,
+                    'purpose' => $currentBorrowing->purpose,
+                    'status' => $currentBorrowing->status,
+                ] : null,
+            ];
+        });
+
+        return $vehicles;
+    }
+
+    /**
+     * Get room availability status
+     */
+    public function getRoomAvailability()
+    {
+        $now = now();
+
+        $rooms = Room::all()->map(function ($room) use ($now) {
+            // Booking yang sedang atau akan berlangsung (approved/ongoing) dan belum selesai
+            $upcomingOrOngoingBooking = BookingRoom::where('room_id', $room->id)
+                ->whereIn('status', ['approved', 'ongoing'])
+                ->where('end_at', '>=', $now)
+                ->orderBy('start_at')
+                ->with(['user:id,name'])
+                ->first();
+
+            // Ruangan tidak tersedia hanya jika sedang dipakai (ongoing dan waktu sekarang dalam range)
+            $isCurrentlyOccupied = BookingRoom::where('room_id', $room->id)
+                ->where('status', 'ongoing')
+                ->where('start_at', '<=', $now)
+                ->where('end_at', '>=', $now)
+                ->exists();
+
+            return [
+                'id' => $room->id,
+                'name' => $room->name,
+                'capacity' => $room->capacity,
+                'isAvailable' => !$isCurrentlyOccupied,
+                'booking' => $upcomingOrOngoingBooking ? [
+                    'booker' => $upcomingOrOngoingBooking->user->name,
+                    'start_at' => $upcomingOrOngoingBooking->start_at,
+                    'end_at' => $upcomingOrOngoingBooking->end_at,
+                    'event_name' => $upcomingOrOngoingBooking->event_name ?? null,
+                    'status' => $upcomingOrOngoingBooking->status,
+                ] : null,
+            ];
+        });
+
+        return $rooms;
     }
 }

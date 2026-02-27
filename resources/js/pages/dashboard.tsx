@@ -6,6 +6,13 @@ import type { PageProps as InertiaPageProps } from '@inertiajs/core';
 import { StatusBadge, LoanStatus } from '@/components/custom/status-badge';
 import formatDateTime from '@/utils/date';
 
+// Helper to format time only (HH:mm)
+const formatTime = (value: string) =>
+    new Date(value).toLocaleString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
 import {
     Box,
     Car,
@@ -16,6 +23,10 @@ import {
     Package,
     Layers,
     PackageCheck,
+    Search,
+    Loader2,
+    CheckCircle2,
+    Clock,
 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { motion, type Variants } from 'motion/react';
@@ -97,6 +108,34 @@ interface StatusBreakdown {
     consumableBorrowings: Record<string, number>;
 }
 
+interface VehicleAvailability {
+    id: number;
+    name: string;
+    license_plate: string;
+    isAvailable: boolean;
+    borrowing: {
+        borrower: string;
+        start_at: string;
+        end_at: string;
+        purpose: string;
+        status: string;
+    } | null;
+}
+
+interface RoomAvailability {
+    id: number;
+    name: string;
+    capacity: number;
+    isAvailable: boolean;
+    booking: {
+        booker: string;
+        start_at: string;
+        end_at: string;
+        event_name?: string;
+        status: string;
+    } | null;
+}
+
 interface PageProps extends InertiaPageProps {
     statusBreakdown: StatusBreakdown;
     topBorrowedItems: {
@@ -111,6 +150,8 @@ interface PageProps extends InertiaPageProps {
         bookingRooms: BookingRoom[];
         consumableBorrowings: ConsumableBorrowing[];
     };
+    vehicleAvailability: VehicleAvailability[];
+    roomAvailability: RoomAvailability[];
 }
 
 const ActionButton = ({
@@ -249,11 +290,255 @@ const EmptyState = ({ label }: { label: string }) => (
     </motion.div>
 );
 
+const VehicleAvailabilityCard = ({
+    vehicles,
+}: {
+    vehicles: VehicleAvailability[];
+}) => {
+    const availableCount = vehicles.filter((v) => v.isAvailable).length;
+    const busyCount = vehicles.length - availableCount;
+    const availabilityPercentage = vehicles.length > 0 ? (availableCount / vehicles.length) * 100 : 0;
+
+    const getStatusColor = () => {
+        if (availabilityPercentage >= 70) return 'bg-emerald-500';
+        if (availabilityPercentage >= 30) return 'bg-amber-500';
+        return 'bg-rose-500';
+    };
+
+    return (
+        <SectionCard title="Ketersediaan Kendaraan" icon={Car}>
+            <div className="space-y-4">
+                {/* Summary Stats */}
+                <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-900/20">
+                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                            {availableCount}
+                        </p>
+                        <p className="text-xs text-emerald-700 dark:text-emerald-300">Tersedia</p>
+                    </div>
+                    <div className="rounded-lg bg-rose-50 p-3 dark:bg-rose-900/20">
+                        <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">
+                            {busyCount}
+                        </p>
+                        <p className="text-xs text-rose-700 dark:text-rose-300">Dipakai</p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
+                        <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                            {vehicles.length}
+                        </p>
+                        <p className="text-xs text-gray-700 dark:text-gray-300">Total</p>
+                    </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                    <motion.div
+                        className={`h-full ${getStatusColor()} transition-all duration-500`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${availabilityPercentage}%` }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                    />
+                </div>
+
+                {/* Vehicle List */}
+                <div className="space-y-2">
+                    {vehicles.map((vehicle) => (
+                        <motion.div
+                            key={vehicle.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`flex items-center justify-between rounded-lg p-3 transition-colors ${
+                                vehicle.isAvailable
+                                    ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30'
+                                    : 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:hover:bg-rose-900/30'
+                            }`}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                                        vehicle.isAvailable
+                                            ? 'bg-emerald-500 text-white'
+                                            : 'bg-rose-500 text-white'
+                                    }`}
+                                >
+                                    {vehicle.isAvailable ? (
+                                        <CheckCircle2 size={14} />
+                                    ) : (
+                                        <Clock size={14} />
+                                    )}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 dark:text-white">
+                                        {vehicle.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {vehicle.license_plate}
+                                    </p>
+                                </div>
+                            </div>
+                            {vehicle.isAvailable ? (
+                                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+                                    Tersedia
+                                </span>
+                            ) : (
+                                <div className="text-right">
+                                    {vehicle.borrowing && (
+                                        <>
+                                            <span className="rounded-full bg-purple-500/10 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
+                                                Sedang Dipinjam
+                                            </span>
+                                            <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+                                                {vehicle.borrowing.borrower}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                                                {formatTime(vehicle.borrowing.start_at)} - {formatTime(vehicle.borrowing.end_at)}
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+                    ))}
+                </div>
+
+                {vehicles.length === 0 && (
+                    <EmptyState label="Belum ada kendaraan" />
+                )}
+            </div>
+        </SectionCard>
+    );
+};
+
+const RoomAvailabilityCard = ({
+    rooms,
+}: {
+    rooms: RoomAvailability[];
+}) => {
+    const availableCount = rooms.filter((r) => r.isAvailable).length;
+    const busyCount = rooms.length - availableCount;
+    const availabilityPercentage = rooms.length > 0 ? (availableCount / rooms.length) * 100 : 0;
+
+    const getStatusColor = () => {
+        if (availabilityPercentage >= 70) return 'bg-emerald-500';
+        if (availabilityPercentage >= 30) return 'bg-amber-500';
+        return 'bg-rose-500';
+    };
+
+    return (
+        <SectionCard title="Ketersediaan Ruangan" icon={DoorOpen}>
+            <div className="space-y-4">
+                {/* Summary Stats */}
+                <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-900/20">
+                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                            {availableCount}
+                        </p>
+                        <p className="text-xs text-emerald-700 dark:text-emerald-300">Tersedia</p>
+                    </div>
+                    <div className="rounded-lg bg-rose-50 p-3 dark:bg-rose-900/20">
+                        <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">
+                            {busyCount}
+                        </p>
+                        <p className="text-xs text-rose-700 dark:text-rose-300">Dipakai</p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800">
+                        <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">
+                            {rooms.length}
+                        </p>
+                        <p className="text-xs text-gray-700 dark:text-gray-300">Total</p>
+                    </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                    <motion.div
+                        className={`h-full ${getStatusColor()} transition-all duration-500`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${availabilityPercentage}%` }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                    />
+                </div>
+
+                {/* Room List */}
+                <div className="space-y-2">
+                    {rooms.map((room) => (
+                        <motion.div
+                            key={room.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`flex items-center justify-between rounded-lg p-3 transition-colors ${
+                                room.isAvailable
+                                    ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:hover:bg-emerald-900/30'
+                                    : 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-900/20 dark:hover:bg-rose-900/30'
+                            }`}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                                        room.isAvailable
+                                            ? 'bg-emerald-500 text-white'
+                                            : 'bg-rose-500 text-white'
+                                    }`}
+                                >
+                                    {room.isAvailable ? (
+                                        <CheckCircle2 size={14} />
+                                    ) : (
+                                        <Clock size={14} />
+                                    )}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-900 dark:text-white">
+                                        {room.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        Kapasitas: {room.capacity} orang
+                                    </p>
+                                </div>
+                            </div>
+                            {room.isAvailable ? (
+                                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+                                    Tersedia
+                                </span>
+                            ) : (
+                                <div className="text-right">
+                                    {room.booking && (
+                                        <>
+                                            <span className={`rounded-full px-3 py-1 text-xs font-bold ${
+                                                room.booking.status === 'ongoing'
+                                                    ? 'bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400'
+                                                    : 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                                            }`}>
+                                                {room.booking.status === 'ongoing' ? 'Sedang Dipinjam' : 'Akan Dipakai'}
+                                            </span>
+                                            <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+                                                {room.booking.booker}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                                                {formatTime(room.booking.start_at)} - {formatTime(room.booking.end_at)}
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+                    ))}
+                </div>
+
+                {rooms.length === 0 && (
+                    <EmptyState label="Belum ada ruangan" />
+                )}
+            </div>
+        </SectionCard>
+    );
+};
+
 export default function Dashboard() {
     const {
         statusBreakdown,
         topBorrowedItems,
         userActivities,
+        vehicleAvailability,
+        roomAvailability,
     } = usePage<PageProps>().props;
 
     const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: dashboard().url }];
@@ -311,6 +596,50 @@ export default function Dashboard() {
                         <ActionButton href="/vehicle-borrowings/create" label="Pinjam Kendaraan" icon={Car} colorClass="bg-emerald-600" />
                         <ActionButton href="/booking-rooms/create" label="Booking Ruangan" icon={DoorOpen} colorClass="bg-purple-600" />
                         <ActionButton href="/consumable-borrowings/create" label="Persediaan" icon={ShoppingBag} colorClass="bg-amber-600" />
+                    </motion.div>
+                </motion.section>
+
+                {/* ================= VEHICLE AVAILABILITY ================= */}
+                <motion.section variants={fadeInUp}>
+                    <motion.div
+                        className="mb-4 flex items-center gap-2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                    >
+                        <motion.div
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white"
+                            whileHover={{ scale: 1.1, rotate: 15 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                        >
+                            <Car size={16} />
+                        </motion.div>
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">Status Kendaraan</h2>
+                    </motion.div>
+                    <motion.div variants={staggerContainer}>
+                        <VehicleAvailabilityCard vehicles={vehicleAvailability} />
+                    </motion.div>
+                </motion.section>
+
+                {/* ================= ROOM AVAILABILITY ================= */}
+                <motion.section variants={fadeInUp}>
+                    <motion.div
+                        className="mb-4 flex items-center gap-2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.15 }}
+                    >
+                        <motion.div
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white"
+                            whileHover={{ scale: 1.1, rotate: 15 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                        >
+                            <DoorOpen size={16} />
+                        </motion.div>
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">Status Ruangan</h2>
+                    </motion.div>
+                    <motion.div variants={staggerContainer}>
+                        <RoomAvailabilityCard rooms={roomAvailability} />
                     </motion.div>
                 </motion.section>
 
