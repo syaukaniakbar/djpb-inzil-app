@@ -27,7 +27,13 @@ class UpdateLoanStatuses extends Command
         // approved → ongoing
         VehicleBorrowing::where('status', 'approved')
             ->where('start_at', '<=', now())
+            ->where('end_at', '>=', now()) // hanya yang end_at belum lewat
             ->update(['status' => 'ongoing']);
+
+        // approved → finished jika sudah lewat end_at
+        VehicleBorrowing::where('status', 'approved')
+            ->where('end_at', '<', now())
+            ->update(['status' => 'finished']);
     }
 
     private function updateRooms()
@@ -35,7 +41,13 @@ class UpdateLoanStatuses extends Command
         // approved → ongoing
         BookingRoom::where('status', 'approved')
             ->where('start_at', '<=', now())
+            ->where('end_at', '>=', now()) // hanya yang end_at belum lewat
             ->update(['status' => 'ongoing']);
+
+        // approved → finished jika sudah lewat end_at
+        BookingRoom::where('status', 'approved')
+            ->where('end_at', '<', now())
+            ->update(['status' => 'finished']);
 
         // ongoing → finished jika end_at lewat
         BookingRoom::where('status', 'ongoing')
@@ -48,6 +60,12 @@ class UpdateLoanStatuses extends Command
         // approved → ongoing
         Borrowing::where('status', 'approved')
             ->where('start_at', '<=', now())
+            ->where('end_at', '>=', now()) // hanya yang end_at belum lewat
             ->update(['status' => 'ongoing']);
+
+        // approved → finished jika sudah lewat end_at
+        Borrowing::where('status', 'approved')
+            ->where('end_at', '<', now())
+            ->update(['status' => 'finished']);
     }
 }
