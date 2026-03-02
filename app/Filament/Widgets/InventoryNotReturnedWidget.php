@@ -17,8 +17,10 @@ class InventoryNotReturnedWidget extends BaseWidget
     {
         return $table
             ->defaultSort('created_at', 'desc')
-            ->heading('Peminjam yang belum mengembalikan inventaris')
-            ->description('Daftar peminjam dengan inventaris yang masih belum dikembalikan')
+            ->heading('Peminjam Inventaris Aktif')
+            ->emptyStateHeading('Tidak ada peminjaman aktif')
+            ->emptyStateDescription('Semua inventaris sudah dikembalikan.')
+            ->description('Daftar peminjam dengan inventaris yang sudah disetujui atau sedang berlangsung')
             ->query(
                 Borrowing::query()->active()
             )

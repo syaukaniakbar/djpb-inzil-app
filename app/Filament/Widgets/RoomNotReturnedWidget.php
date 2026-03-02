@@ -17,8 +17,10 @@ class RoomNotReturnedWidget extends BaseWidget
     {
         return $table
             ->defaultSort('created_at', 'desc')
-            ->heading('Peminjam ruangan yang sedang berlangsung')
-            ->description('Daftar peminjam dengan ruangan yang sedang berlangsung')
+            ->heading('Peminjam Ruangan Aktif')
+            ->description('Daftar peminjam dengan ruangan yang sudah disetujui atau sedang berlangsung')
+            ->emptyStateHeading('Tidak ada peminjaman aktif')
+            ->emptyStateDescription('Semua ruangan sudah dikembalikan.')
             ->query(
                 BookingRoom::query()->active()
             )

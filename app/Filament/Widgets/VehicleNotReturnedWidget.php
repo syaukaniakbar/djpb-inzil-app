@@ -21,8 +21,10 @@ class VehicleNotReturnedWidget extends BaseWidget
     {
         return $table
             ->defaultSort('created_at', 'desc')
-            ->heading('Peminjam yang belum mengembalikan kendaraan')
-            ->description('Daftar peminjam dengan kendaraan yang masih belum dikembalikan')
+            ->heading('Peminjam Kendaraan Aktif')
+            ->description('Daftar peminjam dengan kendaraan yang sudah disetujui atau sedang berlangsung')
+            ->emptyStateHeading('Tidak ada peminjaman aktif')
+            ->emptyStateDescription('Semua kendaraan sudah dikembalikan.')
             ->query(
                 VehicleBorrowing::query()->active()
             )
