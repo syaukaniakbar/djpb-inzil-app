@@ -4,6 +4,7 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\VehicleBorrowingController;
 use App\Http\Controllers\ConsumableBorrowingController;
 use App\Http\Controllers\BookingRoomController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,9 +13,7 @@ Route::get('/', function () {
     return Inertia::render('main');
 })->name('home');
 
-Route::get('/contact-us', function () {
-    return Inertia::render('contact-us');
-})->name('contact-us');
+Route::get('/contact-us', [ContactController::class, 'index'])->name('contact-us');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

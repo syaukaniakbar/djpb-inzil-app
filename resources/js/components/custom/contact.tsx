@@ -1,9 +1,64 @@
 'use client';
 
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export default function ContactSection() {
+    const { props } = usePage();
+    const adminPhone = props.adminPhone as string | null;
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+
+    // Format phone number for WhatsApp (remove leading 0, add 62)
+    const formatWhatsAppNumber = (phone: string) => {
+        // Remove any non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // If starts with 0, replace with 62
+        if (cleaned.startsWith('0')) {
+            return '62' + cleaned.substring(1);
+        }
+        // If starts with 62, keep as is
+        if (cleaned.startsWith('62')) {
+            return cleaned;
+        }
+        // Otherwise assume it's already in international format
+        return cleaned;
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!name.trim() || !message.trim()) {
+            alert('Mohon isi nama dan pesan Anda');
+            return;
+        }
+
+        if (!adminPhone) {
+            alert('Nomor WhatsApp admin belum tersedia');
+            return;
+        }
+
+        // Format message for WhatsApp
+        const whatsappMessage = `Halo Admin DJPb Kaltim,
+
+Saya ${name}${email ? ` (${email})` : ''} ingin menyampaikan pesan:
+
+${message}
+
+Terima kasih.`;
+
+        // Encode message for URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+
+        // Format the phone number and open WhatsApp
+        const whatsappNumber = formatWhatsAppNumber(adminPhone);
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
     return (
         <section className="flex min-h-screen flex-col overflow-hidden bg-white text-black">
             <motion.div
@@ -75,6 +130,7 @@ export default function ContactSection() {
                     </motion.div>
                 </motion.div>
                 <motion.form
+                    onSubmit={handleSubmit}
                     initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -87,6 +143,8 @@ export default function ContactSection() {
                         </label>
                         <input
                             type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Masukkan nama lengkap Anda"
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 mt-2 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         />
@@ -97,6 +155,8 @@ export default function ContactSection() {
                         </label>
                         <input
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="example@domain.com"
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 mt-2 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         />
@@ -107,17 +167,19 @@ export default function ContactSection() {
                         </label>
                         <textarea
                             rows={5}
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
                             placeholder="Tulis pesan Anda..."
                             className="w-full rounded-xl border border-black/20 bg-white px-4 py-3 mt-2 text-black placeholder-neutral-400 focus:border-black focus:ring-2 focus:ring-black/20"
                         ></textarea>
                     </div>
                     <motion.button
                         type="submit"
-                        className="w-full rounded-lg bg-blue-700 hover:bg-blue-800 cursor-pointer py-3 font-semibold text-white md:w-auto md:px-12"
+                        className="w-full rounded-lg bg-green-600 hover:bg-green-700 cursor-pointer py-3 font-semibold text-white md:w-auto md:px-12"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                     >
-                        Kirim Pesan
+                        Kirim Pesan via WhatsApp
                     </motion.button>
                 </motion.form>
             </div>
