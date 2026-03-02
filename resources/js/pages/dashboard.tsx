@@ -168,7 +168,6 @@ const ActionButton = ({
     <motion.div
         initial="hidden"
         animate="visible"
-        whileHover="hover"
         variants={scaleIn}
     >
         <Link
@@ -181,10 +180,7 @@ const ActionButton = ({
             {/* Icon Container with motion */}
             <motion.div
                 className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${colorClass} text-white shadow-lg sm:h-16 sm:w-16`}
-                variants={{
-                    hidden: { scale: 1 },
-                    hover: { scale: 1.1, rotate: 5, transition: { duration: 0.3 } }
-                }}
+                whileHover={{ scale: 1.1 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
                 <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -192,26 +188,13 @@ const ActionButton = ({
 
             {/* Text Content */}
             <div className="flex flex-col items-center text-center">
-                <motion.p
-                    className="text-sm font-bold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:text-base"
-                    variants={{
-                        hidden: { y: 0 },
-                        hover: { y: -2, transition: { duration: 0.2 } }
-                    }}
-                >
+                <p className="text-sm font-bold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:text-base">
                     {label}
-                </motion.p>
+                </p>
 
                 <div className="mt-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 sm:text-[11px]">
                     <span>Buat Sekarang</span>
-                    <motion.span
-                        variants={{
-                            hidden: { x: 0 },
-                            hover: { x: 3, transition: { duration: 0.2 } }
-                        }}
-                    >
-                        <ArrowRight size={12} />
-                    </motion.span>
+                    <ArrowRight size={12} />
                 </div>
             </div>
         </Link>
@@ -796,23 +779,16 @@ export default function Dashboard() {
                                 {Object.entries(statusBreakdown.borrowings).map(([status, count]) => (
                                     <motion.div
                                         key={status}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                                         variants={slideInFromLeft}
-                                        whileHover={{ x: 4, scale: 1.02 }}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <motion.span
-                                                className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`}
-                                                whileHover={{ scale: 1.5 }}
-                                            />
+                                            <span className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`} />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{statusLabelMap[status] || status}</span>
                                         </div>
-                                        <motion.span
-                                            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                                            whileHover={{ scale: 1.2, backgroundColor: '#3b82f6', color: '#fff' }}
-                                        >
+                                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                                             {count}
-                                        </motion.span>
+                                        </span>
                                     </motion.div>
                                 ))}
                             </motion.div>
@@ -822,23 +798,16 @@ export default function Dashboard() {
                                 {Object.entries(statusBreakdown.vehicleBorrowings).map(([status, count]) => (
                                     <motion.div
                                         key={status}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                                         variants={slideInFromLeft}
-                                        whileHover={{ x: 4, scale: 1.02 }}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <motion.span
-                                                className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`}
-                                                whileHover={{ scale: 1.5 }}
-                                            />
+                                            <span className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`} />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{statusLabelMap[status] || status}</span>
                                         </div>
-                                        <motion.span
-                                            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                                            whileHover={{ scale: 1.2, backgroundColor: '#10b981', color: '#fff' }}
-                                        >
+                                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                                             {count}
-                                        </motion.span>
+                                        </span>
                                     </motion.div>
                                 ))}
                             </motion.div>
@@ -848,23 +817,16 @@ export default function Dashboard() {
                                 {Object.entries(statusBreakdown.bookingRooms).map(([status, count]) => (
                                     <motion.div
                                         key={status}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                                         variants={slideInFromLeft}
-                                        whileHover={{ x: 4, scale: 1.02 }}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <motion.span
-                                                className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`}
-                                                whileHover={{ scale: 1.5 }}
-                                            />
+                                            <span className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`} />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{statusLabelMap[status] || status}</span>
                                         </div>
-                                        <motion.span
-                                            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                                            whileHover={{ scale: 1.2, backgroundColor: '#8b5cf6', color: '#fff' }}
-                                        >
+                                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                                             {count}
-                                        </motion.span>
+                                        </span>
                                     </motion.div>
                                 ))}
                             </motion.div>
@@ -874,23 +836,16 @@ export default function Dashboard() {
                                 {Object.entries(statusBreakdown.consumableBorrowings).map(([status, count]) => (
                                     <motion.div
                                         key={status}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                                         variants={slideInFromLeft}
-                                        whileHover={{ x: 4, scale: 1.02 }}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <motion.span
-                                                className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`}
-                                                whileHover={{ scale: 1.5 }}
-                                            />
+                                            <span className={`h-2 w-2 rounded-xs ${statusColorMap[status] || 'bg-gray-400'}`} />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{statusLabelMap[status] || status}</span>
                                         </div>
-                                        <motion.span
-                                            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                                            whileHover={{ scale: 1.2, backgroundColor: '#f59e0b', color: '#fff' }}
-                                        >
+                                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                                             {count}
-                                        </motion.span>
+                                        </span>
                                     </motion.div>
                                 ))}
                             </motion.div>
@@ -910,13 +865,9 @@ export default function Dashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.6 }}
                     >
-                        <motion.div
-                            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                            whileHover={{ scale: 1.1, rotate: 10 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                        >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                             <PackageCheck size={24} />
-                        </motion.div>
+                        </div>
                         <div className="space-y-0.5">
                             <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-2xl">
                                 Aktivitas Saya
@@ -935,192 +886,136 @@ export default function Dashboard() {
 
                         {/* 1. Inventaris */}
                         <motion.div
-                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
+                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all duration-300 hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
                             variants={fadeInUp}
-                            whileHover={{ y: -4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
-                            <motion.div
-                                className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800"
-                                whileHover={{ borderColor: 'rgba(59, 130, 246, 0.3)' }}
-                            >
-                                <motion.div
-                                    whileHover={{ scale: 1.2, rotate: 10 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                                >
+                            <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20">
                                     <Package size={18} className="text-blue-600" />
-                                </motion.div>
+                                </div>
                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">Inventaris</h4>
-                            </motion.div>
-                            <ul className="flex-1 space-y-4">
+                            </div>
+                            <ul className="flex-1 space-y-3">
                                 {userActivities.borrowings.length ? userActivities.borrowings.slice(0, 5).map((b, idx) => (
-                                    <motion.li
+                                    <li
                                         key={b.id}
-                                        className="group border-l-2 border-blue-500 pl-3 transition-colors hover:border-blue-700"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.08, duration: 0.3 }}
-                                        whileHover={{ x: 4, backgroundColor: 'rgba(243, 244, 246, 0.5)' }}
+                                        className="group rounded-lg border-l-2 border-blue-500 bg-gray-50/50 px-3 py-2.5 transition-all duration-200 hover:bg-blue-50 dark:bg-gray-800/50 dark:hover:bg-blue-900/20"
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="line-clamp-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 {b.borrowing_details?.map(d => d.inventory.name).join(', ')}
                                             </p>
-                                            <motion.div
-                                                className="shrink-0 scale-90"
-                                                whileHover={{ scale: 1.05 }}
-                                            >
+                                            <div className="shrink-0">
                                                 <StatusBadge status={b.status} />
-                                            </motion.div>
+                                            </div>
                                         </div>
                                         <p className="mt-1 text-[11px] font-medium text-gray-400 dark:text-gray-500">
                                             {formatDateTime(b.start_at)}
                                         </p>
-                                    </motion.li>
+                                    </li>
                                 )) : <EmptyState label="Tidak ada peminjaman" />}
                             </ul>
                         </motion.div>
 
                         {/* 2. Kendaraan */}
                         <motion.div
-                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
+                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all duration-300 hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
                             variants={fadeInUp}
-                            whileHover={{ y: -4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
-                            <motion.div
-                                className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800"
-                                whileHover={{ borderColor: 'rgba(16, 185, 129, 0.3)' }}
-                            >
-                                <motion.div
-                                    whileHover={{ scale: 1.2, rotate: 10 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                                >
+                            <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
                                     <Car size={18} className="text-emerald-600" />
-                                </motion.div>
+                                </div>
                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">Kendaraan</h4>
-                            </motion.div>
-                            <ul className="flex-1 space-y-4">
+                            </div>
+                            <ul className="flex-1 space-y-3">
                                 {userActivities.vehicleBorrowings.length ? userActivities.vehicleBorrowings.slice(0, 5).map((v, idx) => (
-                                    <motion.li
+                                    <li
                                         key={v.id}
-                                        className="group border-l-2 border-emerald-500 pl-3 transition-colors hover:border-emerald-700"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.08, duration: 0.3 }}
-                                        whileHover={{ x: 4, backgroundColor: 'rgba(243, 244, 246, 0.5)' }}
+                                        className="group rounded-lg border-l-2 border-emerald-500 bg-gray-50/50 px-3 py-2.5 transition-all duration-200 hover:bg-emerald-50 dark:bg-gray-800/50 dark:hover:bg-emerald-900/20"
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="line-clamp-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 {v.vehicle.name}
                                             </p>
-                                            <motion.div
-                                                className="shrink-0 scale-90"
-                                                whileHover={{ scale: 1.05 }}
-                                            >
+                                            <div className="shrink-0">
                                                 <StatusBadge status={v.status} />
-                                            </motion.div>
+                                            </div>
                                         </div>
                                         <p className="mt-1 text-[11px] font-medium text-gray-400 dark:text-gray-500">
                                             {formatDateTime(v.start_at)}
                                         </p>
-                                    </motion.li>
+                                    </li>
                                 )) : <EmptyState label="Tidak ada peminjaman" />}
                             </ul>
                         </motion.div>
 
                         {/* 3. Ruangan */}
                         <motion.div
-                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
+                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all duration-300 hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
                             variants={fadeInUp}
-                            whileHover={{ y: -4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
-                            <motion.div
-                                className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800"
-                                whileHover={{ borderColor: 'rgba(139, 92, 246, 0.3)' }}
-                            >
-                                <motion.div
-                                    whileHover={{ scale: 1.2, rotate: 10 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                                >
+                            <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-900/20">
                                     <DoorOpen size={18} className="text-purple-600" />
-                                </motion.div>
+                                </div>
                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">Ruangan</h4>
-                            </motion.div>
-                            <ul className="flex-1 space-y-4">
+                            </div>
+                            <ul className="flex-1 space-y-3">
                                 {userActivities.bookingRooms.length ? userActivities.bookingRooms.slice(0, 5).map((r, idx) => (
-                                    <motion.li
+                                    <li
                                         key={r.id}
-                                        className="group border-l-2 border-purple-500 pl-3 transition-colors hover:border-purple-700"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.08, duration: 0.3 }}
-                                        whileHover={{ x: 4, backgroundColor: 'rgba(243, 244, 246, 0.5)' }}
+                                        className="group rounded-lg border-l-2 border-purple-500 bg-gray-50/50 px-3 py-2.5 transition-all duration-200 hover:bg-purple-50 dark:bg-gray-800/50 dark:hover:bg-purple-900/20"
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="line-clamp-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 {r.room.name}
                                             </p>
-                                            <motion.div
-                                                className="shrink-0 scale-90"
-                                                whileHover={{ scale: 1.05 }}
-                                            >
+                                            <div className="shrink-0">
                                                 <StatusBadge status={r.status} />
-                                            </motion.div>
+                                            </div>
                                         </div>
                                         <p className="mt-1 text-[11px] font-medium text-gray-400 dark:text-gray-500">
                                             {formatDateTime(r.start_at)}
                                         </p>
-                                    </motion.li>
+                                    </li>
                                 )) : <EmptyState label="Tidak ada pemesanan" />}
                             </ul>
                         </motion.div>
 
                         {/* 4. Persediaan */}
                         <motion.div
-                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
+                            className="flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition-all duration-300 hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
                             variants={fadeInUp}
-                            whileHover={{ y: -4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         >
-                            <motion.div
-                                className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800"
-                                whileHover={{ borderColor: 'rgba(245, 158, 11, 0.3)' }}
-                            >
-                                <motion.div
-                                    whileHover={{ scale: 1.2, rotate: 10 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                                >
+                            <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3 dark:border-gray-800">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20">
                                     <ShoppingBag size={18} className="text-amber-600" />
-                                </motion.div>
+                                </div>
                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">Persediaan</h4>
-                            </motion.div>
-                            <ul className="flex-1 space-y-4">
+                            </div>
+                            <ul className="flex-1 space-y-3">
                                 {userActivities.consumableBorrowings.length ? userActivities.consumableBorrowings.slice(0, 5).map((c, idx) => (
-                                    <motion.li
+                                    <li
                                         key={c.id}
-                                        className="group border-l-2 border-amber-500 pl-3 transition-colors hover:border-amber-700"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.08, duration: 0.3 }}
-                                        whileHover={{ x: 4, backgroundColor: 'rgba(243, 244, 246, 0.5)' }}
+                                        className="group rounded-lg border-l-2 border-amber-500 bg-gray-50/50 px-3 py-2.5 transition-all duration-200 hover:bg-amber-50 dark:bg-gray-800/50 dark:hover:bg-amber-900/20"
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <p className="line-clamp-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                                                 {c.consumable_item.name} ({c.quantity})
                                             </p>
-                                            <motion.div
-                                                className="shrink-0 scale-90"
-                                                whileHover={{ scale: 1.05 }}
-                                            >
+                                            <div className="shrink-0">
                                                 <StatusBadge status={c.status} />
-                                            </motion.div>
+                                            </div>
                                         </div>
                                         <p className="mt-1 text-[11px] font-medium text-gray-400 dark:text-gray-500">
                                             {formatDateTime(c.borrowed_at)}
                                         </p>
-                                    </motion.li>
+                                    </li>
                                 )) : <EmptyState label="Tidak ada peminjaman" />}
                             </ul>
                         </motion.div>
