@@ -205,7 +205,7 @@ export default function ConsumableBorrowingsIndex({ borrowings, admin, filters }
                                                         borrowedAt={borrowing.borrowed_at}
                                                         hasReturnAction
                                                         returnLabel="Kembalikan"
-                                                        whatsappMessage={`Halo Admin, saya ingin konfirmasi peminjaman persediaan dengan ID: ${borrowing.id}.`}
+                                                        whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Persediaan]\n \nSaya ingin mengajukan peminjaman persediaan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nBarang: ${borrowing.consumable_item?.name || 'Tidak Diketahui'}\nJumlah: ${borrowing.quantity}\nTanggal Peminjaman: ${formatDateTime(borrowing.borrowed_at)}\n\n Menunggu persetujuan.`}
                                                     />
                                                 </td>
                                             </tr>

@@ -117,7 +117,7 @@ export default function Index({ borrowings, admin, filters }: VehicleBorrowingsI
                                                 returnedAt={borrowing.returned_at}
                                                 hasReturnAction
                                                 returnLabel="Kembalikan"
-                                                whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nKendaraan: ${borrowing.vehicle.name}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`}
+                                                whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nKendaraan: ${borrowing.vehicle.name}\nPlat Nomor: ${borrowing.vehicle.license_plate}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`}
                                             />
                                         </div>
                                     </div>
@@ -182,7 +182,7 @@ export default function Index({ borrowings, admin, filters }: VehicleBorrowingsI
                                                         returnedAt={borrowing.returned_at}
                                                         hasReturnAction
                                                         returnLabel="Kembalikan"
-                                                        whatsappMessage={`Halo Admin, saya ingin konfirmasi peminjaman kendaraan dengan ID: ${borrowing.id}.`}
+                                                        whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Kendaraan] \n \nSaya ingin mengajukan peminjaman kendaraan dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user?.name || 'Tidak Diketahui'}\nKendaraan: ${borrowing.vehicle.name}\nPlat Nomor: ${borrowing.vehicle.license_plate}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`}
                                                     />
                                                 </td>
                                             </tr>
