@@ -165,7 +165,7 @@ export default function BorrowingsIndex({ borrowings, admin, filters }: Props) {
                                 ))
                             ) : (
                                 <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    Tidak ada data peminjaman
+                                    Tidak ada data peminjaman aset
                                 </div>
                             )}
                         </div>
@@ -182,40 +182,48 @@ export default function BorrowingsIndex({ borrowings, admin, filters }: Props) {
                                 </thead>
 
                                 <tbody className="divide-y divide-gray-100 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                                    {data.map(borrowing => (
-                                        <tr key={borrowing.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                                            <td className="px-4 py-3 text-sm text-gray-800 dark:text-white">#{borrowing.id}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatDateTime(borrowing.start_at)}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatDateTime(borrowing.end_at)}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{borrowing.returned_at ? formatDateTime(borrowing.returned_at) : '-'}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                                                <ul className="list-disc space-y-1 pl-4">
-                                                    {(borrowing.borrowing_details || []).map(detail => (
-                                                        <li key={detail.id}>
-                                                            {detail.inventory?.name ?? 'Inventory tidak ditemukan'}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{borrowing.admin_note ?? '-'}</td>
-                                            <td className="px-4 py-3"><StatusBadge status={borrowing.status} /></td>
-                                            <td className="px-4 py-3 w-44">
-                                                <ActionCell
-                                                    id={borrowing.id}
-                                                    status={borrowing.status}
-                                                    baseRoute="/borrowings"
-                                                    adminPhone={admin.phone}
-                                                    userName={borrowing.user.name}
-                                                    itemName={(borrowing.borrowing_details || []).map(d => d.inventory?.name).join(', ') || 'Tidak Diketahui'}
-                                                    borrowedAt={borrowing.start_at}
-                                                    returnedAt={borrowing.returned_at}
-                                                    hasReturnAction
-                                                    returnLabel="Kembalikan"
-                                                    whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`}
-                                                />
+                                    {data.length > 0 ? (
+                                        data.map(borrowing => (
+                                            <tr key={borrowing.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                                <td className="px-4 py-3 text-sm text-gray-800 dark:text-white">#{borrowing.id}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatDateTime(borrowing.start_at)}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatDateTime(borrowing.end_at)}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{borrowing.returned_at ? formatDateTime(borrowing.returned_at) : '-'}</td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                                    <ul className="list-disc space-y-1 pl-4">
+                                                        {(borrowing.borrowing_details || []).map(detail => (
+                                                            <li key={detail.id}>
+                                                                {detail.inventory?.name ?? 'Inventory tidak ditemukan'}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{borrowing.admin_note ?? '-'}</td>
+                                                <td className="px-4 py-3"><StatusBadge status={borrowing.status} /></td>
+                                                <td className="px-4 py-3 w-44">
+                                                    <ActionCell
+                                                        id={borrowing.id}
+                                                        status={borrowing.status}
+                                                        baseRoute="/borrowings"
+                                                        adminPhone={admin.phone}
+                                                        userName={borrowing.user.name}
+                                                        itemName={(borrowing.borrowing_details || []).map(d => d.inventory?.name).join(', ') || 'Tidak Diketahui'}
+                                                        borrowedAt={borrowing.start_at}
+                                                        returnedAt={borrowing.returned_at}
+                                                        hasReturnAction
+                                                        returnLabel="Kembalikan"
+                                                        whatsappMessage={`DITJEN PERBENDAHARAAN\nKANWIL DJPb PROV. KALTIM\n\n[Peminjaman Barang] \n \nSaya ingin mengajukan peminjaman barang dengan detail berikut: \n\n#ID Peminjaman: ${borrowing.id}\nNama: ${borrowing.user.name}\nBarang: ${(borrowing.borrowing_details || []).map(detail => detail.inventory?.name).join(', ')}\nTanggal Peminjaman: ${formatDateTime(borrowing.start_at)} \nTanggal Pengembalian: ${formatDateTime(borrowing.end_at)}\n\n Menunggu persetujuan.`}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={8} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                                Tidak ada data peminjaman aset
                                             </td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>

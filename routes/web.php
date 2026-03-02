@@ -7,12 +7,9 @@ use App\Http\Controllers\BookingRoomController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('main', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return Inertia::render('main');
 })->name('home');
 
 Route::get('/contact-us', function () {
