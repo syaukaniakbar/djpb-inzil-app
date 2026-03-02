@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\Borrowings\Actions\ApproveAction;
 use App\Filament\Resources\Borrowings\Actions\RejectAction;
 use App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction;
-use App\Filament\Resources\Borrowings\Actions\ReturnAssetAction;
 
 class ViewBorrowing extends ViewRecord
 {
@@ -21,7 +20,6 @@ class ViewBorrowing extends ViewRecord
             ApproveAction::make(),
             RejectAction::make(),
             MarkAsReturnedAction::make(),
-            ReturnAssetAction::make(),
         ];
     }
 }

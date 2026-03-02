@@ -10,27 +10,27 @@ class MarkAsReturnedAction
     public static function make(): Action
     {
         return Action::make('mark_as_returned')
-            ->label('Tandai Sebagai Dikembalikan')
+            ->label('Tandai Dikembalikan')
+            ->icon('heroicon-o-arrow-left-end-on-rectangle')
             ->color('success')
             ->requiresConfirmation()
             ->modalHeading('Tandai Peminjaman Telah Dikembalikan')
             ->modalDescription('Apakah Anda yakin ingin menandai peminjaman ini sebagai telah dikembalikan?')
-            ->modalSubmitActionLabel('Ya, tandai sebagai dikembalikan')
+            ->modalSubmitActionLabel('Ya, tandai dikembalikan')
+            ->modalCancelActionLabel('Batal')
             ->action(function ($record) {
-                // Update data peminjaman
                 $record->update([
                     'returned_at' => now(),
                     'status' => 'finished',
                 ]);
 
                 Notification::make()
-                    ->title('Peminjaman berhasil ditandai sebagai dikembalikan')
+                    ->title('Peminjaman berhasil dikembalikan')
+                    ->body('Peminjaman atas nama ' . $record->user->name . ' telah ditandai sebagai dikembalikan.')
                     ->success()
+                    ->icon('heroicon-o-check-circle')
                     ->send();
             })
-            ->visible(fn ($record) =>
-                auth()->user()->role === 'admin' &&
-                $record->status === 'ongoing'
-            );
+            ->visible(fn($record) => auth()->user()->role === 'admin' && $record->status === 'ongoing');
     }
 }

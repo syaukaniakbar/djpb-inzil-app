@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use App\Filament\Resources\Borrowings\Actions\ApproveAction;
 use App\Filament\Resources\Borrowings\Actions\RejectAction;
 use App\Filament\Resources\Borrowings\Actions\MarkAsReturnedAction;
-use App\Filament\Resources\Borrowings\Actions\ReturnAssetAction;
 use App\Filament\Resources\Borrowings\Actions\WhatsAppNotificationAction;
 
 
@@ -125,13 +124,12 @@ class BorrowingsTable
                     }),
             ])
             ->recordActions([
-                EditAction::make(),
                 ViewAction::make(),
+                EditAction::make(),
                 // Custom admin actions
                 ApproveAction::make(),
                 RejectAction::make(),
                 MarkAsReturnedAction::make(),
-                ReturnAssetAction::make(),
                 WhatsAppNotificationAction::make(),
             ])
             ->bulkActions([
