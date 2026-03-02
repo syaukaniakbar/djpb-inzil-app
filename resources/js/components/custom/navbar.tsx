@@ -60,7 +60,17 @@ export default function Navbar({ links = navLinks }: NavbarProps) {
         if (isHome) {
             smoothScrollTo(sectionId);
         } else {
+            // Navigate to home page with hash, then smooth scroll after page loads
             window.location.href = `/#${sectionId}`;
+        }
+    };
+
+    const handleNavigationClick = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        href: string
+    ): void => {
+        if (href.startsWith('#')) {
+            handleClick(e, href);
         }
     };
 

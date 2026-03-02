@@ -6,12 +6,43 @@ import {
     Youtube,
     Instagram,
 } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     const linkHover =
         'transition-colors hover:text-blue-600';
+
+    const navLinks = [
+        { name: 'Beranda', href: '/' },
+        { name: 'Layanan', href: '#service' },
+        { name: 'Tentang Inzil', href: '#about' },
+        { name: 'Contact Us', href: '/contact-us' },
+    ];
+
+    const handleFooterClick = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        href: string
+    ) => {
+        if (!href.startsWith('#')) return;
+
+        e.preventDefault();
+        const sectionId = href.replace('#', '');
+        const el = document.getElementById(sectionId);
+        if (!el) return;
+
+        const NAV_HEIGHT = 80;
+        const y =
+            el.getBoundingClientRect().top +
+            window.scrollY -
+            NAV_HEIGHT;
+
+        window.scrollTo({
+            top: y,
+            behavior: 'smooth',
+        });
+    };
 
     return (
         <footer className="border-t border-slate-200 bg-white px-6 py-16 text-slate-600">
@@ -51,18 +82,28 @@ export default function Footer() {
                             Navigasi
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            {['Beranda', 'Layanan', 'Tentang Inzil', 'Contact Us'].map(
-                                (item) => (
-                                    <li key={item}>
+                            {navLinks.map((item) => (
+                                <li key={item.name}>
+                                    {item.href.startsWith('#') ? (
                                         <a
-                                            href="#"
+                                            href={item.href}
+                                            onClick={(e) =>
+                                                handleFooterClick(e, item.href)
+                                            }
                                             className={linkHover}
                                         >
-                                            {item}
+                                            {item.name}
                                         </a>
-                                    </li>
-                                )
-                            )}
+                                    ) : (
+                                        <Link
+                                            href={item.href}
+                                            className={linkHover}
+                                        >
+                                            {item.name}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
