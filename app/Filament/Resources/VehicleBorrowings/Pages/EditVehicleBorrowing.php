@@ -10,7 +10,6 @@ use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\RejectAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction;
-use App\Filament\Resources\VehicleBorrowings\Actions\ReturnVehicleAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 
@@ -25,7 +24,6 @@ class EditVehicleBorrowing extends EditRecord
             ApproveAction::make(),
             RejectAction::make(),
             MarkAsReturnedAction::make(),
-            ReturnVehicleAction::make(),
             DeleteAction::make(),
         ];
     }

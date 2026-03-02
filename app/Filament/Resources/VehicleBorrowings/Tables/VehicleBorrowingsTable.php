@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\RejectAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction;
-use App\Filament\Resources\VehicleBorrowings\Actions\ReturnVehicleAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\WhatsAppNotificationAction;
 
 class VehicleBorrowingsTable
@@ -167,7 +166,6 @@ class VehicleBorrowingsTable
                 ApproveAction::make(),
                 RejectAction::make(),
                 MarkAsReturnedAction::make(),
-                ReturnVehicleAction::make(),
                 WhatsAppNotificationAction::make(),
             ])
             ->bulkActions([

@@ -11,11 +11,13 @@ class RejectAction
     {
         return Action::make('reject')
             ->label('Tolak')
+            ->icon('heroicon-o-x-circle')
             ->color('danger')
             ->requiresConfirmation()
             ->modalHeading('Tolak Permintaan Kendaraan')
-            ->modalDescription('Apakah Anda yakin ingin menolak permintaan kendaraan ini?')
+            ->modalDescription('Apakah Anda yakin ingin menolak permintaan peminjaman kendaraan ini?')
             ->modalSubmitActionLabel('Ya, tolak')
+            ->modalCancelActionLabel('Batal')
             ->action(function ($record) {
                 // Perbarui status menjadi ditolak
                 $record->update([
@@ -24,9 +26,11 @@ class RejectAction
 
                 Notification::make()
                     ->title('Permintaan kendaraan berhasil ditolak')
+                    ->body('Peminjaman kendaraan atas nama ' . $record->user->name . ' telah ditolak.')
                     ->danger()
+                    ->icon('heroicon-o-x-circle')
                     ->send();
             })
-            ->visible(fn ($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
+            ->visible(fn($record) => auth()->user()->role === 'admin' && $record->status === 'pending');
     }
 }

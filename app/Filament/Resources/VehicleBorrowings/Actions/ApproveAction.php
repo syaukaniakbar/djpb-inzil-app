@@ -11,11 +11,13 @@ class ApproveAction
     {
         return Action::make('approve')
             ->label('Setujui')
+            ->icon('heroicon-o-check-circle')
             ->color('success')
             ->requiresConfirmation()
             ->modalHeading('Setujui Permintaan Kendaraan')
-            ->modalDescription('Apakah Anda yakin ingin menyetujui permintaan kendaraan ini?')
+            ->modalDescription('Apakah Anda yakin ingin menyetujui permintaan peminjaman kendaraan ini?')
             ->modalSubmitActionLabel('Ya, setujui')
+            ->modalCancelActionLabel('Batal')
             ->action(function ($record) {
                 // Perbarui data untuk menandai sebagai disetujui (berlangsung)
                 $record->update([
@@ -24,7 +26,9 @@ class ApproveAction
 
                 Notification::make()
                     ->title('Permintaan kendaraan berhasil disetujui')
+                    ->body('Peminjaman kendaraan atas nama ' . $record->user->name . ' telah disetujui.')
                     ->success()
+                    ->icon('heroicon-o-check-circle')
                     ->send();
             })
             ->visible(fn($record) => auth()->user()->role === 'admin' && $record->status === 'pending');

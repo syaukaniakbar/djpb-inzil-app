@@ -8,7 +8,6 @@ use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\VehicleBorrowings\Actions\ApproveAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\RejectAction;
 use App\Filament\Resources\VehicleBorrowings\Actions\MarkAsReturnedAction;
-use App\Filament\Resources\VehicleBorrowings\Actions\ReturnVehicleAction;
 
 class ViewVehicleBorrowing extends ViewRecord
 {
@@ -21,7 +20,6 @@ class ViewVehicleBorrowing extends ViewRecord
             ApproveAction::make(),
             RejectAction::make(),
             MarkAsReturnedAction::make(),
-            ReturnVehicleAction::make(),
         ];
     }
 }
