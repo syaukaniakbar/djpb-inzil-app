@@ -76,10 +76,23 @@ export default function BorrowingEdit({ borrowing }: Props) {
                 const res = await fetch(`/api/inventories/available-inventories?${params}`, {
                     signal: controller.signal,
                 });
+                const contentType = res.headers.get('content-type');
+                if (!res.ok || !contentType?.includes('application/json')) {
+                    const text = await res.text();
+                    console.error('API error:', res.status, text.substring(0, 500));
+                    throw new Error(`API error: ${res.status}`);
+                }
                 const json = await res.json();
-                if (json.success) setInventories(json.inventories as AvailableInventory[]);
+                if (json.success) {
+                    setInventories(json.inventories as AvailableInventory[]);
+                } else {
+                    setInventories([]);
+                }
             } catch (err: unknown) {
-                if (err instanceof Error && err.name !== 'AbortError') console.error(err);
+                if (err instanceof Error && err.name !== 'AbortError') {
+                    console.error('Failed to fetch available inventories:', err);
+                }
+                setInventories([]);
             } finally {
                 setLoading((prev) => { const n = [...prev]; n[index] = false; return n; });
             }

@@ -42,12 +42,20 @@ export default function BookingRoomEdit({ booking }: BookingRoomEditProps) {
         });
 
         fetch(`/api/rooms/available-rooms?${params}`)
-            .then((res) => res.json())
+            .then(async (response) => {
+                const contentType = response.headers.get('content-type');
+                if (!response.ok || !contentType?.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('API error:', response.status, text.substring(0, 500));
+                    throw new Error(`API error: ${response.status}`);
+                }
+                return response.json();
+            })
             .then((result) => {
                 if (result.success) {
                     setAvailableRooms(result.rooms);
                     // Clear selected room if it's no longer available and not the current room
-                    if (data.room_id && !result.rooms.some((r: AvailableRoom) => r.id === data.room_id)) {
+                    if (data.room_id && !result.rooms.some((room: AvailableRoom) => room.id === data.room_id)) {
                         setData('room_id', null);
                     }
                 } else {

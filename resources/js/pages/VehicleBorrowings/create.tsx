@@ -34,7 +34,15 @@ export default function VehicleBorrowingCreate() {
         });
 
         fetch(`/api/vehicles/available-vehicles?${params}`)
-            .then((response) => response.json())
+            .then(async (response) => {
+                const contentType = response.headers.get('content-type');
+                if (!response.ok || !contentType?.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('API error:', response.status, text.substring(0, 500));
+                    throw new Error(`API error: ${response.status}`);
+                }
+                return response.json();
+            })
             .then((result) => {
                 if (result.success) {
                     setAvailableVehicles(result.vehicles);
