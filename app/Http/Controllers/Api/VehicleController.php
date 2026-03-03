@@ -20,11 +20,7 @@ class VehicleController extends Controller
         $endAt = $request->end_at;
         $borrowingId = $request->borrowing_id;
 
-        $availableVehicles = Vehicle::all()
-            ->filter(function ($vehicle) use ($startAt, $endAt, $borrowingId) {
-                return $vehicle->isAvailableForRange($startAt, $endAt, $borrowingId);
-            })
-            ->values();
+        $availableVehicles = Vehicle::availableForRange($startAt, $endAt, $borrowingId)->get();
 
         return response()->json([
             'success' => true,

@@ -33,24 +33,11 @@ class InventoryController extends Controller
         $search = $request->string('search')->trim()->toString();
         $excludeBorrowing = $request->integer('exclude_borrowing') ?: null;
 
-        $inventories = Inventory::query()
+        $inventories = Inventory::availableForRange($startAt, $endAt, $excludeBorrowing)
             ->when($search, fn($q) => $q->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('serial_number', 'like', "%{$search}%");
             }))
-            // Exclude inventories that overlap with an active borrowing in this date range
-            ->whereDoesntHave('borrowingDetails', function ($q) use ($startAt, $endAt, $excludeBorrowing) {
-                $q->whereHas('borrowing', function ($borrowingQuery) use ($startAt, $endAt, $excludeBorrowing) {
-                    $borrowingQuery
-                        ->whereIn('status', ['pending', 'approved', 'ongoing'])
-                        ->where('start_at', '<', $endAt)
-                        ->where('end_at', '>', $startAt);
-
-                    if ($excludeBorrowing) {
-                        $borrowingQuery->where('id', '!=', $excludeBorrowing);
-                    }
-                });
-            })
             ->orderBy('name')
             ->get(['id', 'name', 'serial_number', 'category'])
             ->map(fn($inv) => [

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,6 +25,22 @@ class Inventory extends Model
         return $this->hasMany(BorrowingDetail::class);
     }
 
+    public function scopeAvailableForRange(Builder $query, $startAt, $endAt, $excludeBorrowingId = null): Builder
+    {
+        return $query->whereDoesntHave('borrowingDetails', function ($q) use ($startAt, $endAt, $excludeBorrowingId) {
+            $q->whereHas('borrowing', function ($borrowingQuery) use ($startAt, $endAt, $excludeBorrowingId) {
+                $borrowingQuery
+                    ->whereIn('status', ['pending', 'approved', 'ongoing'])
+                    ->where('start_at', '<', $endAt)
+                    ->where('end_at', '>', $startAt);
+
+                if ($excludeBorrowingId) {
+                    $borrowingQuery->where('id', '!=', $excludeBorrowingId);
+                }
+            });
+        });
+    }
+
     /**
      * Check if inventory is being borrowed during a specific period.
      * Uses date overlap: start_at < end AND end_at > start.
@@ -34,17 +51,12 @@ class Inventory extends Model
      */
     public function isBeingBorrowedDuring(Carbon $start, Carbon $end, ?int $excludeBorrowingId = null): bool
     {
-        return $this->borrowingDetails()
-            ->whereHas('borrowing', function ($query) use ($start, $end, $excludeBorrowingId) {
-                $query->whereIn('status', ['pending', 'approved', 'ongoing'])
-                    ->where('start_at', '<', $end)
-                    ->where('end_at', '>', $start);
-
-                if ($excludeBorrowingId) {
-                    $query->where('id', '!=', $excludeBorrowingId);
-                }
-            })
-            ->exists();
+        return $this->scopeAvailableForRange(
+            static::query(),
+            $start,
+            $end,
+            $excludeBorrowingId
+        )->where('id', $this->id)->exists() === false;
     }
 
     /**

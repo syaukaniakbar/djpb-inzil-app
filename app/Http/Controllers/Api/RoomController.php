@@ -20,9 +20,7 @@ class RoomController extends Controller
         $endAt = $request->end_at;
         $bookingId = $request->booking_id;
 
-        $availableRooms = Room::all()->filter(function ($room) use ($startAt, $endAt, $bookingId) {
-            return $room->isAvailableForRange($startAt, $endAt, $bookingId);
-        })->values();
+        $availableRooms = Room::availableForRange($startAt, $endAt, $bookingId)->get();
 
         return response()->json([
             'success' => true,
