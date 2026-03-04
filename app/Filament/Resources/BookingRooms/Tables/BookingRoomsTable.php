@@ -102,11 +102,9 @@ class BookingRoomsTable
 
                 SelectFilter::make('event_mode')
                     ->options([
-                        'meeting' => 'Meeting',
-                        'presentation' => 'Presentasi',
-                        'training' => 'Training',
-                        'interview' => 'Interview',
-                        'other' => 'Lainnya',
+                        'offline' => 'Offline',
+                        'online' => 'Online',
+                        'hybrid' => 'Hybrid',
                     ]),
 
                 Filter::make('start_at')

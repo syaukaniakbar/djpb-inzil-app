@@ -9,65 +9,23 @@ use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 use App\Models\User;
 use App\Models\Room;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Forms\Components\Hidden;
 
 class BookingRoomForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
                 Select::make('user_id')
-                    ->label('User')
+                    ->label('Pengguna')
                     ->relationship('user', 'name')
                     ->options(User::all()->pluck('name', 'id'))
                     ->searchable()
                     ->preload()
-                    ->required(),
-
-                DateTimePicker::make('start_at')
-                    ->label('Tanggal Peminjaman')
+                    ->placeholder('Pilih pengguna')
                     ->required()
-                    ->live()
-                    ->disabled(fn() => auth()->user()->role !== 'admin'),
-
-                DateTimePicker::make('end_at')
-                    ->label('Tanggal Pengembalian')
-                    ->required()
-                    ->live()
-                    ->disabled(fn() => auth()->user()->role !== 'admin'),
-
-                Select::make('room_id')
-                    ->label('Pilih Ruangan')
-                    ->required()
-                    ->options(function ($get) {
-                        $startAt = $get('start_at');
-                        $endAt = $get('end_at');
-                        $roomId = $get('room_id');
-
-                        if (!$startAt || !$endAt) {
-                            return Room::where('id', $roomId)
-                                ->pluck('name', 'id')
-                                ->toArray();
-                        }
-
-                        return Room::query()
-                            ->where(function ($query) use ($startAt, $endAt, $roomId) {
-                                $query
-                                    ->whereDoesntHave('bookingRooms', function ($q) use ($startAt, $endAt) {
-                                        $q->whereIn('status', ['pending', 'approved', 'ongoing'])
-                                            ->where('start_at', '<', $endAt)
-                                            ->where('end_at', '>', $startAt);
-                                    })
-                                    ->orWhere('id', $roomId);
-                            })
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->live(),
+                    ->columnSpan(1),
 
                 Select::make('event_mode')
                     ->label('Jenis Acara')
@@ -76,19 +34,101 @@ class BookingRoomForm
                         'online' => 'Online',
                         'hybrid' => 'Hybrid',
                     ])
-                    ->required(),
+                    ->placeholder('Pilih jenis acara')
+                    ->required()
+                    ->columnSpan(1),
+
+                DateTimePicker::make('start_at')
+                    ->label('Tanggal Mulai')
+                    ->required()
+                    ->live()
+                    ->placeholder('Pilih tanggal mulai')
+                    // Layer 2: Auto-reset end_at & ruangan jika start_at berubah menjadi >= end_at
+                    ->afterStateUpdated(function ($state, $set, $get) {
+                        $endAt = $get('end_at');
+                        if ($endAt && $state && $state >= $endAt) {
+                            $set('end_at', null);
+                        }
+                        $set('room_id', null);
+                    })
+                    ->columnSpan(1),
+
+                DateTimePicker::make('end_at')
+                    ->label('Tanggal Selesai')
+                    ->required()
+                    ->live()
+                    ->placeholder('Pilih tanggal selesai')
+                    // Layer 1: Batasi picker agar tidak bisa memilih sebelum start_at
+                    ->minDate(fn($get) => $get('start_at'))
+                    // Layer 3: Validasi server-side saat submit
+                    ->after('start_at')
+                    ->validationMessages([
+                        'after' => 'Tanggal selesai harus setelah tanggal mulai.',
+                    ])
+                    ->afterStateUpdated(fn($set) => $set('room_id', null))
+                    ->columnSpan(1),
+
+                Select::make('room_id')
+                    ->label('Pilih Ruangan')
+                    ->required()
+                    ->options(function ($get, $record) {
+                        $startAt = $get('start_at');
+                        $endAt = $get('end_at');
+                        // ID booking aktif (untuk mode edit, agar ruangan saat ini tetap tampil)
+                        $currentBookingId = $record?->id;
+
+                        $label = fn($r) => "{$r->name} (Kapasitas: {$r->capacity} orang)";
+
+                        // Jika tanggal belum lengkap, tampilkan semua ruangan
+                        if (!$startAt || !$endAt) {
+                            return Room::all()
+                                ->mapWithKeys(fn($r) => [$r->id => $label($r)])
+                                ->toArray();
+                        }
+
+                        // Pakai scope dari model agar logika overlap konsisten
+                        return Room::availableForRange($startAt, $endAt, $currentBookingId)
+                            ->get()
+                            ->mapWithKeys(fn($r) => [$r->id => $label($r)])
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Pilih ruangan')
+                    ->live()
+                    ->disabled(fn($get) => !$get('start_at') || !$get('end_at'))
+                    ->helperText(
+                        fn($get) => (!$get('start_at') || !$get('end_at'))
+                        ? '⚠️ Pilih tanggal mulai dan selesai terlebih dahulu'
+                        : 'Hanya ruangan yang tersedia pada rentang waktu dipilih'
+                    )
+                    ->columnSpanFull(),
 
                 TextInput::make('event_name')
                     ->label('Nama Acara')
-                    ->required(),
+                    ->required()
+                    ->placeholder('Masukkan nama acara')
+                    ->columnSpanFull(),
+
+                Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'ongoing' => 'Ongoing',
+                        'finished' => 'Finished',
+                        'rejected' => 'Rejected',
+                    ])
+                    ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
+                    ->placeholder('Pilih status')
+                    ->required()
+                    ->columnSpan(1),
 
                 Textarea::make('admin_note')
                     ->label('Catatan Admin')
-                    ->placeholder('Opsional')
-                    ->columnSpanFull(),
-
-                Hidden::make('status')
-                    ->default(fn(?string $operation) => $operation === 'create' ? 'pending' : null)
+                    ->placeholder('Tambahkan catatan (opsional)')
+                    ->rows(3)
+                    ->columnSpan(1),
             ]);
     }
 }
