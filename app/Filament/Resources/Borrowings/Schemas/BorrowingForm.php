@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\Borrowings\Schemas;
 
 use App\Models\Inventory;
-use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class BorrowingForm
 {
@@ -17,11 +17,11 @@ class BorrowingForm
         return $schema
             ->columns(2)
             ->components([
-                // ── Informasi Peminjaman ───────────────────────────────────
+
+                // ── Borrowing Info ─────────────────────────────────
                 Select::make('user_id')
                     ->label('Pengguna')
                     ->relationship('user', 'name')
-                    ->options(User::all()->pluck('name', 'id'))
                     ->searchable()
                     ->preload()
                     ->placeholder('Pilih pengguna')
@@ -33,12 +33,21 @@ class BorrowingForm
                     ->required()
                     ->live()
                     ->placeholder('Pilih tanggal mulai')
-                    // Auto-reset end_at jika start_at berubah >= end_at
                     ->afterStateUpdated(function ($state, $set, $get) {
                         $endAt = $get('end_at');
+
                         if ($endAt && $state && $state >= $endAt) {
                             $set('end_at', null);
                         }
+
+                        // reset inventory_id inside repeater
+                        $details = $get('borrowingDetails') ?? [];
+
+                        foreach ($details as $key => $item) {
+                            $details[$key]['inventory_id'] = null;
+                        }
+
+                        $set('borrowingDetails', $details);
                     })
                     ->columnSpan(1),
 
@@ -48,51 +57,72 @@ class BorrowingForm
                     ->placeholder('Pilih tanggal kembali')
                     ->minDate(fn($get) => $get('start_at'))
                     ->after('start_at')
+                    ->afterStateUpdated(function ($set, $get) {
+
+                        $details = $get('borrowingDetails') ?? [];
+
+                        foreach ($details as $key => $item) {
+                            $details[$key]['inventory_id'] = null;
+                        }
+
+                        $set('borrowingDetails', $details);
+                    })
                     ->validationMessages([
                         'after' => 'Tanggal pengembalian harus setelah tanggal peminjaman.',
                     ])
                     ->columnSpan(1),
 
-                // ── Daftar Barang ──────────────────────────────────────────
+                // ── Borrowing Items ───────────────────────────────
                 Repeater::make('borrowingDetails')
                     ->label('Daftar Barang')
                     ->relationship('borrowingDetails')
                     ->schema([
+
                         Select::make('inventory_id')
                             ->label('Barang')
-                            ->options(function ($get) {
-                                // Ambil tanggal dari parent form
+                            ->placeholder('Pilih barang')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->disabled(fn($get) => !$get('../../start_at') || !$get('../../end_at'))
+                            ->columnSpan(2)
+
+                            ->options(function ($get, ?Model $record) {
+
                                 $startAt = $get('../../start_at');
                                 $endAt = $get('../../end_at');
 
-                                $label = fn($i) => $i->serial_number
-                                    ? "{$i->name} (S/N: {$i->serial_number})"
-                                    : $i->name;
+                                $query = Inventory::query()
+                                    ->select('id', 'name', 'serial_number');
 
-                                // Jika tanggal belum lengkap, tampilkan semua inventaris
-                                if (!$startAt || !$endAt) {
-                                    return Inventory::all()
-                                        ->mapWithKeys(fn($i) => [$i->id => $label($i)])
-                                        ->toArray();
+                                if ($startAt && $endAt) {
+                                    $excludeBorrowingId = $record?->borrowing_id ?? null;
+
+                                    $query = Inventory::availableForRange(
+                                        $startAt,
+                                        $endAt,
+                                        $excludeBorrowingId
+                                    );
                                 }
 
-                                return Inventory::availableForRange($startAt, $endAt)
+                                return $query
                                     ->get()
-                                    ->mapWithKeys(fn($i) => [$i->id => $label($i)])
+                                    ->mapWithKeys(fn($i) => [
+                                        $i->id => $i->serial_number
+                                            ? "{$i->name} (S/N: {$i->serial_number})"
+                                            : $i->name
+                                    ])
                                     ->toArray();
-                            })
-                            ->searchable()
-                            ->preload()
-                            ->placeholder('Pilih barang')
-                            ->required()
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->columnSpan(2),
+                            }),
 
                         Textarea::make('notes')
                             ->label('Catatan Barang')
                             ->placeholder('Catatan khusus untuk barang ini (opsional)')
                             ->rows(2)
                             ->columnSpan(2),
+
                     ])
                     ->columns(2)
                     ->addActionLabel('+ Tambah Barang')
@@ -101,7 +131,7 @@ class BorrowingForm
                     ->helperText('Pilih minimal satu barang yang akan dipinjam.')
                     ->columnSpanFull(),
 
-                // ── Status & Catatan ───────────────────────────────────────
+                // ── Status ────────────────────────────────────────
                 Select::make('status')
                     ->label('Status')
                     ->options([
@@ -131,3 +161,4 @@ class BorrowingForm
             ]);
     }
 }
+
