@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vehicles\Tables;
 
+use App\Filament\Resources\Vehicles\VehicleResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -47,12 +48,11 @@ class VehiclesTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->recordUrl(fn ($record) => VehicleResource::getUrl('view', ['record' => $record]))
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-
-            
             ])
             ->emptyStateHeading('Tidak Ada Data Kendaraan')
             ->emptyStateDescription('Klik tombol "Tambah Kendaraan" untuk menambahkan data baru.');
