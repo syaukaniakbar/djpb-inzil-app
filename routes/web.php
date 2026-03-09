@@ -15,7 +15,7 @@ Route::get('/', function () {
 
 Route::get('/contact-us', [ContactController::class, 'index'])->name('contact-us');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Borrowing routes
