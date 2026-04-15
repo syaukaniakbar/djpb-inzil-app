@@ -32,15 +32,15 @@ export default function AuthSimpleLayout({
                                 </div>
 
                                 <div className="ml-1 flex flex-col leading-tight">
-                                    <span className="text-[11px] font-semibold text-gray-900">
+                                    <span className="text-[11px] font-semibold text-gray-900 dark:text-white">
                                         INZIL APP
                                     </span>
 
-                                    <span className="text-[10px] font-medium text-gray-700">
+                                    <span className="text-[10px] font-medium text-gray-700 dark:text-white">
                                         DITJEN PERBENDAHARAAN
                                     </span>
 
-                                    <span className="text-[9.5px] font-normal text-gray-500">
+                                    <span className="text-[9.5px] font-normal text-gray-500 dark:text-white">
                                         KANWIL DJPb PROV. KALTIM
                                     </span>
                                 </div>
