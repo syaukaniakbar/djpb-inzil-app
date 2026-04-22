@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomController as ApiRoomController;
 use App\Http\Controllers\Api\VehicleController as ApiVehicleController;
 use App\Http\Controllers\Api\InventoryController as ApiInventoryController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +30,13 @@ Route::prefix('vehicles')->group(function () {
 // Inventory API routes
 Route::prefix('inventories')->group(function () {
     Route::get('/available-inventories', [ApiInventoryController::class, 'getAvailableInventories']);
+});
+
+Route::get('/cron/update-loan-statuses', function () {
+    if (request('key') !== env('CRON_KEY')) {
+        abort(403);
+    }
+
+    Artisan::call('app:update-loan-statuses');
+    return response()->json(['status' => 'OK']);
 });

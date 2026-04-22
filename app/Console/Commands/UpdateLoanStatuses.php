@@ -18,7 +18,6 @@ class UpdateLoanStatuses extends Command
         $this->updateRooms();
         $this->updateBorrowings();
         \Log::info('UpdateLoanStatuses executed at ' . now());
-
         $this->info('Loan & Booking statuses updated.');
     }
 
